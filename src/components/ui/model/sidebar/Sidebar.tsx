@@ -9,6 +9,8 @@ const StyledDiv = styled("div")(({ theme }) => ({
   height: "100%",
 }));
 
+
+
 const Sidebar = () => {
   return (
     <StyledDiv>
