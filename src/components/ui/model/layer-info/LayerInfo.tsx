@@ -2,9 +2,16 @@ import { Typography, Divider, Container } from "@mui/material";
 import { styled } from "@mui/system";
 import TextInput from "./TextInput";
 import SelectInput from "./SelectInput";
+import CheckBoxInput from "./CheckBoxInput";
 import { useContext, useEffect, useState } from "react";
 import ModelContext from "../../../../context/model-context";
-import { Activation, Regularizer } from "../nn-elements";
+import {
+  ACTIVATIONS,
+  CONSTRAINTS,
+  INITIALIZERS,
+  REGULARIZERS,
+} from "../nn-elements";
+import NumberInput from "./NumberInput";
 
 const LayerName = styled(Typography)(({ theme }) => ({
   padding: ".1em",
@@ -22,7 +29,9 @@ const StyledOptionGroup = styled(Container)(({ theme }) => ({
 const StyledDiv = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.action.hover,
   height: "100%",
-  overflowY: "scroll",
+  overflowY: "auto",
+  overflowX: "hidden",
+  scrollbarColor: theme.palette.action.hover,
 }));
 
 interface Props {
@@ -45,27 +54,42 @@ const LayerInfo = () => {
   const selectedNode = modelContext.elements.find(
     (el) => el.id === modelContext.selectedNodeId
   );
+
+  /**
+   *
+   * @param arg argument that should be updated
+   * @returns a function that updates the given argument on the elements in context
+   */
   const setValue = (arg: string) => {
     return (val: any) => {
-      selectedNode?.data.setArgs((oldArgs: Object) => {
-        console.log("arg: ", arg, "val: ", val);
-        return { ...oldArgs, [arg]: val };
+      modelContext.setElements((els) => {
+        return els.map((el) => {
+          // update output value of this node
+          if (el.id === modelContext.selectedNodeId) {
+            el.data.args = {
+              ...el.data.args,
+              [arg]: val,
+            };
+            el.data = { ...el.data, changed: true };
+            console.log("changed set to true", el);
+            console.log("arg: val", arg, val);
+          }
+          return el;
+        });
       });
     };
   };
 
+  // getting all options
   let objs: JSX.Element[] = [];
   if (selectedNode !== undefined) {
-    // make types right
+    // TODO: make types right
 
     objs = Object.keys(selectedNode.data.menu).map((key, index) => {
-      console.log("key: ", key, "value: ", selectedNode?.data.menu[key]);
-      const subset = selectedNode?.data.menu[key];
+      const subset = selectedNode.data.menu[key];
       return (
-        <OptionGroup label={key}>
+        <OptionGroup key={key} label={key}>
           {Object.keys(subset).map((key, index) => {
-            console.log("key: ", key, "value: ", subset[key]);
-            console.log("args key: ", selectedNode.data.args[key]);
             switch (subset[key]) {
               case "string":
                 return (
@@ -75,40 +99,69 @@ const LayerInfo = () => {
                     setValue={setValue(key)}
                     id={`text-${key}`}
                     name={key}
-                    helperText={"helper text"}
                   />
                 );
 
               case "activation":
                 return (
                   <SelectInput
-                    key={`select-activation-${key}`}
-                    id={"select-activation"}
+                    key={`select-${key}`}
+                    id={`select-${key}`}
                     name={key}
-                    options={Object.keys(Activation)}
+                    options={Object.keys(ACTIVATIONS)}
                     value={selectedNode.data.args[key]}
                     setValue={setValue(key)}
                   />
                 );
               case "number":
-                return <p>number</p>;
-                break;
+                return (
+                  <NumberInput
+                    key={key}
+                    min={1}
+                    value={selectedNode.data.args[key]}
+                    setValue={setValue(key)}
+                    id={`text-${key}`}
+                    name={key}
+                  />
+                );
               case "boolean":
-                return <p>boolean</p>;
-                break;
+                return (
+                  <CheckBoxInput
+                    key={key}
+                    name={key}
+                    value={selectedNode.data.args[key]}
+                    setValue={setValue(key)}
+                  />
+                );
               case "initializer":
-                return <p>initializer</p>;
-                break;
+                return (
+                  <SelectInput
+                    key={`select-${key}`}
+                    id={`select-${key}`}
+                    name={key}
+                    options={Object.keys(INITIALIZERS)}
+                    value={selectedNode.data.args[key]}
+                    setValue={setValue(key)}
+                  />
+                );
               case "constaint":
-                return <p>constaint</p>;
-                break;
+                return (
+                  <SelectInput
+                    key={`select-${key}`}
+                    id={`select-${key}`}
+                    name={key}
+                    options={Object.keys(CONSTRAINTS)}
+                    value={selectedNode.data.args[key]}
+                    setValue={setValue(key)}
+                  />
+                );
               case "regularizer":
                 return (
                   <SelectInput
                     key={`select-${key}`}
                     id={`select-${key}`}
                     name={key}
-                    options={Object.keys(Regularizer)}
+                    options={Object.keys(REGULARIZERS)}
                     value={selectedNode.data.args[key]}
                     setValue={setValue(key)}
                   />

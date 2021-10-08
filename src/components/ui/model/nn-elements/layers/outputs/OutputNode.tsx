@@ -83,8 +83,8 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
       <StyledTypography>{labelText}</StyledTypography>
       {summary.length === 1 && <p>No summary available.</p>}
       {summary.length > 1 &&
-        summary.map((line) => {
-          return <p>{line}</p>;
+        summary.map((line, index) => {
+          return <p key={`$output-node-p-${index}`}>{line}</p>;
         })}
     </NodeWrapper>
   );

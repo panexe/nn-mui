@@ -24,7 +24,7 @@ interface Props {
 const ThreeColLayout = (props: Props) => {
   return (
     <StyledSplit
-      sizes={[20, 60, 20]}
+      sizes={[20, 57, 23]}
       minSize={[200,600,200]}
       style={{display: 'flex', height: '100%'}}
       gutterSize={5}

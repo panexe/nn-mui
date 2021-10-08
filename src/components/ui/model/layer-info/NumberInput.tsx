@@ -12,7 +12,6 @@ import { styled } from "@mui/system";
 import { yellow } from "@mui/material/colors";
 import { createStyles, makeStyles } from "@mui/styles";
 
-
 const StyledTextField = styled((props: FilledTextFieldProps) => (
   <TextField
     InputProps={{ disableUnderline: true }}
@@ -49,33 +48,40 @@ interface Props {
   children?: React.ReactNode;
   name: string;
   value: string | number;
-  setValue: React.Dispatch<React.SetStateAction<string | number>>,
+  setValue: React.Dispatch<React.SetStateAction<string | number>>;
   id: string;
   helperText?: string;
-  number?: boolean;
+  min?: number; 
+  max?: number;
 }
 
-const TextInput = (props: Props) => {
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement> ) => {
-        if(props.number){
-            props.setValue(parseInt(event.target.value));
-        }else{
-            props.setValue(event.target.value);
-        }
-        
+const NumberInput = (props: Props) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(event.target.value); 
+    if(isNaN(val)){
+        // show error
+    }else{
+       props.setValue(parseInt(event.target.value)); 
     }
+    
+  };
 
   return (
-    <Grid container direction='row' justifyContent='space-between' alignItems='center'>
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
+    >
       <Grid item>
-        <InputLabel sx={{fontSize:'18px'}}>{props.name}:</InputLabel>
+        <InputLabel sx={{ fontSize: "18px" }}>{props.name}:</InputLabel>
       </Grid>
       <Grid item xs={8}>
         <StyledTextField
-          type={props.number ? 'number' : ''}
+          type={"number"}
           fullWidth={true}
           hiddenLabel
+          inputProps={{min: (props.min? props.min: undefined), max: props.max ? props.max : undefined}}
           id={props.id}
           InputLabelProps={{ shrink: true }}
           helperText={props.helperText ? props.helperText : ""}
@@ -88,4 +94,4 @@ const TextInput = (props: Props) => {
   );
 };
 
-export default TextInput;
+export default NumberInput;

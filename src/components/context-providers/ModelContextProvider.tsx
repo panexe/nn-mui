@@ -16,6 +16,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
+      changed: true, 
     },
   },
   // default node
@@ -31,6 +32,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
+      changed: true, 
     },
   },
   {
@@ -44,6 +46,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
+      changed: true, 
     },
   },
   {
@@ -58,6 +61,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
+      changed: true, 
     },
   },
   // animated edge
