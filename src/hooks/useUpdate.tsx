@@ -18,7 +18,7 @@ export const useUpdate = (data: any, id: string, fn: any) => {
       return;
     }
     if (currentElement?.data.inputValue === data.inputValue) {
-        console.log("currentElement: ", currentElement);
+      console.log("currentElement: ", currentElement);
       if (currentElement.data.changed) {
         console.log(
           "update because data changed!",
@@ -33,8 +33,6 @@ export const useUpdate = (data: any, id: string, fn: any) => {
         );
         return;
       }
-    }
-    {
     }
 
     // calc output value | should be the connection of the layers here later on

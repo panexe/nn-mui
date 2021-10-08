@@ -1,17 +1,13 @@
-import {
-  TextField,
-  FilledTextFieldProps,
-  Theme,
-  FormControl,
-  FormLabel,
-  OutlinedInput,
-  Grid,
-  InputLabel,
-} from "@mui/material";
+// MUI
+import { TextField } from "@mui/material";
+import { FilledTextFieldProps } from "@mui/material";
+import { Grid } from "@mui/material";
+import { InputLabel } from "@mui/material";
 import { styled } from "@mui/system";
-import { yellow } from "@mui/material/colors";
-import { createStyles, makeStyles } from "@mui/styles";
 
+/*--------------------------------------------------------*/
+/*                         CSS                            */
+/*--------------------------------------------------------*/
 const StyledTextField = styled((props: FilledTextFieldProps) => (
   <TextField
     InputProps={{ disableUnderline: true }}
@@ -44,6 +40,10 @@ const StyledTextField = styled((props: FilledTextFieldProps) => (
   },
 }));
 
+/*--------------------------------------------------------*/
+/*                       COMPONENT                        */
+/*--------------------------------------------------------*/
+
 interface Props {
   children?: React.ReactNode;
   name: string;
@@ -51,19 +51,18 @@ interface Props {
   setValue: React.Dispatch<React.SetStateAction<string | number>>;
   id: string;
   helperText?: string;
-  min?: number; 
+  min?: number;
   max?: number;
 }
 
 const NumberInput = (props: Props) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(event.target.value); 
-    if(isNaN(val)){
-        // show error
-    }else{
-       props.setValue(parseInt(event.target.value)); 
+    const val = parseInt(event.target.value);
+    if (isNaN(val)) {
+      // show error
+    } else {
+      props.setValue(parseInt(event.target.value));
     }
-    
   };
 
   return (
@@ -81,7 +80,10 @@ const NumberInput = (props: Props) => {
           type={"number"}
           fullWidth={true}
           hiddenLabel
-          inputProps={{min: (props.min? props.min: undefined), max: props.max ? props.max : undefined}}
+          inputProps={{
+            min: props.min ? props.min : undefined,
+            max: props.max ? props.max : undefined,
+          }}
           id={props.id}
           InputLabelProps={{ shrink: true }}
           helperText={props.helperText ? props.helperText : ""}

@@ -1,8 +1,18 @@
+// REACT
+import React, { useState } from "react";
+
+// MUI
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import {  ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { ToggleButton } from "@mui/material";
+import { ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/system";
-import React, { useState } from "react";
+
+// UNFINISHED
+
+/*--------------------------------------------------------*/
+/*                         CSS                            */
+/*--------------------------------------------------------*/
 
 const StyledDiv = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.divider,
@@ -25,15 +35,10 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-const StyledToogleButton = styled(ToggleButton)(({ theme }) => ({
-    "& .MuiToggleButton-root": {
-        backgroundColor: 'pink',
-      "& .Mui-selected": {
-        backgroundColor: 'pink',
-      },
-    },
-  }));
 
+/*--------------------------------------------------------*/
+/*                       COMPONENT                        */
+/*--------------------------------------------------------*/
 const ToolSelectBar = () => {
   const [value, setValue] = useState<string | null>("val1");
 

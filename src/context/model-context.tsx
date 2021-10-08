@@ -1,55 +1,54 @@
-import { SymbolicTensor } from "@tensorflow/tfjs";
+// REACT
 import React from "react";
+
+// REACT FLOW
 import { Elements } from "react-flow-renderer";
-import * as tf from "@tensorflow/tfjs";
+
+// TFJS
+import { SymbolicTensor } from "@tensorflow/tfjs";
+import { input } from "@tensorflow/tfjs-layers";
+import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
+import { model } from "@tensorflow/tfjs-layers";
 import { LayersModel } from "@tensorflow/tfjs-layers";
-import { Node as FlowNode} from "react-flow-renderer";
-import InputNode from "../components/ui/model/nn-elements/layers/inputs/InputNode";
 
 const elements: Elements = [];
 const setElements: React.Dispatch<React.SetStateAction<Elements<any>>> =
   () => {};
 const setInputTensor: React.Dispatch<React.SetStateAction<SymbolicTensor>> =
   () => {};
-const inputLayer = tf.input({ shape: [5] });
-const outputLayer = tf.layers
-  .dense({ units: 10, activation: "relu" })
-  .apply(inputLayer);
-const modelProp = tf.model({
+const inputLayer = input({ shape: [5] });
+const outputLayer = dense({ units: 10, activation: "relu" }).apply(inputLayer);
+const modelProp = model({
   inputs: inputLayer,
   outputs: outputLayer as SymbolicTensor,
 });
 
-
-
 type ModelContextType = {
-    toolSelection: string,
-    setToolSelection: React.Dispatch<React.SetStateAction<string>>,
-    elements: Elements,
-    setElements: React.Dispatch<React.SetStateAction<Elements<any>>>,
-    inputTensor: SymbolicTensor,
-    setInputTensor: React.Dispatch<React.SetStateAction<SymbolicTensor>>,
-    model: LayersModel,
-    setModel: React.Dispatch<React.SetStateAction<LayersModel>>, 
-    selectedNode: (FlowNode<any>),
-    setSelectedNode: (React.Dispatch<React.SetStateAction<FlowNode<any>>> ), 
-    selectedNodeId: string, 
-    setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>,
+  toolSelection: string;
+  setToolSelection: React.Dispatch<React.SetStateAction<string>>;
+  elements: Elements;
+  setElements: React.Dispatch<React.SetStateAction<Elements<any>>>;
+  inputTensor: SymbolicTensor;
+  setInputTensor: React.Dispatch<React.SetStateAction<SymbolicTensor>>;
+  model: LayersModel;
+  setModel: React.Dispatch<React.SetStateAction<LayersModel>>;
+  selectedNodeId: string;
+  setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const setModel: React.Dispatch<React.SetStateAction<LayersModel>> = () => {};
 const ModelContext = React.createContext<ModelContextType>({
   toolSelection: "select",
-  setToolSelection: (tool: any) => {return tool},
+  setToolSelection: (tool: any) => {
+    return tool;
+  },
   elements: elements,
   setElements: setElements,
   inputTensor: inputLayer,
   setInputTensor: setInputTensor,
-  model: (modelProp),
+  model: modelProp,
   setModel: setModel,
-  selectedNode: {id:'1'}, 
-  setSelectedNode: () => {},
-  selectedNodeId: '1',
+  selectedNodeId: "1",
   setSelectedNodeId: () => {},
 });
 

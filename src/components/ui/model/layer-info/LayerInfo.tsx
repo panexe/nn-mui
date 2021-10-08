@@ -1,9 +1,15 @@
+// REACT
+import { useContext } from "react";
+
+//  MUI 
 import { Typography, Divider, Container } from "@mui/material";
 import { styled } from "@mui/system";
+
+// NNUI 
 import TextInput from "./TextInput";
 import SelectInput from "./SelectInput";
 import CheckBoxInput from "./CheckBoxInput";
-import { useContext, useEffect, useState } from "react";
+import NumberInput from "./NumberInput";
 import ModelContext from "../../../../context/model-context";
 import {
   ACTIVATIONS,
@@ -11,8 +17,11 @@ import {
   INITIALIZERS,
   REGULARIZERS,
 } from "../nn-elements";
-import NumberInput from "./NumberInput";
 
+
+/*--------------------------------------------------------*/
+/*                         CSS                            */
+/*--------------------------------------------------------*/
 const LayerName = styled(Typography)(({ theme }) => ({
   padding: ".1em",
   paddingTop: ".3em",
@@ -38,6 +47,9 @@ interface Props {
   children?: React.ReactNode;
   label: string;
 }
+/*--------------------------------------------------------*/
+/*                       COMPONENT                        */
+/*--------------------------------------------------------*/
 
 const OptionGroup = (props: Props) => {
   return (
@@ -85,10 +97,10 @@ const LayerInfo = () => {
   if (selectedNode !== undefined) {
     // TODO: make types right
 
-    objs = Object.keys(selectedNode.data.menu).map((key, index) => {
-      const subset = selectedNode.data.menu[key];
+    objs = Object.keys(selectedNode.data.menu).map((keyCat, index) => {
+      const subset = selectedNode.data.menu[keyCat];
       return (
-        <OptionGroup key={key} label={key}>
+        <OptionGroup key={keyCat} label={keyCat}>
           {Object.keys(subset).map((key, index) => {
             switch (subset[key]) {
               case "string":
@@ -144,7 +156,7 @@ const LayerInfo = () => {
                     setValue={setValue(key)}
                   />
                 );
-              case "constaint":
+              case "constraint":
                 return (
                   <SelectInput
                     key={`select-${key}`}
@@ -165,6 +177,12 @@ const LayerInfo = () => {
                     value={selectedNode.data.args[key]}
                     setValue={setValue(key)}
                   />
+                );
+              default:
+                return (
+                  <p key={key}>
+                    Value: <strong>{key}</strong> of type <strong>{subset[key]}</strong> is unknown!
+                  </p>
                 );
             }
           })}

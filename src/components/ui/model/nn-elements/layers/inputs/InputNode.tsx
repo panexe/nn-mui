@@ -3,25 +3,40 @@
     Can only be once in our model (for now). 
 */
 
-import * as tf from "@tensorflow/tfjs";
+// REACT
+import { memo } from "react";
+import { useContext } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+
+// REACT FLOW
+import { getOutgoers } from "react-flow-renderer";
+import { Handle } from "react-flow-renderer";
+import { NodeProps } from "react-flow-renderer";
+import { Position } from "react-flow-renderer";
+
+// MUI
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import { useContext, useEffect, useState } from "react";
-import { getOutgoers, Handle, NodeProps, Position } from "react-flow-renderer";
 import { purple } from "@mui/material/colors";
-import { memo } from "react";
-import ModelContext from "../../../../../../context/model-context";
-import { useOnConnect } from "../../../../../../hooks/useOnConnect";
+
+// TFJS
+import * as tf from "@tensorflow/tfjs";
 import { DataType } from "@tensorflow/tfjs-core";
 import { Shape } from "@tensorflow/tfjs-layers";
 
+// NNUI
+import ModelContext from "../../../../../../context/model-context";
+import { useOnConnect } from "../../../../../../hooks/useOnConnect";
+import { useOnDisconnect } from "../../../../../../hooks/useOnDisconnect";
+
 /** this basicly is a copy of InputConfig from tfjs
  *  but we want import their type directly
- * 
+ *
  * import {InputConfig} from '@tensorflow/tfjs-layers/src/engine/input_layer';
  * (https://github.com/tensorflow/tfjs/blob/38f8462fe642011ff1b7bcbb52e018f3451be58b/tfjs-layers/src/engine/input_layer.ts#L149)
- * 
- * 
+ *
+ *
  */
 export interface InputArgs {
   shape?: Shape;
@@ -58,9 +73,11 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const modelContext = useContext(ModelContext);
   const { onSourceConnect } = useOnConnect(data, id);
+  const { onSourceDisconnect } = useOnDisconnect(data, id);
   const [counter, setCounter] = useState(0);
-  const [args, setArgs] = useState<InputArgs>({ shape: [32], name:'input' });
-
+  const [args, setArgs] = useState<InputArgs>({ shape: [32], name: "input" });
+  const labelText = "Input";
+  
   useEffect(() => {
     data.args = args;
   }, []);
@@ -77,7 +94,7 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     const outGoers = getOutgoers(currentElement, modelContext.elements);
     const outputValue = tf.input(args);
 
-    // put into context for output node to read 
+    // put into context for output node to read
     modelContext.setInputTensor(outputValue);
     console.log(outputValue);
     //outputValue.computeOutputShape();
@@ -102,7 +119,7 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     ]);
   }, [args]);
 
-  const labelText = "Input";
+  
 
   return (
     <NodeWrapper>

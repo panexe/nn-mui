@@ -3,37 +3,48 @@
  *
  */
 
-import { memo, useContext, useEffect, useState } from "react";
-import { Handle, NodeProps, Position } from "react-flow-renderer";
-import { useOnConnect } from "../../../../../../hooks/useOnConnect";
-import { useUpdate } from "../../../../../../hooks/useUpdate";
+// REACT
+import { memo } from "react";
+import { useContext } from "react";
+import { useEffect } from "react";
+
+// REACT FLOW
+import { Handle } from "react-flow-renderer";
+import { NodeProps } from "react-flow-renderer";
+import { Position } from "react-flow-renderer";
+
+// TFJS
+import { SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
+
+// MUI
 import { styled } from "@mui/system";
 import { green } from "@mui/material/colors";
-import { Typography } from "@mui/material";
-import { ACTIVATIONS, getInitializer, Initializer, NodeLayerArgs, getConstraint, getActivation, getRegularizer } from "../..";
-import { ActivationIdentifier } from "@tensorflow/tfjs-layers/src/keras_format/activation_config";
-import { INITIALIZERS, CONSTRAINTS, REGULARIZERS } from "../..";
-import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { Tensor } from "@tensorflow/tfjs-core";
-import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
-import ModelContext from "../../../../../../context/model-context";
 import theme from "../../../../../../theme";
-import { getOutgoers } from "react-flow-renderer";
 
-export interface NodeDenseLayerArgs extends NodeLayerArgs {
-  units: number;
-  activation?: ACTIVATIONS; // put acceptable types only here
-  useBias?: boolean;
-  kernelInitializer?: INITIALIZERS;
-  biasInitializer?: INITIALIZERS;
-  inputDim?: number;
-  kernelConstraint?: CONSTRAINTS;
-  biasConstraint?: CONSTRAINTS;
-  kernelRegularizer?: REGULARIZERS;
-  biasRegularizer?: REGULARIZERS;
-  activityRegularizer?: REGULARIZERS;
-}
+// NNUI
+import ModelContext from "../../../../../../context/model-context";
+import { useOnConnect } from "../../../../../../hooks/useOnConnect";
+import { useUpdate } from "../../../../../../hooks/useUpdate";
+import {
+  INITIALIZERS,
+  CONSTRAINTS,
+  REGULARIZERS,
+  ACTIVATIONS,
+  getInitializer,
+  getConstraint,
+  getActivation,
+  getRegularizer,
+} from "../..";
 
+/*--------------------------------------------------------*/
+/*                      DATATYPES                         */
+/*--------------------------------------------------------*/
+
+/**
+ * here the options the sidebar lets you change are listed
+ *
+ */
 export const denseMenu = {
   Options: {
     name: "string",
@@ -44,8 +55,8 @@ export const denseMenu = {
   "Advanced Options": {
     kernelInitializer: "initializer",
     biasInitializer: "initializer",
-    kernelConstraint: "constaint",
-    biasConstraint: "constaint",
+    kernelConstraint: "constraint",
+    biasConstraint: "constraint",
     kernelRegularizer: "regularizer",
     biasRegularizer: "regularizer",
   },
@@ -66,9 +77,6 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.primary,
-}));
 
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
@@ -79,35 +87,30 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const modelContext = useContext(ModelContext);
   const selected = modelContext.selectedNodeId === id;
 
-  const [args, setArgs] = useState<NodeDenseLayerArgs>({
-    units: 32,
-    // set standard values
-    activation: ACTIVATIONS.none,
-    useBias: true,
-    kernelInitializer: INITIALIZERS.none,
-    biasInitializer: INITIALIZERS.none,
-    kernelConstraint: CONSTRAINTS.none,
-    biasConstraint: CONSTRAINTS.none,
-    kernelRegularizer: REGULARIZERS.none,
-    biasRegularizer: REGULARIZERS.none,
-    activityRegularizer: REGULARIZERS.none, // they dont seem supported yet 
-  });
-  
+  // sets the standard value for the layer args and the menu 
+  // should only be executed once 
   useEffect(() => {
     data.menu = denseMenu;
-  });
-  useEffect(() => {
-    data.args = args;
-    data.setArgs = setArgs;
-    // problem: doesnt update our model-flow when parameters are changed 
-    // problem prob. is that instead of chaning the arg a new element is set, 
-    // so the arguments did  not really change 
-    // maybe update the whole model when something changes 
-
-  },[args] );
+    // maybe put the initial values somewhere else 
+    data.args = {
+      units: 32,
+      // set standard values
+      activation: ACTIVATIONS.none,
+      useBias: true,
+      kernelInitializer: INITIALIZERS.none,
+      biasInitializer: INITIALIZERS.none,
+      kernelConstraint: CONSTRAINTS.none,
+      biasConstraint: CONSTRAINTS.none,
+      kernelRegularizer: REGULARIZERS.none,
+      biasRegularizer: REGULARIZERS.none,
+      activityRegularizer: REGULARIZERS.none, // they dont seem supported yet
+    };
+  }, []);
 
   // applys input to this layer
-  const fn = (a: SymbolicTensor | SymbolicTensor[]) => {
+  const fn = (a: SymbolicTensor | SymbolicTensor[] | undefined ) => {
+    if(a === undefined) return a;
+
     const name = data.args.name;
     const units = data.args.units;
     const useBias = data.args.useBias;
@@ -124,18 +127,16 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
       units,
       activation,
       useBias,
-      kernelInitializer, 
-      biasInitializer, 
-      kernelConstraint, 
-      biasConstraint, 
-      kernelRegularizer, 
-      biasRegularizer, 
+      kernelInitializer,
+      biasInitializer,
+      kernelConstraint,
+      biasConstraint,
+      kernelRegularizer,
+      biasRegularizer,
       activityRegularizer,
     }).apply(a) as SymbolicTensor;
   };
   useUpdate(data, id, fn);
-
-  
 
   return (
     <NodeWrapper

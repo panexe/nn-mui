@@ -1,9 +1,20 @@
-import ModelContext from "../../context/model-context";
+// REACT
 import { useState } from "react";
-import { Elements, Node as FlowNode } from "react-flow-renderer";
-import { input, LayersModel, model, SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
 
+// REACT FLOW
+import { Elements } from "react-flow-renderer";
+
+// TFJS
+import { input } from "@tensorflow/tfjs-layers";
+import { LayersModel } from "@tensorflow/tfjs-layers";
+import { model } from "@tensorflow/tfjs-layers";
+import { SymbolicTensor } from "@tensorflow/tfjs-layers";
+
+// NNUI
+import ModelContext from "../../context/model-context";
+
+
+// setup elements, prob. move this to its own file
 const initialElements = [
   {
     id: "1",
@@ -16,7 +27,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
-      changed: true, 
+      changed: true,
     },
   },
   // default node
@@ -32,7 +43,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
-      changed: true, 
+      changed: true,
     },
   },
   {
@@ -46,7 +57,7 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
-      changed: true, 
+      changed: true,
     },
   },
   {
@@ -61,16 +72,17 @@ const initialElements = [
       args: {},
       setArgs: () => {},
       menu: Object(),
-      changed: true, 
+      changed: true,
     },
   },
   // animated edge
 ];
 
 const inputLayer = input({ shape: [32] });
-const outputLayer = dense({units:32}).apply(inputLayer);
-const initModel = model({inputs: inputLayer, outputs:inputLayer as SymbolicTensor})
-
+const initModel = model({
+  inputs: inputLayer,
+  outputs: inputLayer as SymbolicTensor,
+});
 
 const ModelContextProvider: React.FC = (props) => {
   const [elements, setElements] = useState<Elements>(initialElements);
@@ -79,8 +91,7 @@ const ModelContextProvider: React.FC = (props) => {
     input({ shape: [32] })
   );
   const [model, setModel] = useState<LayersModel>(initModel);
-  const [selectedNode, setSelectedNode] = useState<FlowNode<any>>(elements[0]);
-  const [selectedNodeId, setSelectedNodeId] = useState('1');
+  const [selectedNodeId, setSelectedNodeId] = useState("1");
 
   return (
     <ModelContext.Provider
@@ -93,9 +104,7 @@ const ModelContextProvider: React.FC = (props) => {
         setInputTensor: setInputTensor,
         model: model,
         setModel: setModel,
-        selectedNode: selectedNode,
-        setSelectedNode: setSelectedNode,
-        selectedNodeId: selectedNodeId, 
+        selectedNodeId: selectedNodeId,
         setSelectedNodeId: setSelectedNodeId,
       }}
     >

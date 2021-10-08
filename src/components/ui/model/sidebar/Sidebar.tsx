@@ -1,6 +1,10 @@
 import SidebarCategory from "./SidebarCategory";
-import {  MenuItem, MenuList } from "@mui/material";
-import {  styled } from "@mui/system";
+import { MenuItem, MenuList } from "@mui/material";
+import { styled } from "@mui/system";
+
+/*--------------------------------------------------------*/
+/*                         CSS                            */
+/*--------------------------------------------------------*/
 
 const StyledDiv = styled("div")(({ theme }) => ({
   color: theme.palette.background.paper,
@@ -8,8 +12,6 @@ const StyledDiv = styled("div")(({ theme }) => ({
   padding: theme.spacing(0),
   height: "100%",
 }));
-
-
 
 const Sidebar = () => {
   return (
@@ -24,7 +26,7 @@ const Sidebar = () => {
         </MenuList>
       </SidebarCategory>
       <SidebarCategory title={"math"}>
-      <MenuList>
+        <MenuList>
           <MenuItem draggable>Item 1</MenuItem>
 
           <MenuItem draggable>Item 2</MenuItem>
@@ -33,7 +35,7 @@ const Sidebar = () => {
         </MenuList>
       </SidebarCategory>
       <SidebarCategory title={"Losses"}>
-      <MenuList>
+        <MenuList>
           <MenuItem draggable>Item 1</MenuItem>
 
           <MenuItem draggable>Item 2</MenuItem>

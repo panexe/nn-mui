@@ -1,16 +1,16 @@
+// MUI
 import { styled } from "@mui/system";
-import {
-  Select,
-  SelectProps,
-  Box,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
-  MenuItem,
-  Grid,
-} from "@mui/material";
-import { useState } from "react";
+import { Select } from "@mui/material";
+import { SelectProps } from "@mui/material";
+import { Box } from "@mui/material";
+import { InputLabel } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
+import { MenuItem } from "@mui/material";
+import { Grid } from "@mui/material";
 
+/*--------------------------------------------------------*/
+/*                         CSS                            */
+/*--------------------------------------------------------*/
 const StyledSelect = styled((props: SelectProps<string>) => (
   <Select {...props} />
 ))(({ theme }) => ({
@@ -36,6 +36,10 @@ const StyledSelect = styled((props: SelectProps<string>) => (
   },
 }));
 
+
+/*--------------------------------------------------------*/
+/*                       COMPONENT                        */
+/*--------------------------------------------------------*/
 interface Props {
   children?: React.ReactNode;
   name: string;
@@ -43,7 +47,6 @@ interface Props {
   setValue: React.Dispatch<React.SetStateAction<string>>;
   id: string;
   options: string[];
-
 }
 
 const SelectInput = (props: Props) => {
@@ -63,7 +66,7 @@ const SelectInput = (props: Props) => {
         <Grid item>
           <InputLabel id={`inputLabel-${props.id}`}>{props.name}</InputLabel>
         </Grid>
-        <Grid item >
+        <Grid item>
           <StyledSelect
             labelId={`inputLabel-${props.id}`}
             size="small"
@@ -74,7 +77,11 @@ const SelectInput = (props: Props) => {
             value={props.value}
           >
             {props.options.map((val) => {
-              return <MenuItem key={`select-${props.id}-${val}`} value={val}>{val}</MenuItem>;
+              return (
+                <MenuItem key={`select-${props.id}-${val}`} value={val}>
+                  {val}
+                </MenuItem>
+              );
             })}
           </StyledSelect>
         </Grid>

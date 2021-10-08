@@ -1,5 +1,7 @@
-import { DataType, Tensor } from "@tensorflow/tfjs-core";
-import { regularizers, Shape } from "@tensorflow/tfjs-layers";
+// TFJS
+import { DataType } from "@tensorflow/tfjs-core";
+import { Tensor } from "@tensorflow/tfjs-core";
+import { Shape } from "@tensorflow/tfjs-layers";
 
 /**
  * Copy of tfjs LayerArgs, because we cant import their
@@ -18,8 +20,13 @@ export declare interface NodeLayerArgs {
   inputDType?: DataType;
 }
 
+/**
+ * Enum of available initlializers in tfjs.
+ * - Has the none option, which tfjs does not accept
+ * -> none must be converted to undefined before passing to a layer
+ */
 export enum INITIALIZERS {
-  none = "none", // the value is not used, but we have to use a valid string for type-safety
+  none = "none",
   constant = "constant",
   glorotNormal = "glorotNormal",
   glorotUniform = "glorotUniform",
@@ -37,6 +44,9 @@ export enum INITIALIZERS {
   zeros = "zeros",
 }
 
+/**
+ * covers all string literals that are valid initializer types
+ */
 export type Initializer =
   | "constant"
   | "glorotNormal"
@@ -54,11 +64,22 @@ export type Initializer =
   | "varianceScaling"
   | "zeros";
 
+/**
+ * Converts the initlializer enum to a string thats accepted by tfjs
+ *
+ * @param initializer enum value for initializer
+ * @returns initlializer string literal
+ */
 export const getInitializer = (initializer: INITIALIZERS) => {
   if (initializer === INITIALIZERS.none) return undefined;
   return INITIALIZERS[initializer];
 };
 
+/**
+ * Enum of available constraints in tfjs.
+ * - Has the none option, which tfjs does not accept
+ * -> none must be converted to undefined before passing to a layer
+ */
 export enum CONSTRAINTS {
   none = "none", // the value is not used, but we have to use a valid string for type-safety
   maxNorm = "maxNorm",
@@ -67,6 +88,9 @@ export enum CONSTRAINTS {
   unitNorm = "unitNorm",
 }
 
+/**
+ * covers all string literals that are valid constraint types
+ */
 export type Constaint =
   | "maxNorm"
   | "maxNorm"
@@ -74,23 +98,42 @@ export type Constaint =
   | "nonNeg"
   | "unitNorm";
 
+  /**
+   * Converts a constraint enum value to a string tfjs accepts. 
+   * 
+   * @param constraint CONSTRAINS enum value
+   * @returns 
+   */
 export const getConstraint = (constraint: CONSTRAINTS) => {
   if (constraint === CONSTRAINTS.none) return undefined;
   return CONSTRAINTS[constraint];
 };
 
+/**
+ * Enum of available regularizers in tfjs.
+ * - Has the none option, which tfjs does not accept
+ * -> none must be converted to undefined before passing to a layer
+ */
 export enum REGULARIZERS {
   none = "none", // the value is not used, but we have to use a valid string for type-safety
   l1l2 = "l1l2",
 }
 
-export type Regularizer = 'l1l2';
+/**
+ * covers all string literals that are valid regularizer types
+ */
+export type Regularizer = "l1l2";
 
 export const getRegularizer = (regularizer: REGULARIZERS) => {
-    if(regularizer === REGULARIZERS.none) return undefined; 
-    return regularizer;
-}
+  if (regularizer === REGULARIZERS.none) return undefined;
+  return regularizer;
+};
 
+/**
+ * Enum of available activations in tfjs.
+ * - Has the none option, which tfjs does not accept
+ * -> none must be converted to undefined before passing to a layer
+ */
 export enum ACTIVATIONS {
   none = "none", // the value is not used, but we have to use a valid string for type-safety
   linear = "linear",
@@ -108,6 +151,29 @@ export enum ACTIVATIONS {
   mish = "mish",
 }
 
+/**
+ * covers all string literals that are valid activation types
+ */
+export type Activation =
+  | "elu"
+  | "hardSigmoid"
+  | "linear"
+  | "relu"
+  | "relu6"
+  | "selu"
+  | "sigmoid"
+  | "softmax"
+  | "softplus"
+  | "softsign"
+  | "tanh"
+  | "swish"
+  | "mish";
+
+/**
+ * 
+ * @param activation ACTIVATIONS enum value
+ * @returns 
+ */
 export const getActivation = (activation: ACTIVATIONS) => {
   if (activation === ACTIVATIONS.none) return undefined;
   return ACTIVATIONS[activation];

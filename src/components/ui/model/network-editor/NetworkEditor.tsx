@@ -1,46 +1,52 @@
-import { Box } from "@mui/material";
-import ReactFlow, {
-  addEdge,
-  Background,
-  Connection,
-  Edge,
-  Elements,
-  Node,
-  SnapGrid,
-} from "react-flow-renderer";
+// REACT
+import { MouseEvent } from "react";
+import { useContext } from "react";
+
+// REACT FLOW
+import ReactFlow, { removeElements } from "react-flow-renderer";
+import { addEdge } from "react-flow-renderer";
+import { Background } from "react-flow-renderer";
+import { Connection } from "react-flow-renderer";
+import { Edge } from "react-flow-renderer";
+import { Elements } from "react-flow-renderer";
+import { Node } from "react-flow-renderer";
+import { SnapGrid } from "react-flow-renderer";
+
+// NNUI
 import ContextMenu from "../../context-menu/ContextMenu";
 import ToolSelectBar from "./ToolSelectBar";
 import ModelContext from "../../../../context/model-context";
+import { nodeTypes } from "../nn-elements/layers";
 
-import { DenseNode } from "../nn-elements/layers";
-import InputNode from "../nn-elements/layers/inputs/InputNode";
-import { MouseEvent, useContext, useEffect } from "react";
-import OutputNode from "../nn-elements/layers/outputs/OutputNode";
+// MUI
+import { Box } from "@mui/material";
 
+// parameters for react flow
+// should be in a global settings context
 const snapGrid: SnapGrid = [16, 16];
-const nodeTypes = {
-  denseNode: DenseNode,
-  inputNode: InputNode,
-  outputNode: OutputNode,
-};
 
+/*--------------------------------------------------------*/
+/*                       COMPONENT                        */
+/*--------------------------------------------------------*/
 const NetworkEditor = () => {
   const modelContext = useContext(ModelContext);
 
-
   const onConnect = (params: Connection | Edge) => {
-    console.log("on connect", params);
     modelContext.setElements((els: Elements) => {
       return addEdge(params, els);
     });
   };
 
+  const onElementsRemove = (elementsToRemove: Elements) => {
+    modelContext.setElements((els) => {
+      return removeElements(elementsToRemove, els);
+    });
+  };
+
   const onNodeDoubleClick = (event: MouseEvent, element: Node) => {
-    if (modelContext.setSelectedNode) {
-      modelContext.setSelectedNode(element);
+    if (modelContext.setSelectedNodeId) {
       modelContext.setSelectedNodeId(element.id);
     }
-    console.log("double clicked: ", element);
   };
 
   return (
@@ -63,6 +69,7 @@ const NetworkEditor = () => {
             snapGrid={snapGrid}
             onConnect={onConnect}
             onNodeDoubleClick={onNodeDoubleClick}
+            onElementsRemove={onElementsRemove}
           >
             <Background gap={16} size={1} />
           </ReactFlow>
