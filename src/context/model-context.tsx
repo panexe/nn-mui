@@ -10,6 +10,7 @@ import { input } from "@tensorflow/tfjs-layers";
 import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { model } from "@tensorflow/tfjs-layers";
 import { LayersModel } from "@tensorflow/tfjs-layers";
+import '@tensorflow/tfjs-backend-cpu';
 
 const elements: Elements = [];
 const setElements: React.Dispatch<React.SetStateAction<Elements<any>>> =

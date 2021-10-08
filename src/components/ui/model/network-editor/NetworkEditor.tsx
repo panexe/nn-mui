@@ -21,6 +21,9 @@ import { nodeTypes } from "../nn-elements/layers";
 // MUI
 import { Box } from "@mui/material";
 
+import * as tf from '@tensorflow/tfjs-core';
+import '@tensorflow/tfjs-backend-cpu';
+
 // parameters for react flow
 // should be in a global settings context
 const snapGrid: SnapGrid = [16, 16];

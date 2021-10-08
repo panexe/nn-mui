@@ -10,6 +10,7 @@
     "@mui/material": "latest",
     "@mui/styles": "^5.0.1",
     "@tensorflow/tfjs": "^3.9.0",
+    "@tensorflow/tfjs-backend-cpu": "^3.9.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "react": "latest",
@@ -40,11 +41,11 @@
   },
   "devDependencies": {
     "@types/react-splitter-layout": "^3.0.2"
-  }, 
+  },
   "eslintConfig": {
     "extends": [
-       "react-app",
-       "react-app/jest"
+      "react-app",
+      "react-app/jest"
     ]
- }
+  }
 }

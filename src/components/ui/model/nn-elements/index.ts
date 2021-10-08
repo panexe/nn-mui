@@ -1,7 +1,7 @@
 // TFJS
 import { DataType } from "@tensorflow/tfjs-core";
 import { Tensor } from "@tensorflow/tfjs-core";
-import { Shape } from "@tensorflow/tfjs-layers";
+import { initializers, Shape } from "@tensorflow/tfjs-layers";
 
 /**
  * Copy of tfjs LayerArgs, because we cant import their
@@ -27,7 +27,7 @@ export declare interface NodeLayerArgs {
  */
 export enum INITIALIZERS {
   none = "none",
-  constant = "constant",
+  //constant = "constant",
   glorotNormal = "glorotNormal",
   glorotUniform = "glorotUniform",
   heNormal = "heNormal",
@@ -72,7 +72,8 @@ export type Initializer =
  */
 export const getInitializer = (initializer: INITIALIZERS) => {
   if (initializer === INITIALIZERS.none) return undefined;
-  return INITIALIZERS[initializer];
+  const i: Initializer = initializer;
+  return i;
 };
 
 /**
@@ -91,22 +92,23 @@ export enum CONSTRAINTS {
 /**
  * covers all string literals that are valid constraint types
  */
-export type Constaint =
+export type Constraint =
   | "maxNorm"
   | "maxNorm"
   | "minMaxNorm"
   | "nonNeg"
   | "unitNorm";
 
-  /**
-   * Converts a constraint enum value to a string tfjs accepts. 
-   * 
-   * @param constraint CONSTRAINS enum value
-   * @returns 
-   */
+/**
+ * Converts a constraint enum value to a string tfjs accepts.
+ *
+ * @param constraint CONSTRAINS enum value
+ * @returns
+ */
 export const getConstraint = (constraint: CONSTRAINTS) => {
   if (constraint === CONSTRAINTS.none) return undefined;
-  return CONSTRAINTS[constraint];
+  const ret: Constraint = constraint;
+  return ret;
 };
 
 /**
@@ -170,9 +172,9 @@ export type Activation =
   | "mish";
 
 /**
- * 
+ *
  * @param activation ACTIVATIONS enum value
- * @returns 
+ * @returns
  */
 export const getActivation = (activation: ACTIVATIONS) => {
   if (activation === ACTIVATIONS.none) return undefined;

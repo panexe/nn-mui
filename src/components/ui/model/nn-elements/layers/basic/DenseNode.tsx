@@ -16,6 +16,7 @@ import { Position } from "react-flow-renderer";
 // TFJS
 import { SymbolicTensor } from "@tensorflow/tfjs-layers";
 import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
+import {DenseLayerArgs} from '@tensorflow/tfjs-layers/dist/layers/core';
 
 // MUI
 import { styled } from "@mui/system";
@@ -35,11 +36,29 @@ import {
   getConstraint,
   getActivation,
   getRegularizer,
+  Activation,
+  Initializer,
+  Constraint,
+  Regularizer,
 } from "../..";
 
 /*--------------------------------------------------------*/
 /*                      DATATYPES                         */
 /*--------------------------------------------------------*/
+
+/*type DenseLayerArgs = {
+  name: string;
+  units: number;
+  activation: Activation;
+  useBias: boolean;
+  kernelInitializer: Initializer;
+  biasInitializer: Initializer;
+  kernelConstraint: Constraint;
+  biasConstraint: Constraint;
+  kernelRegularizer: Regularizer;
+  biasRegularizer: Regularizer;
+  activityRegularizer: Regularizer;
+};*/
 
 /**
  * here the options the sidebar lets you change are listed
@@ -77,7 +96,6 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
@@ -87,11 +105,11 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const modelContext = useContext(ModelContext);
   const selected = modelContext.selectedNodeId === id;
 
-  // sets the standard value for the layer args and the menu 
-  // should only be executed once 
+  // sets the standard value for the layer args and the menu
+  // should only be executed once
   useEffect(() => {
     data.menu = denseMenu;
-    // maybe put the initial values somewhere else 
+    // maybe put the initial values somewhere else
     data.args = {
       units: 32,
       // set standard values
@@ -108,8 +126,8 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   }, []);
 
   // applys input to this layer
-  const fn = (a: SymbolicTensor | SymbolicTensor[] | undefined ) => {
-    if(a === undefined) return a;
+  const fn = (a: SymbolicTensor | SymbolicTensor[] | undefined) => {
+    if (a === undefined) return a;
 
     const name = data.args.name;
     const units = data.args.units;
@@ -122,19 +140,24 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     const kernelRegularizer = getRegularizer(data.args.kernelRegularizer);
     const biasRegularizer = getRegularizer(data.args.biasRegularizer);
     const activityRegularizer = getRegularizer(data.args.activityRegularizer);
-    return dense({
-      name,
-      units,
-      activation,
-      useBias,
+    console.log(
+      "kernelInitlializer",
       kernelInitializer,
-      biasInitializer,
-      kernelConstraint,
-      biasConstraint,
-      kernelRegularizer,
-      biasRegularizer,
-      activityRegularizer,
-    }).apply(a) as SymbolicTensor;
+      typeof kernelInitializer
+    );
+    return dense({
+      name: name,
+      units: units,
+      activation: activation,
+      useBias: useBias,
+      kernelInitializer: kernelInitializer,
+      biasInitializer: biasInitializer,
+      kernelConstraint: kernelConstraint,
+      biasConstraint: biasConstraint,
+      kernelRegularizer: kernelRegularizer,
+      biasRegularizer: biasRegularizer,
+      activityRegularizer: activityRegularizer,
+    } as DenseLayerArgs).apply(a) as SymbolicTensor;
   };
   useUpdate(data, id, fn);
 
@@ -153,7 +176,7 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
       />
       <div>
         {data.inputValue ? data.inputValue.name : "no layer yet"}
-        <p>Dense Node</p>
+        <p>{data.args.name ? data.args.name : "Dense Node"}</p>
         {data.outputValue ? data.outputValue.name : "no layer yet"}
         {}
       </div>
