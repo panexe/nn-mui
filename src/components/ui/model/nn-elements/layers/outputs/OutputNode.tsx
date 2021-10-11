@@ -14,9 +14,6 @@ import ModelContext from "../../../../../../context/model-context";
 import { useOnConnect } from "../../../../../../hooks/useOnConnect";
 import { model, SymbolicTensor } from "@tensorflow/tfjs-layers";
 
-
-
-
 /*--------------------------------------------------------*/
 /*                         CSS                            */
 /*--------------------------------------------------------*/
@@ -56,14 +53,14 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const labelText = "Output";
 
   useEffect(() => {
-      setSummary(['summary: ']);
+    setSummary(["summary: "]);
     // put summary to screen
     if (modelContext.model) {
       modelContext.model.summary(
         undefined,
         undefined,
         (message?: any, ...optionalParams: any[]) => {
-          setSummary( (oldSummary) => [...oldSummary, (message as string)]);
+          setSummary((oldSummary) => [...oldSummary, message as string]);
         }
       );
     }

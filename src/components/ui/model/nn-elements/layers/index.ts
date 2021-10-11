@@ -1,9 +1,9 @@
 import  InputNode  from "./inputs/InputNode";
-import  DenseNode  from "./basic/DenseNode";
 import  OutputNode  from "./outputs/OutputNode";
 import { NodeTypesType } from "react-flow-renderer";
+import BaseNode from "./basic/BaseNode";
 
-export { InputNode, DenseNode, OutputNode };
+export { InputNode, OutputNode };
 
 /**
  * This Object is neccesary for the react-flow component  
@@ -11,5 +11,5 @@ export { InputNode, DenseNode, OutputNode };
 export const nodeTypes: NodeTypesType = {
   inputNode: InputNode,
   outputNode: OutputNode,
-  denseNode: DenseNode,
+  baseNode: BaseNode,
 };

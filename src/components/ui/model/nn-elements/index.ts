@@ -1,7 +1,7 @@
 // TFJS
 import { DataType } from "@tensorflow/tfjs-core";
 import { Tensor } from "@tensorflow/tfjs-core";
-import { initializers, Shape } from "@tensorflow/tfjs-layers";
+import { Shape } from "@tensorflow/tfjs-layers";
 
 /**
  * Copy of tfjs LayerArgs, because we cant import their

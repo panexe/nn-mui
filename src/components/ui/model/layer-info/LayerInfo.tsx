@@ -66,6 +66,7 @@ const LayerInfo = () => {
   const selectedNode = modelContext.elements.find(
     (el) => el.id === modelContext.selectedNodeId
   );
+  console.log("selected Node: ",selectedNode);
 
   /**
    *

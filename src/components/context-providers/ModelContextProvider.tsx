@@ -12,12 +12,14 @@ import { SymbolicTensor } from "@tensorflow/tfjs-layers";
 
 // NNUI
 import ModelContext from "../../context/model-context";
+import { createDenseFromBase } from "../ui/model/nn-elements/layers/basic/DenseFromBase";
+import { createDropoutFromBase } from "../ui/model/nn-elements/layers/basic/DropoutNode";
 
 
 // setup elements, prob. move this to its own file
 const initialElements = [
   {
-    id: "1",
+    id: "input",
     type: "inputNode", // input node
     position: { x: 250, y: 25 },
     data: {
@@ -31,44 +33,18 @@ const initialElements = [
     },
   },
   // default node
-  {
-    id: "2",
-    type: "denseNode",
+  createDenseFromBase('2', 355, 150),
+  createDenseFromBase('3', 355, 150),
+  createDropoutFromBase('4', 360, 150),
 
-    position: { x: 100, y: 125 },
-    data: {
-      inputValue: null,
-      outputValue: null,
-      value: 0,
-      args: {},
-      setArgs: () => {},
-      menu: Object(),
-      changed: true,
-    },
-  },
   {
-    id: "3",
-    type: "denseNode",
-    position: { x: 100, y: 225 },
-    data: {
-      inputValue: null,
-      outputValue: null,
-      value: 0,
-      args: {},
-      setArgs: () => {},
-      menu: Object(),
-      changed: true,
-    },
-  },
-  {
-    id: "4",
+    id: "output",
     type: "outputNode", // output node
     position: { x: 250, y: 250 },
     data: {
       label: "outputNode",
       inputValue: null,
       outputValue: null,
-      value: 10,
       args: {},
       setArgs: () => {},
       menu: Object(),

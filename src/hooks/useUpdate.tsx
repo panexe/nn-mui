@@ -13,7 +13,8 @@ export const useUpdate = (data: any, id: string, fn: any) => {
     if (
       currentElement === undefined ||
       currentElement === null ||
-      currentElement.data.inputValue === null
+      currentElement.data.inputValue === null ||
+      currentElement.data.inputValue === undefined
     ) {
       return;
     }

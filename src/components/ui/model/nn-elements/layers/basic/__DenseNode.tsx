@@ -9,7 +9,7 @@ import { useContext } from "react";
 import { useEffect } from "react";
 
 // REACT FLOW
-import { Handle } from "react-flow-renderer";
+import { Handle, Node } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
 
@@ -36,10 +36,6 @@ import {
   getConstraint,
   getActivation,
   getRegularizer,
-  Activation,
-  Initializer,
-  Constraint,
-  Regularizer,
 } from "../..";
 
 /*--------------------------------------------------------*/
@@ -100,30 +96,54 @@ const NodeWrapper = styled("div")(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
+export const createDenseNode = (id :string, posX: number, posY: number) => {
+  return {
+    id: id,
+    type: "denseNode",
+
+    position: { x: posX, y: posY },
+    data: {
+      inputValue: undefined,
+      outputValue: undefined,
+      args: {
+        units: 32,
+        // set standard values
+        activation: ACTIVATIONS.none,
+        useBias: true,
+        kernelInitializer: INITIALIZERS.none,
+        biasInitializer: INITIALIZERS.none,
+        kernelConstraint: CONSTRAINTS.none,
+        biasConstraint: CONSTRAINTS.none,
+        kernelRegularizer: REGULARIZERS.none,
+        biasRegularizer: REGULARIZERS.none,
+        activityRegularizer: REGULARIZERS.none, // they dont seem supported yet
+      },
+      menu: {
+        Options: {
+          name: "string",
+          units: "number",
+          activation: "activation",
+          useBias: "boolean",
+        },
+        "Advanced Options": {
+          kernelInitializer: "initializer",
+          biasInitializer: "initializer",
+          kernelConstraint: "constraint",
+          biasConstraint: "constraint",
+          kernelRegularizer: "regularizer",
+          biasRegularizer: "regularizer",
+        },
+      },
+      changed: true,
+    },
+  } as Node;
+};
+
+
 const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
   const modelContext = useContext(ModelContext);
   const selected = modelContext.selectedNodeId === id;
-
-  // sets the standard value for the layer args and the menu
-  // should only be executed once
-  useEffect(() => {
-    data.menu = denseMenu;
-    // maybe put the initial values somewhere else
-    data.args = {
-      units: 32,
-      // set standard values
-      activation: ACTIVATIONS.none,
-      useBias: true,
-      kernelInitializer: INITIALIZERS.none,
-      biasInitializer: INITIALIZERS.none,
-      kernelConstraint: CONSTRAINTS.none,
-      biasConstraint: CONSTRAINTS.none,
-      kernelRegularizer: REGULARIZERS.none,
-      biasRegularizer: REGULARIZERS.none,
-      activityRegularizer: REGULARIZERS.none, // they dont seem supported yet
-    };
-  }, []);
 
   // applys input to this layer
   const fn = (a: SymbolicTensor | SymbolicTensor[] | undefined) => {
@@ -140,11 +160,7 @@ const DenseNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     const kernelRegularizer = getRegularizer(data.args.kernelRegularizer);
     const biasRegularizer = getRegularizer(data.args.biasRegularizer);
     const activityRegularizer = getRegularizer(data.args.activityRegularizer);
-    console.log(
-      "kernelInitlializer",
-      kernelInitializer,
-      typeof kernelInitializer
-    );
+
     return dense({
       name: name,
       units: units,
