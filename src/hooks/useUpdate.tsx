@@ -1,8 +1,9 @@
 import { useContext, useEffect } from "react";
 import { getOutgoers } from "react-flow-renderer";
 import ModelContext from "../context/model-context";
+import { DataBaseType } from "../types";
 
-export const useUpdate = (data: any, id: string, fn: any) => {
+export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
   const modelContext = useContext(ModelContext);
 
   useEffect(() => {
@@ -37,7 +38,14 @@ export const useUpdate = (data: any, id: string, fn: any) => {
     }
 
     // calc output value | should be the connection of the layers here later on
-    const outputValue = fn(currentElement.data.inputValue);
+    let outputValue: any = undefined;
+    let error = '';
+    try{
+      outputValue = fn(currentElement.data.inputValue);  
+    }catch (e){
+        error = (e as Error).message;
+    }
+    
 
     // get outgoing connection to update their input values
     const outGoers = getOutgoers(currentElement, modelContext.elements);
@@ -50,6 +58,7 @@ export const useUpdate = (data: any, id: string, fn: any) => {
             ...el.data,
             outputValue,
             changed: false,
+            error: error,
           };
         }
         // update input value of all recieving nodes

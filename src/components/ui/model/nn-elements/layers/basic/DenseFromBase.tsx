@@ -72,7 +72,7 @@ export const createDenseFromBase = (
       inputValue: undefined,
       outputValue: undefined,
       args: {
-        units: 32,
+        units: -32,
         // set standard values
         activation: ACTIVATIONS.none,
         useBias: true,
@@ -101,6 +101,7 @@ export const createDenseFromBase = (
       },
       changed: true,
       getLayerFunction: getDenseLayerFunction,
+      error: '',
     },
   }; //as Node<DataBaseType>;
 };

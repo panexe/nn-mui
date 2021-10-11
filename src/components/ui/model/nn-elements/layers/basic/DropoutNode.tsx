@@ -5,8 +5,16 @@ import { DropoutLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
 import { DataBaseType } from "../../../../../../types";
 import { Node } from "react-flow-renderer";
 import { blue } from "@mui/material/colors";
+import { NodeLayerArgs } from "../..";
 
-const getDropoutLayerFunction = (args: any) => {
+
+interface DropoutArgs extends NodeLayerArgs{
+    rate: number; 
+    noiseShape: number[] | undefined; 
+    seed: number | undefined;
+}
+
+const getDropoutLayerFunction = (args: DropoutArgs) => {
   return (input: SymbolicTensor | SymbolicTensor[] | undefined) => {
     if (input === undefined) return input;
 
@@ -26,7 +34,7 @@ export const createDropoutFromBase = (
   id: string,
   posX: number,
   posY: number
-): Node<DataBaseType> => {
+): Node<DataBaseType<DropoutArgs>> => {
   return {
     id: id,
     type: "baseNode",
@@ -48,6 +56,7 @@ export const createDropoutFromBase = (
       changed: true,
       getLayerFunction: getDropoutLayerFunction,
       backgroundColor: blue[800],
+      error: '',
     },
   }; //as Node<DataBaseType>;
 };

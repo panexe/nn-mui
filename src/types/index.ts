@@ -12,4 +12,5 @@ export interface DataBaseType<T=any> {
     input: SymbolicTensor | SymbolicTensor[] | undefined
   ) => SymbolicTensor | undefined;
   backgroundColor?: string;
+  error: string;
 }

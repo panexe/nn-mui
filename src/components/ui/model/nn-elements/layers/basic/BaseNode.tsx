@@ -27,7 +27,7 @@ import ModelContext from "../../../../../../context/model-context";
 import { useOnConnect } from "../../../../../../hooks/useOnConnect";
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType } from "../../../../../../types";
-
+import { Alert } from "@mui/material";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -48,11 +48,12 @@ const NodeWrapper = styled("div")(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-export interface BaseNodeProps extends NodeProps<DataBaseType>{
-    layerTypeName: string;
-    layerFunction: (input: SymbolicTensor | SymbolicTensor[] | undefined ) => SymbolicTensor | undefined;
-};
-
+export interface BaseNodeProps extends NodeProps<DataBaseType> {
+  layerTypeName: string;
+  layerFunction: (
+    input: SymbolicTensor | SymbolicTensor[] | undefined
+  ) => SymbolicTensor | undefined;
+}
 
 const BaseNode: React.FC<NodeProps<DataBaseType>> = (props) => {
   const { data, id, isConnectable } = props;
@@ -64,36 +65,46 @@ const BaseNode: React.FC<NodeProps<DataBaseType>> = (props) => {
 
   //props.getLayerFunction(data);
 
-  useUpdate(data, id, data.getLayerFunction(data.args));
+  try {
+    useUpdate(data, id, data.getLayerFunction(data.args));
+  } catch (e) {
+    console.log(e);
+  }
 
   return (
-    <NodeWrapper
-      sx={{
-        border: selected
-          ? `3px solid ${theme.palette.error.light}`
-          : `1px solid ${theme.palette.action.disabled}`,
-        backgroundColor: data.backgroundColor? data.backgroundColor : green[800],
-      }}
-    >
-      <Handle
-        type="target"
-        position={Position.Top}
-        onConnect={onTargetConnect}
-      />
-      <div>
-        {data.inputValue ? data.inputValue.name : "no layer yet"}
-        <p>{data.args.name ? data.args.name : "node name"}</p>
-        {data.outputValue ? data.outputValue.name : "no layer yet"}
-        {}
-      </div>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="a"
-        onConnect={onSourceConnect}
-        isConnectable={isConnectable}
-      />
-    </NodeWrapper>
+    <>
+      <NodeWrapper
+        sx={{
+          border: selected
+            ? `3px solid ${theme.palette.error.light}`
+            : `1px solid ${theme.palette.action.disabled}`,
+          backgroundColor: data.backgroundColor
+            ? data.backgroundColor
+            : green[800],
+        }}
+      >
+        <Handle
+          type="target"
+          position={Position.Top}
+          onConnect={onTargetConnect}
+        />
+        <div>
+          {data.inputValue ? data.inputValue.name : "no layer yet"}
+          <p>{data.args.name ? data.args.name : "node name"}</p>
+          {data.outputValue ? data.outputValue.name : "no layer yet"}
+          {}
+        </div>
+
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id="a"
+          onConnect={onSourceConnect}
+          isConnectable={isConnectable}
+        />
+      </NodeWrapper>
+      {data.error.length > 0 && <Alert severity='error'>{data.error}</Alert>}
+    </>
   );
 };
 
