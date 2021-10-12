@@ -57,8 +57,6 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
 
 const BaseNode: React.FC<NodeProps<DataBaseType>> = (props) => {
   const { data, id, isConnectable } = props;
-  console.log(props.data);
-
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
   const modelContext = useContext(ModelContext);
   const selected = modelContext.selectedNodeId === id;
@@ -90,7 +88,7 @@ const BaseNode: React.FC<NodeProps<DataBaseType>> = (props) => {
         />
         <div>
           {data.inputValue ? data.inputValue.name : "no layer yet"}
-          <p>{data.args.name ? data.args.name : "node name"}</p>
+          <p>{data.args.name ? data.args.name : data.layerName}</p>
           {data.outputValue ? data.outputValue.name : "no layer yet"}
           {}
         </div>

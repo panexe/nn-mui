@@ -13,4 +13,5 @@ export interface DataBaseType<T=any> {
   ) => SymbolicTensor | undefined;
   backgroundColor?: string;
   error: string;
+  layerName: string;
 }

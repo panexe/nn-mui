@@ -1,6 +1,8 @@
 import SidebarCategory from "./SidebarCategory";
 import { MenuItem, MenuList } from "@mui/material";
 import { styled } from "@mui/system";
+import { nodesMenu } from "../nn-elements/layers";
+import { DragEvent } from "react";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -14,36 +16,29 @@ const StyledDiv = styled("div")(({ theme }) => ({
 }));
 
 const Sidebar = () => {
-  return (
-    <StyledDiv>
-      <SidebarCategory title={"Layers"}>
-        <MenuList>
-          <MenuItem draggable>Item 1</MenuItem>
 
-          <MenuItem draggable>Item 2</MenuItem>
+  const onDragStart = (event : DragEvent, nodeType: string) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+    console.log('dragstart: ',nodeType);
+  }
 
-          <MenuItem draggable>Item 3</MenuItem>
-        </MenuList>
+
+  const objs = Object.entries(nodesMenu).map(([cat, vals]) => {
+    return (
+      <SidebarCategory key={cat} title={cat}>
+        {vals.map((val) => {
+          return (
+            <MenuItem draggable onDragStart={(event: DragEvent) => onDragStart(event, val)} key={cat + val}>
+              <div >{val}</div>
+            </MenuItem>
+          );
+        })}
       </SidebarCategory>
-      <SidebarCategory title={"math"}>
-        <MenuList>
-          <MenuItem draggable>Item 1</MenuItem>
+    );
+  });
+  console.log("objs in sidebar: ", objs);
 
-          <MenuItem draggable>Item 2</MenuItem>
-
-          <MenuItem draggable>Item 3</MenuItem>
-        </MenuList>
-      </SidebarCategory>
-      <SidebarCategory title={"Losses"}>
-        <MenuList>
-          <MenuItem draggable>Item 1</MenuItem>
-
-          <MenuItem draggable>Item 2</MenuItem>
-
-          <MenuItem draggable>Item 3</MenuItem>
-        </MenuList>
-      </SidebarCategory>
-    </StyledDiv>
-  );
+  return <StyledDiv>{objs}</StyledDiv>;
 };
 export default Sidebar;

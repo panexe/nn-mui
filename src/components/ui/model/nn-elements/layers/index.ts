@@ -13,3 +13,7 @@ export const nodeTypes: NodeTypesType = {
   outputNode: OutputNode,
   baseNode: BaseNode,
 };
+
+export const nodesMenu = {
+    'basic':['dense', 'dropout'],
+}

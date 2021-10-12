@@ -57,6 +57,7 @@ export const createDropoutFromBase = (
       getLayerFunction: getDropoutLayerFunction,
       backgroundColor: blue[800],
       error: '',
+      layerName: 'dropout',
     },
   }; //as Node<DataBaseType>;
 };

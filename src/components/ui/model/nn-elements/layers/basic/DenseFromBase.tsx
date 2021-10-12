@@ -102,6 +102,7 @@ export const createDenseFromBase = (
       changed: true,
       getLayerFunction: getDenseLayerFunction,
       error: '',
+      layerName: 'dense',
     },
   }; //as Node<DataBaseType>;
 };
