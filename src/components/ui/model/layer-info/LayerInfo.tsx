@@ -72,7 +72,7 @@ const OptionGroup = (props: Props) => {
 const LayerInfo = () => {
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
-  const elements = nodes.concat(edges);
+  const elements = [...nodes, ...edges];
   const selectedElements = useStoreState((state) => state.selectedElements);
   const setElements = useStoreActions((actions) => actions.setElements);
   const setSelectedElements = useStoreActions((action)=> action.setSelectedElements);

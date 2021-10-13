@@ -21,6 +21,7 @@ import { green } from "@mui/material/colors";
 import BaseNode from "./BaseNode";
 import { useEffect, useState } from "react";
 import NumberInput from "../../../layer-info/NumberInput";
+import { data } from "@tensorflow/tfjs";
 
 interface DenseArgs extends NodeLayerArgs {
   units: number;
@@ -85,6 +86,7 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
         setArgs((old) => {
           return { ...old, units: val as number };
         });
+        props.data.changed = true;
       }}
     />
   );
@@ -112,6 +114,7 @@ export const createDenseFromBase = (
     id: id,
     type: "denseNode",
     position: { x: posX, y: posY },
+    dragHandle: ".drag-handle",
     data: {
       inputValue: undefined,
       outputValue: undefined,

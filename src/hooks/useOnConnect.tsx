@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { useStoreActions, useStoreState } from "react-flow-renderer";
+import { Elements, useStoreActions, useStoreState } from "react-flow-renderer";
 
 export const useOnConnect = (data: any, id: string) => {
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
-  const elements = nodes.concat(edges);
+  const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
 
   // TODO: change params type

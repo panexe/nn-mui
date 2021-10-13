@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import {
+  Elements,
   getOutgoers,
   Node,
   useStore,
@@ -12,7 +13,7 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
   const setElements = useStoreActions((actions) => actions.setElements);
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
-  const elements = nodes.concat(edges);
+  const elements: Elements = [...nodes,...edges];
 
   useEffect(() => {
     const currentElement = nodes.find((el) => el.id === id);
@@ -78,6 +79,7 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
           el.data = {
             ...el.data,
             inputValue: outputValue,
+            changed: true,
           };
         }
         return el;

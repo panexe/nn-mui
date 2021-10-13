@@ -68,6 +68,7 @@ export interface BaseNodeProps<T> extends NodeProps<DataBaseType> {
 }
 
 const BaseNode = <T,>(props: BaseNodeProps<T>) => {
+  console.log("rerender basenode");
   const { data, id, isConnectable } = props;
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
 
@@ -76,11 +77,9 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
     selectedElements !== null &&
     selectedElements.find((el) => el.id === props.id);
 
-  try {
-    useUpdate(data, id, props.layerFunction);
-  } catch (e) {
-    console.log(e);
-  }
+  
+  useUpdate(data, id, props.layerFunction);
+
 
   return (
     <Grid container direction="row">
@@ -90,7 +89,7 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
         </Portal>
       )}
       <Grid item>
-        <NodeWrapper
+        <NodeWrapper className='drag-handle'
           sx={{
             border: selected
               ? `4px solid ${blue[800]}`

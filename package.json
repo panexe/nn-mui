@@ -15,7 +15,7 @@
     "@types/react-dom": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-flow-renderer": "^9.6.7",
+    "react-flow-renderer": "^9.6.8",
     "react-scripts": "latest",
     "react-split": "^2.0.13",
     "react-splitter-layout": "^4.0.0",

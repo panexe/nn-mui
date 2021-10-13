@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 // REACT FLOW
-import { getOutgoers, useStoreActions, useStoreState } from "react-flow-renderer";
+import { Elements, getOutgoers, useStoreActions, useStoreState } from "react-flow-renderer";
 import { Handle } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
@@ -73,7 +73,7 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
 
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
-  const elements = nodes.concat(edges);
+  const elements : Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
 
   const { onSourceConnect } = useOnConnect(data, id);
@@ -116,6 +116,7 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
             el.data = {
                 ...el.data,
                 inputValue: outputValue,
+                changed: true,
             };
             }
 
