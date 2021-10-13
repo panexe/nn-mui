@@ -39,7 +39,7 @@ import { Box } from "@mui/material";
 //
 import "@tensorflow/tfjs-backend-cpu";
 import { createDenseFromBase } from "../nn-elements/layers/basic/DenseFromBase";
-import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
+//import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
 import { edgeTypes } from "../edges";
 import NNEdge, { createNNEdge } from "../edges/NNEdge";
 import { updateNodePos } from "react-flow-renderer/dist/store/actions";
@@ -131,7 +131,7 @@ const NetworkEditor = () => {
           newNode = createDenseFromBase(getId(), position.x, position.y);
           break;
         case "dropout":
-          newNode = createDropoutFromBase(getId(), position.x, position.y);
+          //newNode = createDropoutFromBase(getId(), position.x, position.y);
           break;
         default:
           return;

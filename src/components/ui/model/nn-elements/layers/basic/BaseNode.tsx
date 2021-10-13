@@ -4,7 +4,7 @@
  */
 
 // REACT
-import { memo, useState } from "react";
+import { memo, ReactNode, useState } from "react";
 import { useContext } from "react";
 
 // REACT FLOW
@@ -59,15 +59,17 @@ const NodeTopDiv = styled("div")(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-export interface BaseNodeProps<T> extends NodeProps<DataBaseType<T>> {
+export interface BaseNodeProps<T> extends NodeProps<DataBaseType> {
+  backgroundColor?: string;
   layerTypeName: string;
-  layerFunction: (input: layerOutput | undefined) => SymbolicTensor | undefined;
+  layerFunction: (input: layerOutput | undefined) => layerOutput | undefined;
+  args: T;
+  menu: ReactNode;
 }
 
 const BaseNode = <T,>(props: BaseNodeProps<T>) => {
   const { data, id, isConnectable } = props;
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
-  const [args, setArgs] = useState(data.args);
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
@@ -75,24 +77,26 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
     selectedElements.find((el) => el.id === props.id);
 
   try {
-    useUpdate(data, id, data.getLayerFunction(data.args));
+    useUpdate(data, id, props.layerFunction);
   } catch (e) {
     console.log(e);
   }
 
   return (
     <Grid container direction="row">
-      {selected && <Portal destination={Portals.layerInfo}>
-        <p>Hello world</p>
-      </Portal>}
+      {selected && (
+        <Portal destination={Portals.layerInfo}>
+          {props.menu}
+        </Portal>
+      )}
       <Grid item>
         <NodeWrapper
           sx={{
             border: selected
               ? `4px solid ${blue[800]}`
               : `1px solid ${theme.palette.action.disabled}`,
-            backgroundColor: data.backgroundColor
-              ? data.backgroundColor
+            backgroundColor: props.backgroundColor
+              ? props.backgroundColor
               : grey[800],
           }}
         >

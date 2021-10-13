@@ -13,7 +13,7 @@ interface DropoutArgs extends NodeLayerArgs{
     noiseShape: number[] | undefined; 
     seed: number | undefined;
 }
-
+/*
 const getDropoutLayerFunction = (args: DropoutArgs) => {
   return (input: layerOutput | undefined) => {
     if (input === undefined) return input;
@@ -62,3 +62,4 @@ export const createDropoutFromBase = (
     },
   }; //as Node<DataBaseType>;
 };
+*/

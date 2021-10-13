@@ -13,7 +13,7 @@ import { SymbolicTensor } from "@tensorflow/tfjs-layers";
 // NNUI
 import ModelContext from "../../context/model-context";
 import { createDenseFromBase } from "../ui/model/nn-elements/layers/basic/DenseFromBase";
-import { createDropoutFromBase } from "../ui/model/nn-elements/layers/basic/DropoutNode";
+//import { createDropoutFromBase } from "../ui/model/nn-elements/layers/basic/DropoutNode";
 
 
 // setup elements, prob. move this to its own file
@@ -35,7 +35,7 @@ const initialElements = [
   // default node
   createDenseFromBase('2', 360, 160),
   createDenseFromBase('3', 460, 160),
-  createDropoutFromBase('4', 360, 160),
+  //createDropoutFromBase('4', 360, 160),
   {
     id: 'e2-3',
     source: '2',

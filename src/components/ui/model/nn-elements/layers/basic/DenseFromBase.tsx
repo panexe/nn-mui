@@ -15,9 +15,12 @@ import {
   getRegularizer,
   NodeLayerArgs,
 } from "../..";
-import { Node } from "react-flow-renderer";
+import { Node, NodeProps } from "react-flow-renderer";
 import { DataBaseType, layerOutput } from "../../../../../../types";
 import { green } from "@mui/material/colors";
+import BaseNode from "./BaseNode";
+import { useEffect, useState } from "react";
+import NumberInput from "../../../layer-info/NumberInput";
 
 interface DenseArgs extends NodeLayerArgs {
   units: number;
@@ -29,10 +32,23 @@ interface DenseArgs extends NodeLayerArgs {
   biasConstraint: CONSTRAINTS;
   kernelRegularizer: REGULARIZERS;
   biasRegularizer: REGULARIZERS;
-};
+}
 
-const getDenseLayerFunction = (args: DenseArgs) => {
-  return (input: layerOutput | undefined) => {
+const DenseNode = (props: NodeProps<DataBaseType>) => {
+  const [args, setArgs] = useState<DenseArgs>({
+    units: -32,
+    // set standard values
+    activation: ACTIVATIONS.none,
+    useBias: true,
+    kernelInitializer: INITIALIZERS.none,
+    biasInitializer: INITIALIZERS.none,
+    kernelConstraint: CONSTRAINTS.none,
+    biasConstraint: CONSTRAINTS.none,
+    kernelRegularizer: REGULARIZERS.none,
+    biasRegularizer: REGULARIZERS.none,
+  });
+
+  const layerFunction = (input: layerOutput | undefined) => {
     if (input === undefined) return input;
 
     const name = args.name;
@@ -57,55 +73,53 @@ const getDenseLayerFunction = (args: DenseArgs) => {
       kernelRegularizer: kernelRegularizer,
       biasRegularizer: biasRegularizer,
     } as DenseLayerArgs).apply(input.layerOutput) as SymbolicTensor;
-    return {layerOutput: ret, modelInput: input.modelInput} as layerOutput;
+    return { layerOutput: ret, modelInput: input.modelInput } as layerOutput;
   };
+
+  const menu = (
+    <NumberInput
+      id="unitsinput"
+      name="units"
+      value={args.units}
+      setValue={(val) => {
+        setArgs((old) => {
+          return { ...old, units: val as number };
+        });
+      }}
+    />
+  );
+  useEffect(() => {
+    console.log("args", args);
+  }, [args]);
+
+  return (
+    <BaseNode
+      {...props}
+      menu={menu}
+      layerFunction={layerFunction}
+      layerTypeName="dense"
+      args={args}
+    ></BaseNode>
+  );
 };
 
-export const createDenseFromBase  = (
+export const createDenseFromBase = (
   id: string,
   posX: number,
   posY: number
-): Node<DataBaseType<DenseArgs>> => {
+): Node<DataBaseType> => {
   return {
     id: id,
-    type: "baseNode",
+    type: "denseNode",
     position: { x: posX, y: posY },
     data: {
       inputValue: undefined,
       outputValue: undefined,
-      args: {
-        units: -32,
-        // set standard values
-        activation: ACTIVATIONS.none,
-        useBias: true,
-        kernelInitializer: INITIALIZERS.none,
-        biasInitializer: INITIALIZERS.none,
-        kernelConstraint: CONSTRAINTS.none,
-        biasConstraint: CONSTRAINTS.none,
-        kernelRegularizer: REGULARIZERS.none,
-        biasRegularizer: REGULARIZERS.none,
-      },
-      menu: {
-        Options: {
-          name: "string",
-          units: "number",
-          activation: "activation",
-          useBias: "boolean",
-        },
-        "Advanced Options": {
-          kernelInitializer: "initializer",
-          biasInitializer: "initializer",
-          kernelConstraint: "constraint",
-          biasConstraint: "constraint",
-          kernelRegularizer: "regularizer",
-          biasRegularizer: "regularizer",
-        },
-      },
       changed: true,
-      getLayerFunction: getDenseLayerFunction,
-      backgroundColor: green[500],
-      error: '',
-      layerName: 'dense',
+      error: "",
+      layerName: "dense",
     },
   }; //as Node<DataBaseType>;
 };
+
+export default DenseNode;
