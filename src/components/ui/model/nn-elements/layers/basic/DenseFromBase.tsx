@@ -16,7 +16,8 @@ import {
   NodeLayerArgs,
 } from "../..";
 import { Node } from "react-flow-renderer";
-import { DataBaseType } from "../../../../../../types";
+import { DataBaseType, layerOutput } from "../../../../../../types";
+import { green } from "@mui/material/colors";
 
 interface DenseArgs extends NodeLayerArgs {
   units: number;
@@ -31,7 +32,7 @@ interface DenseArgs extends NodeLayerArgs {
 };
 
 const getDenseLayerFunction = (args: DenseArgs) => {
-  return (input: SymbolicTensor | SymbolicTensor[] | undefined) => {
+  return (input: layerOutput | undefined) => {
     if (input === undefined) return input;
 
     const name = args.name;
@@ -44,7 +45,7 @@ const getDenseLayerFunction = (args: DenseArgs) => {
     const biasConstraint = getConstraint(args.biasConstraint);
     const kernelRegularizer = getRegularizer(args.kernelRegularizer);
     const biasRegularizer = getRegularizer(args.biasRegularizer);
-    return dense({
+    const ret = dense({
       name: name,
       units: units,
       activation: activation,
@@ -55,11 +56,12 @@ const getDenseLayerFunction = (args: DenseArgs) => {
       biasConstraint: biasConstraint,
       kernelRegularizer: kernelRegularizer,
       biasRegularizer: biasRegularizer,
-    } as DenseLayerArgs).apply(input) as SymbolicTensor;
+    } as DenseLayerArgs).apply(input.layerOutput) as SymbolicTensor;
+    return {layerOutput: ret, modelInput: input.modelInput} as layerOutput;
   };
 };
 
-export const createDenseFromBase = (
+export const createDenseFromBase  = (
   id: string,
   posX: number,
   posY: number
@@ -101,6 +103,7 @@ export const createDenseFromBase = (
       },
       changed: true,
       getLayerFunction: getDenseLayerFunction,
+      backgroundColor: green[500],
       error: '',
       layerName: 'dense',
     },
