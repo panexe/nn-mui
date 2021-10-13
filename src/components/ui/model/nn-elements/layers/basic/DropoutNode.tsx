@@ -2,7 +2,7 @@ import { dropout } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { SymbolicTensor } from "@tensorflow/tfjs-layers";
 
 import { DropoutLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
-import { DataBaseType } from "../../../../../../types";
+import { DataBaseType, layerOutput } from "../../../../../../types";
 import { Node } from "react-flow-renderer";
 import { blue } from "@mui/material/colors";
 import { NodeLayerArgs } from "../..";
@@ -15,18 +15,19 @@ interface DropoutArgs extends NodeLayerArgs{
 }
 
 const getDropoutLayerFunction = (args: DropoutArgs) => {
-  return (input: SymbolicTensor | SymbolicTensor[] | undefined) => {
+  return (input: layerOutput | undefined) => {
     if (input === undefined) return input;
 
     const rate = args.rate;
     const noiseShape = args.noiseShape;
     const seed = args.seed;
 
-    return dropout({
+    const ret = dropout({
       rate: rate,
       noiseShape: noiseShape,
       seed: seed,
-    } as DropoutLayerArgs).apply(input) as SymbolicTensor;
+    } as DropoutLayerArgs).apply(input.layerOutput) as SymbolicTensor;
+    return {layerOutput: ret, modelInput: input.modelInput};
   };
 };
 
@@ -55,7 +56,7 @@ export const createDropoutFromBase = (
       },
       changed: true,
       getLayerFunction: getDropoutLayerFunction,
-      backgroundColor: blue[800],
+      backgroundColor: blue[400],
       error: '',
       layerName: 'dropout',
     },

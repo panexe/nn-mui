@@ -6,7 +6,7 @@
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import { useContext, useEffect } from "react";
-import { Handle, NodeProps, Position } from "react-flow-renderer";
+import { Handle, NodeProps, Position, useStoreActions, useStoreState } from "react-flow-renderer";
 import { purple } from "@mui/material/colors";
 import { memo, useState } from "react";
 import { useUpdate } from "../../../../../../hooks/useUpdate";
@@ -39,13 +39,16 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 
 const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const modelContext = useContext(ModelContext);
+  
+  const nodes = useStoreState((state) => state.nodes);
+  
   const { onTargetConnect } = useOnConnect(data, id);
   const [summary, setSummary] = useState(["summary"]);
 
   // applys input to this layer
   const fn = (a: SymbolicTensor | SymbolicTensor[]) => {
     const nnModel = model({ inputs: modelContext.inputTensor, outputs: a });
-    modelContext.setModel(nnModel);
+    //modelContext.setModel(nnModel);
     return nnModel;
   };
   useUpdate(data, id, fn);

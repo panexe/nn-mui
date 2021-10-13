@@ -1,10 +1,20 @@
 // REACT
-import { MouseEvent, useRef, useState } from "react";
+import React, { MouseEvent, useCallback, useRef, useState } from "react";
 import { useContext } from "react";
 import { DragEvent } from "react";
 
 // REACT FLOW
-import ReactFlow, { removeElements } from "react-flow-renderer";
+import ReactFlow, {
+  BackgroundVariant,
+  FlowElement,
+  getConnectedEdges,
+  getIncomers,
+  isEdge,
+  isNode,
+  removeElements,
+  useStoreState,
+  XYPosition,
+} from "react-flow-renderer";
 import { addEdge } from "react-flow-renderer";
 import { Background } from "react-flow-renderer";
 import { Connection } from "react-flow-renderer";
@@ -14,6 +24,7 @@ import { Node } from "react-flow-renderer";
 import { SnapGrid } from "react-flow-renderer";
 import { OnLoadParams } from "react-flow-renderer";
 import { ElementId } from "react-flow-renderer";
+import { useStoreActions } from "react-flow-renderer";
 
 // NNUI
 import ContextMenu from "../../context-menu/ContextMenu";
@@ -24,82 +35,134 @@ import { nodeTypes } from "../nn-elements/layers";
 // MUI
 import { Box } from "@mui/material";
 
-// Tensorflow 
-// 
-import '@tensorflow/tfjs-backend-cpu';
+// Tensorflow
+//
+import "@tensorflow/tfjs-backend-cpu";
 import { createDenseFromBase } from "../nn-elements/layers/basic/DenseFromBase";
 import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
+import { edgeTypes } from "../edges";
+import NNEdge, { createNNEdge } from "../edges/NNEdge";
+import { updateNodePos } from "react-flow-renderer/dist/store/actions";
+import * as constants from "../../../../constants/constants";
+import { initialElements } from "./initialElements";
 
 // parameters for react flow
 // should be in a global settings context
-const snapGrid: SnapGrid = [16, 16];
+const snapGrid: SnapGrid = [constants.GRID_SNAP_SIZE, constants.GRID_SNAP_SIZE];
 
 const onDragOver = (event: DragEvent) => {
-  event.preventDefault(); 
-  event.dataTransfer.dropEffect = 'move';
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
 };
-let id = 0; 
+let id = 0;
 const getId = (): ElementId => `node_${id++}`;
 
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 const NetworkEditor = () => {
+  const [reactFlowInstance, setReactFlowInstance] = useState<OnLoadParams>();
+  const [elements, setElements] = useState<Elements>(initialElements);
+  console.log('elements: ',elements);
+
   const networkEditorRef = useRef<HTMLDivElement>(null);
 
-  const [reactFlowInstance, setReactFlowInstance] = useState<OnLoadParams>();
-  const modelContext = useContext(ModelContext);
+  
+  
+  const setSelectedElements = useStoreActions(
+    (actions) => actions.setSelectedElements
+  );
+  const resetSelectedElements = useStoreActions(
+    (actions) => actions.resetSelectedElements
+  );
 
-  const onLoad = (_reactFlowInstance: OnLoadParams) => setReactFlowInstance(_reactFlowInstance);
+  const onLoad = (_reactFlowInstance: OnLoadParams) => {
+    if(!reactFlowInstance){
+      setReactFlowInstance(_reactFlowInstance);
+      console.log("loaded flow:", _reactFlowInstance);
+    }
+  }
+    
 
-  const onConnect = (params: Connection | Edge) => {
-    modelContext.setElements((els: Elements) => {
-      return addEdge(params, els);
-    });
-  };
+  const onConnect = useCallback( 
+    (params: Connection | Edge) => {
+    //const newEdge = createNNEdge(params as Connection);
+    setElements((els) => addEdge(params, els));
+  }, []);
 
   const onElementsRemove = (elementsToRemove: Elements) => {
-    modelContext.setElements((els) => {
+    setElements((els) => {
       return removeElements(elementsToRemove, els);
     });
   };
 
-  const onNodeDoubleClick = (event: MouseEvent, element: Node) => {
-    if (modelContext.setSelectedNodeId) {
-      modelContext.setSelectedNodeId(element.id);
+  const onElementClick = (event: MouseEvent, element: FlowElement) => {
+    if (isNode(element)) {
+      setSelectedElements([element]);
     }
-    console.log("doubleclick: ", element);
+    
+  };
+
+  const onPaneClick = (event: MouseEvent) => {
+    resetSelectedElements();
+    console.log("elements: ", elements);
+  };
+
+  const onNodeDragStart = (event: React.MouseEvent, element: Node) => {
+    setSelectedElements([element]);
   };
 
   const onDrop = (event: DragEvent) => {
-    event.preventDefault(); 
-
-    if(reactFlowInstance){
-      console.log("onDrop");
-      const type = event.dataTransfer.getData('application/reactflow'); 
-
+    event.preventDefault();
+    if (reactFlowInstance) {
+      const type = event.dataTransfer.getData("application/reactflow");
       const boundingRect = networkEditorRef.current?.getBoundingClientRect();
-      const bounds = boundingRect === undefined ? {x: 250, y:50} : boundingRect;
-      const position = reactFlowInstance.project({ x : event.clientX - bounds.x - 50, y: event.clientY - bounds.y - 80});
-      console.log('onDrop: ', type);
+      const bounds =
+        boundingRect === undefined ? { x: 250, y: 50 } : boundingRect;
+      const position = reactFlowInstance.project({
+        x: event.clientX - bounds.x - 50,
+        y: event.clientY - bounds.y - 80,
+      });
+      console.log("onDrop: ", type);
 
-      let newNode : Node;
-      switch (type){
-        case 'dense':
+      let newNode: Node;
+      switch (type) {
+        case "dense":
           newNode = createDenseFromBase(getId(), position.x, position.y);
-          break; 
-        case 'dropout':
+          break;
+        case "dropout":
           newNode = createDropoutFromBase(getId(), position.x, position.y);
           break;
-        default: 
+        default:
           return;
-      } 
-      modelContext.setElements((el) => el.concat(newNode));
-        
+      }
+      setElements((els) => els.concat(newNode));
     }
-  }
-  console.log('bounding rect: ',networkEditorRef.current?.getBoundingClientRect());
+  };
 
+  const onSelectionDragStop = (event: React.MouseEvent, elements: Node[]) => {
+    console.log("selection drag stop: ", elements);
+    const newElement = elements.map((el) => {
+      const newX =
+        Math.ceil(el.position!.x / constants.GRID_SNAP_SIZE) *
+        constants.GRID_SNAP_SIZE;
+      const newY =
+        Math.ceil(el.position!.y / constants.GRID_SNAP_SIZE) *
+        constants.GRID_SNAP_SIZE;
+      console.log("new x/y", newX, newY);
+      setElements((els) => {
+        return els.map((e) => {
+          if (e.id === el.id) {
+            e = { ...el, position: { x: newX, y: newY } };
+          }
+          return e;
+        });
+      });
+    });
+    //setSelectedElements(elements);
+  };
+
+  
 
   return (
     <div
@@ -116,18 +179,21 @@ const NetworkEditor = () => {
 
         <Box sx={{ flex: "auto", overflow: "hidden", height: "100%" }}>
           <ReactFlow
-            elements={modelContext.elements}
+            elements={elements}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             snapToGrid={true}
             snapGrid={snapGrid}
             onConnect={onConnect}
-            onNodeDoubleClick={onNodeDoubleClick}
+            onElementClick={onElementClick}
+            onPaneClick={onPaneClick}
             onElementsRemove={onElementsRemove}
             onLoad={onLoad}
             onDragOver={onDragOver}
             onDrop={onDrop}
+            onNodeDragStart={onNodeDragStart}
           >
-            <Background gap={16} size={1} />
+            <Background gap={20} size={0.7} variant={BackgroundVariant.Dots} />
           </ReactFlow>
         </Box>
       </ContextMenu>

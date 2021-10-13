@@ -33,8 +33,8 @@ type ModelContextType = {
   setInputTensor: React.Dispatch<React.SetStateAction<SymbolicTensor>>;
   model: LayersModel;
   setModel: React.Dispatch<React.SetStateAction<LayersModel>>;
-  selectedNodeId: string;
-  setSelectedNodeId: React.Dispatch<React.SetStateAction<string>>;
+  selectedNodeId: string | undefined;
+  setSelectedNodeId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const setModel: React.Dispatch<React.SetStateAction<LayersModel>> = () => {};
@@ -49,7 +49,7 @@ const ModelContext = React.createContext<ModelContextType>({
   setInputTensor: setInputTensor,
   model: modelProp,
   setModel: setModel,
-  selectedNodeId: "1",
+  selectedNodeId: undefined,
   setSelectedNodeId: () => {},
 });
 

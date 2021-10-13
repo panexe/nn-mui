@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 // REACT FLOW
-import { getOutgoers } from "react-flow-renderer";
+import { getOutgoers, useStoreActions, useStoreState } from "react-flow-renderer";
 import { Handle } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
@@ -26,7 +26,6 @@ import { DataType } from "@tensorflow/tfjs-core";
 import { Shape } from "@tensorflow/tfjs-layers";
 
 // NNUI
-import ModelContext from "../../../../../../context/model-context";
 import { useOnConnect } from "../../../../../../hooks/useOnConnect";
 import { useOnDisconnect } from "../../../../../../hooks/useOnDisconnect";
 
@@ -71,13 +70,18 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*--------------------------------------------------------*/
 
 const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
-  const modelContext = useContext(ModelContext);
+
+  const nodes = useStoreState((state) => state.nodes);
+  const edges = useStoreState((state) => state.edges);
+  const elements = nodes.concat(edges);
+  const setElements = useStoreActions((actions) => actions.setElements);
+
   const { onSourceConnect } = useOnConnect(data, id);
   const { onSourceDisconnect } = useOnDisconnect(data, id);
   const [counter, setCounter] = useState(0);
   const [args, setArgs] = useState<InputArgs>({ shape: [32], name: "input" });
   const labelText = "Input";
-  
+
   useEffect(() => {
     data.args = args;
   }, []);
@@ -89,34 +93,35 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
 
   // update outgoing connections
   useEffect(() => {
-    const currentElement = modelContext.elements.find((el) => el.id === id);
+    const currentElement = nodes.find((el) => el.id === id);
     if (currentElement === undefined) return; // not elegant, refactor!
-    const outGoers = getOutgoers(currentElement, modelContext.elements);
-    const outputValue = tf.input(args);
+    const outGoers = getOutgoers(currentElement, elements);
+    const layer = tf.input(args);
+    const outputValue = { layerOutput: layer, modelInput: layer };
 
     // put into context for output node to read
-    modelContext.setInputTensor(outputValue);
+    //modelContext.setInputTensor(outputValue);
     console.log(outputValue);
     //outputValue.computeOutputShape();
 
-    modelContext.setElements((els) => [
-      ...els.map((el) => {
-        if (el.id === id) {
-          el.data = {
-            ...el.data,
-            outputValue,
-          };
-        }
-        if (!!outGoers.find((target) => target.id === el.id)) {
-          el.data = {
-            ...el.data,
-            inputValue: outputValue,
-          };
-        }
+    setElements(
+        elements.map((el) => {
+            if (el.id === id) {
+            el.data = {
+                ...el.data,
+                outputValue,
+            };
+            }
+            if (!!outGoers.find((target) => target.id === el.id)) {
+            el.data = {
+                ...el.data,
+                inputValue: outputValue,
+            };
+            }
 
-        return el;
-      }),
-    ]);
+            return el;
+        }
+    ));
   }, [args]);
 
   

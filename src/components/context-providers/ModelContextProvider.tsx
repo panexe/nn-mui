@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // REACT FLOW
-import { Elements } from "react-flow-renderer";
+import { ArrowHeadType, Elements } from "react-flow-renderer";
 
 // TFJS
 import { input } from "@tensorflow/tfjs-layers";
@@ -33,10 +33,17 @@ const initialElements = [
     },
   },
   // default node
-  createDenseFromBase('2', 355, 150),
-  createDenseFromBase('3', 355, 150),
-  createDropoutFromBase('4', 360, 150),
-
+  createDenseFromBase('2', 360, 160),
+  createDenseFromBase('3', 460, 160),
+  createDropoutFromBase('4', 360, 160),
+  {
+    id: 'e2-3',
+    source: '2',
+    target: '3',
+    type: 'nnedge',
+    data: { text: 'custom edge' },
+    arrowHeadType: ArrowHeadType.Arrow,
+  },
   {
     id: "output",
     type: "outputNode", // output node
@@ -67,7 +74,7 @@ const ModelContextProvider: React.FC = (props) => {
     input({ shape: [32] })
   );
   const [model, setModel] = useState<LayersModel>(initModel);
-  const [selectedNodeId, setSelectedNodeId] = useState("1");
+  const [selectedNodeId, setSelectedNodeId] = useState<string | undefined>();
 
   return (
     <ModelContext.Provider

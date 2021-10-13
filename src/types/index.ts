@@ -9,9 +9,15 @@ export interface DataBaseType<T=any> {
   getLayerFunction: (
     args: T
   ) => (
-    input: SymbolicTensor | SymbolicTensor[] | undefined
-  ) => SymbolicTensor | undefined;
+    input: layerOutput | undefined
+  ) => layerOutput | undefined;
   backgroundColor?: string;
   error: string;
   layerName: string;
+}
+
+export type layerOutput = { layerOutput: SymbolicTensor, modelInput: SymbolicTensor | SymbolicTensor [] };
+
+export enum Portals{
+    layerInfo='layer-info-portal'
 }

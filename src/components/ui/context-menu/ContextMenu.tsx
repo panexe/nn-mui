@@ -13,7 +13,8 @@ const ContextMenu = (props: Props) => {
   } | null>(null);
 
   const handleContextMenu = (event: React.MouseEvent) => {
-    event.preventDefault();
+      return;
+    //event.preventDefault();
     setContextMenu(
       contextMenu === null
         ? {

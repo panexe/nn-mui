@@ -1,16 +1,23 @@
 import { useContext, useEffect } from "react";
-import { getOutgoers } from "react-flow-renderer";
-import ModelContext from "../context/model-context";
+import {
+  getOutgoers,
+  Node,
+  useStore,
+  useStoreActions,
+  useStoreState,
+} from "react-flow-renderer";
 import { DataBaseType } from "../types";
 
 export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
-  const modelContext = useContext(ModelContext);
+  const setElements = useStoreActions((actions) => actions.setElements);
+  const nodes = useStoreState((state) => state.nodes);
+  const edges = useStoreState((state) => state.edges);
+  const elements = nodes.concat(edges);
 
   useEffect(() => {
-    const currentElement = modelContext.elements.find((el) => el.id === id);
+    const currentElement = nodes.find((el) => el.id === id);
 
-    // no updates necessary if the input hasnt changed
-
+    // only proceed when input values are valid
     if (
       currentElement === undefined ||
       currentElement === null ||
@@ -19,8 +26,9 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
     ) {
       return;
     }
-    if (currentElement?.data.inputValue === data.inputValue) {
+    if (currentElement.data.inputValue === data.inputValue) {
       console.log("currentElement: ", currentElement);
+      // no updates necessary if the input hasnt changed
       if (currentElement.data.changed) {
         console.log(
           "update because data changed!",
@@ -39,19 +47,22 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
 
     // calc output value | should be the connection of the layers here later on
     let outputValue: any = undefined;
-    let error = '';
-    try{
-      outputValue = fn(currentElement.data.inputValue);  
-    }catch (e){
-        error = (e as Error).message;
+    let error = "";
+    let connectable = true;
+    // catching the errors produced by tfjs to show them in the node
+    try {
+      outputValue = fn(currentElement.data.inputValue);
+    } catch (e) {
+      error = (e as Error).message;
+      connectable = false;
     }
-    
 
     // get outgoing connection to update their input values
-    const outGoers = getOutgoers(currentElement, modelContext.elements);
+    const outGoers = getOutgoers(currentElement, elements);
 
-    modelContext.setElements((els) => {
-      return els.map((el) => {
+    // update nodes 
+    setElements(
+      elements.map((el) => {
         // update output value of this node
         if (el.id === id) {
           el.data = {
@@ -60,6 +71,7 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
             changed: false,
             error: error,
           };
+          (el as Node).connectable = connectable;
         }
         // update input value of all recieving nodes
         if (outGoers.find((target) => target.id === el.id)) {
@@ -68,9 +80,8 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
             inputValue: outputValue,
           };
         }
-
         return el;
-      });
-    });
-  }, [modelContext.elements]);
+      })
+    );
+  }, [elements]);
 };

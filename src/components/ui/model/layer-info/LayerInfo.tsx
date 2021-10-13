@@ -1,11 +1,11 @@
 // REACT
 import { useContext } from "react";
 
-//  MUI 
+//  MUI
 import { Typography, Divider, Container } from "@mui/material";
 import { styled } from "@mui/system";
 
-// NNUI 
+// NNUI
 import TextInput from "./TextInput";
 import SelectInput from "./SelectInput";
 import CheckBoxInput from "./CheckBoxInput";
@@ -17,7 +17,15 @@ import {
   INITIALIZERS,
   REGULARIZERS,
 } from "../nn-elements";
-
+import {
+  FlowElement,
+  isNode,
+  updateEdge,
+  useStore,
+  useStoreActions,
+  useStoreState,
+} from "react-flow-renderer";
+import { setSelectedElements } from "react-flow-renderer/dist/store/actions";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -62,11 +70,36 @@ const OptionGroup = (props: Props) => {
 };
 
 const LayerInfo = () => {
-  const modelContext = useContext(ModelContext);
-  const selectedNode = modelContext.elements.find(
-    (el) => el.id === modelContext.selectedNodeId
+  const nodes = useStoreState((state) => state.nodes);
+  const edges = useStoreState((state) => state.edges);
+  const elements = nodes.concat(edges);
+  const selectedElements = useStoreState((state) => state.selectedElements);
+  const setElements = useStoreActions((actions) => actions.setElements);
+  const setSelectedElements = useStoreActions((action)=> action.setSelectedElements);
+
+  const emptyReturn = (
+    <StyledDiv>
+      <LayerName variant="h4">{"Nothing is selected."}</LayerName>
+
+      <Divider />
+    </StyledDiv>
   );
-  console.log("selected Node: ",selectedNode);
+  if(nodes.length > 0) return <div id='layerinfo-portal'></div>
+
+  if (
+    selectedElements === undefined ||
+    selectedElements === null ||
+    selectedElements?.length === 0
+  ) {
+    return emptyReturn;
+  }
+
+  if(selectedElements.length > 1){
+    return emptyReturn;
+  }
+  const selectedNode = elements.find( (el) => el.id === selectedElements[0].id);
+
+  
 
   /**
    *
@@ -75,21 +108,29 @@ const LayerInfo = () => {
    */
   const setValue = (arg: string) => {
     return (val: any) => {
-      modelContext.setElements((els) => {
-        return els.map((el) => {
-          // update output value of this node
-          if (el.id === modelContext.selectedNodeId) {
-            el.data.args = {
-              ...el.data.args,
-              [arg]: val,
-            };
-            el.data = { ...el.data, changed: true };
-            console.log("changed set to true", el);
-            console.log("arg: val", arg, val);
-          }
-          return el;
-        });
-      });
+      setElements([]);
+      return;
+      setElements(
+        elements.map((el) => {
+            if (selectedNode?.id === el.id) {
+              console.log("selected node:", elements);
+              setSelectedElements(elements.find((el) => el.id === '4'));
+              const args = {
+                ...el.data.args,
+                [arg]: val,
+              }
+              el.data = {
+                ...el.data,
+                args: args,
+                changed: true,
+                changedValue: 'yes',
+              };
+            }
+            return el;
+          })
+      );
+      
+      console.log("updated:", arg, 'to val', val);
     };
   };
 
@@ -182,7 +223,8 @@ const LayerInfo = () => {
               default:
                 return (
                   <p key={key}>
-                    Value: <strong>{key}</strong> of type <strong>{subset[key]}</strong> is unknown!
+                    Value: <strong>{key}</strong> of type{" "}
+                    <strong>{subset[key]}</strong> is unknown!
                   </p>
                 );
             }
