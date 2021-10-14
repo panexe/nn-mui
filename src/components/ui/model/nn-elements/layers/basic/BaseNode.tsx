@@ -4,7 +4,7 @@
  */
 
 // REACT
-import { memo, ReactNode, useState } from "react";
+import { memo, ReactNode, useEffect, useState } from "react";
 import { useContext } from "react";
 
 // REACT FLOW
@@ -68,9 +68,11 @@ export interface BaseNodeProps<T> extends NodeProps<DataBaseType> {
 }
 
 const BaseNode = <T,>(props: BaseNodeProps<T>) => {
-  console.log("rerender basenode");
   const { data, id, isConnectable } = props;
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
+
+  const [inputValue, setInputValue] = useState(props.data.inputValue);
+  const [outputValue, setOutputValue] = useState(props.data.outputValue);
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
@@ -102,7 +104,7 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
           <Handle
             type="target"
             position={Position.Top}
-            //onConnect={onTargetConnect}
+            onConnect={onSourceConnect}
           />
           <div>
             {data.inputValue ? data.inputValue.name : "no layer yet"}
@@ -115,7 +117,7 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
             type="source"
             position={Position.Bottom}
             id="a"
-            //onConnect={onSourceConnect}
+            onConnect={onTargetConnect}
             isConnectable={isConnectable}
           />
         </NodeWrapper>

@@ -1,5 +1,11 @@
 // REACT
-import React, { MouseEvent, useCallback, useRef, useState } from "react";
+import React, {
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { useContext } from "react";
 import { DragEvent } from "react";
 
@@ -45,6 +51,7 @@ import NNEdge, { createNNEdge } from "../edges/NNEdge";
 import { updateNodePos } from "react-flow-renderer/dist/store/actions";
 import * as constants from "../../../../constants/constants";
 import { initialElements } from "./initialElements";
+import { convertToObject } from "typescript";
 
 // parameters for react flow
 // should be in a global settings context
@@ -57,18 +64,24 @@ const onDragOver = (event: DragEvent) => {
 let id = 0;
 const getId = (): ElementId => `node_${id++}`;
 
+interface Props {
+  children?: ReactNode;
+  elements: Elements;
+}
+
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
-const NetworkEditor = () => {
+const NetworkEditor = (props: Props) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<OnLoadParams>();
-  const [elements, setElements] = useState<Elements>(initialElements);
-  console.log('elements: ',elements);
+  const [elementsState, setElementsState] = useState<Elements>(initialElements);
+  const nodes = useStoreState((state) => state.nodes);
+  const edges = useStoreState((state) => state.edges);
+  const elements: Elements = [...nodes, ...edges];
+  const setElements = useStoreActions((actions) => actions.setElements);
 
   const networkEditorRef = useRef<HTMLDivElement>(null);
 
-  
-  
   const setSelectedElements = useStoreActions(
     (actions) => actions.setSelectedElements
   );
@@ -77,30 +90,57 @@ const NetworkEditor = () => {
   );
 
   const onLoad = (_reactFlowInstance: OnLoadParams) => {
-    if(!reactFlowInstance){
+    if (!reactFlowInstance) {
       setReactFlowInstance(_reactFlowInstance);
       console.log("loaded flow:", _reactFlowInstance);
     }
-  }
-    
+  };
 
-  const onConnect = useCallback( 
-    (params: Connection | Edge) => {
-    //const newEdge = createNNEdge(params as Connection);
-    setElements((els) => addEdge(params, els));
-  }, []);
+  const onConnect = (params: Connection | Edge) => {
+    const sourceNode = elements.find((el) => params.source === el.id);
+    if (sourceNode === undefined) return;
+    setElements(
+      addEdge(params, elements).map((el) => {
+        if (el.id == params.target) {
+          el.data = {
+            ...el.data,
+            inputValue: sourceNode?.data.outputValue,
+            changed: true,
+          };
+        }
+        return el;
+      })
+    );
+  };
 
   const onElementsRemove = (elementsToRemove: Elements) => {
-    setElements((els) => {
-      return removeElements(elementsToRemove, els);
-    });
+    const removeEdges: Edge[] = elementsToRemove.filter((el) =>
+      isEdge(el)
+    ) as Edge[];
+    console.log("edges to remove", removeEdges);
+
+    console.log("elements to remove", elementsToRemove);
+    setElements(
+      removeElements(
+        elementsToRemove,
+        elements.map((el) => {
+          if (removeEdges.find((e) => e.target == el.id)) {
+            el.data = {
+              ...el.data,
+              inputValue: undefined,
+              changed: true,
+            };
+          }
+          return el;
+        })
+      )
+    );
   };
 
   const onElementClick = (event: MouseEvent, element: FlowElement) => {
     if (isNode(element)) {
       setSelectedElements([element]);
     }
-    
   };
 
   const onPaneClick = (event: MouseEvent) => {
@@ -125,7 +165,7 @@ const NetworkEditor = () => {
       });
       console.log("onDrop: ", type);
 
-      let newNode: Node;
+      let newNode: Node = { id: "uninit", position: { x: 0, y: 0 } };
       switch (type) {
         case "dense":
           newNode = createDenseFromBase(getId(), position.x, position.y);
@@ -136,7 +176,7 @@ const NetworkEditor = () => {
         default:
           return;
       }
-      setElements((els) => els.concat(newNode));
+      setElements(elements.concat(newNode));
     }
   };
 
@@ -150,19 +190,17 @@ const NetworkEditor = () => {
         Math.ceil(el.position!.y / constants.GRID_SNAP_SIZE) *
         constants.GRID_SNAP_SIZE;
       console.log("new x/y", newX, newY);
-      setElements((els) => {
-        return els.map((e) => {
+      setElements(
+        elements.map((e) => {
           if (e.id === el.id) {
             e = { ...el, position: { x: newX, y: newY } };
           }
           return e;
-        });
-      });
+        })
+      );
     });
     //setSelectedElements(elements);
   };
-
-  
 
   return (
     <div
@@ -179,7 +217,7 @@ const NetworkEditor = () => {
 
         <Box sx={{ flex: "auto", overflow: "hidden", height: "100%" }}>
           <ReactFlow
-            elements={elements}
+            elements={elementsState}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             snapToGrid={true}

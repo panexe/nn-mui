@@ -22,26 +22,19 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
     if (
       currentElement === undefined ||
       currentElement === null ||
-      currentElement.data.inputValue === null ||
-      currentElement.data.inputValue === undefined
+      currentElement.data.inputValue === null 
     ) {
       return;
     }
+    // update after deletion
+    if(currentElement.data.inputValue === undefined && !currentElement?.data.changed){
+      return;
+    }
+    // update after argument change inside of 
     if (currentElement.data.inputValue === data.inputValue) {
       console.log("currentElement: ", currentElement);
       // no updates necessary if the input hasnt changed
-      if (currentElement.data.changed) {
-        console.log(
-          "update because data changed!",
-          currentElement,
-          data.inputValue
-        );
-      } else {
-        console.log(
-          "no update in useupdate: ",
-          currentElement,
-          data.inputValue
-        );
+      if (!currentElement.data.changed) {
         return;
       }
     }

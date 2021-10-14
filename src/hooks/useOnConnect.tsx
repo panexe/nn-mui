@@ -7,6 +7,7 @@ export const useOnConnect = (data: any, id: string) => {
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
 
+
   // TODO: change params type
   const onTargetConnect = (params: any) => {
     const sourceNode = nodes.find((el) => el.id === params.source);
@@ -27,6 +28,8 @@ export const useOnConnect = (data: any, id: string) => {
   };
 
   const onSourceConnect = (params: any) => {
+    console.log("|| source connected: ", params);
+
     const targetNode = nodes.find((el) => el.id === params.target);
     setElements(
       elements.map((el) => {
@@ -34,6 +37,7 @@ export const useOnConnect = (data: any, id: string) => {
           el.data = {
             ...el.data,
             inputValue: data.outputValue,
+            changed: true,
           };
         }
         return el;

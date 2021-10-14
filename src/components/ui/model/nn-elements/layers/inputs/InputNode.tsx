@@ -10,7 +10,12 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 // REACT FLOW
-import { Elements, getOutgoers, useStoreActions, useStoreState } from "react-flow-renderer";
+import {
+  Elements,
+  getOutgoers,
+  useStoreActions,
+  useStoreState,
+} from "react-flow-renderer";
 import { Handle } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
@@ -70,13 +75,14 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*--------------------------------------------------------*/
 
 const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
-
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
-  const elements : Elements = [...nodes, ...edges];
+  const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
+  //useStoreActions((actions) => actions.)
 
-  const { onSourceConnect } = useOnConnect(data, id);
+
+  //const { onSourceConnect } = useOnConnect(data, id);
   const { onSourceDisconnect } = useOnDisconnect(data, id);
   const [counter, setCounter] = useState(0);
   const [args, setArgs] = useState<InputArgs>({ shape: [32], name: "input" });
@@ -84,7 +90,7 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
 
   useEffect(() => {
     data.args = args;
-  }, []);
+  }, [args]);
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArgs({ shape: [parseInt(event.target.value)] });
@@ -99,33 +105,29 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     const layer = tf.input(args);
     const outputValue = { layerOutput: layer, modelInput: layer };
 
-    // put into context for output node to read
-    //modelContext.setInputTensor(outputValue);
-    console.log(outputValue);
-    //outputValue.computeOutputShape();
 
     setElements(
-        elements.map((el) => {
-            if (el.id === id) {
-            el.data = {
-                ...el.data,
-                outputValue,
-            };
-            }
-            if (!!outGoers.find((target) => target.id === el.id)) {
-            el.data = {
-                ...el.data,
-                inputValue: outputValue,
-                changed: true,
-            };
-            }
-
-            return el;
+      elements.map((el) => {
+        if (el.id === id) {
+          el.data = {
+            ...el.data,
+            args: args,
+            outputValue: outputValue,
+          };
         }
-    ));
+        if (!!outGoers.find((target) => target.id === el.id)) {
+          el.data = {
+            ...el.data,
+            inputValue: outputValue,
+            changed: true,
+          };
+        }
+
+        return el;
+      })
+    );
   }, [args]);
 
-  
 
   return (
     <NodeWrapper>
@@ -136,7 +138,7 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
         position={Position.Bottom}
         id="a"
         isConnectable={isConnectable}
-        onConnect={onSourceConnect}
+        //onConnect={onSourceConnect}
       />
     </NodeWrapper>
   );
