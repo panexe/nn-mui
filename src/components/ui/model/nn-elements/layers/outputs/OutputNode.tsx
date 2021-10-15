@@ -13,6 +13,7 @@ import { useUpdate } from "../../../../../../hooks/useUpdate";
 import ModelContext from "../../../../../../context/model-context";
 import { useOnConnect } from "../../../../../../hooks/useOnConnect";
 import { model, SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { layerOutput } from "../../../../../../types";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -46,8 +47,8 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   const [summary, setSummary] = useState(["summary"]);
 
   // applys input to this layer
-  const fn = (a: SymbolicTensor | SymbolicTensor[]) => {
-    const nnModel = model({ inputs: modelContext.inputTensor, outputs: a });
+  const fn = (input: layerOutput) => {
+    const nnModel = model({ inputs: input.modelInput, outputs: input.layerOutput });
     //modelContext.setModel(nnModel);
     return nnModel;
   };

@@ -6,41 +6,6 @@ import { InputLabel } from "@mui/material";
 import { styled } from "@mui/system";
 
 /*--------------------------------------------------------*/
-/*                         CSS                            */
-/*--------------------------------------------------------*/
-const StyledTextField = styled((props: FilledTextFieldProps) => (
-  <TextField
-    InputProps={{ disableUnderline: true }}
-    InputLabelProps={{ shrink: true }}
-    margin={"dense"}
-    size="small"
-    fullWidth={true}
-    {...props}
-  />
-))(({ theme }) => ({
-  color: theme.palette.action.hover,
-
-  "& .MuiFilledInput-input": {
-    "&:focus": {
-      outline: 1,
-      border: `1px solid ${theme.palette.primary.main}`,
-    },
-  },
-
-  "& .MuiFilledInput-root": {
-    border: `0px solid ${theme.palette.action.hover}`,
-    overflow: "hidden",
-    borderRadius: 0,
-    backgroundColor: theme.palette.action.hover,
-  },
-
-  "&.Mui-focused": {
-    border: `1px solid ${theme.palette.primary.main}`,
-    borderColor: theme.palette.primary.main,
-  },
-}));
-
-/*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 interface Props {
@@ -56,7 +21,12 @@ interface Props {
 const TextInput = (props: Props) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (props.number) {
-      props.setValue(parseInt(event.target.value));
+      if( isNaN(parseInt(event.target.value))){
+        props.setValue(0);
+      }else{
+        props.setValue(parseInt(event.target.value));
+      }
+      
     } else {
       props.setValue(event.target.value);
     }
@@ -67,23 +37,20 @@ const TextInput = (props: Props) => {
       container
       direction="row"
       justifyContent="space-between"
-      alignItems="center"
+      alignItems="flex-end"
     >
-      <Grid item>
-        <InputLabel sx={{ fontSize: "18px" }}>{props.name}:</InputLabel>
+      <Grid item xs={5}>
+        <InputLabel>{props.name}</InputLabel>
       </Grid>
-      <Grid item xs={8}>
-        <StyledTextField
-          type={props.number ? "number" : ""}
-          fullWidth={true}
-          hiddenLabel
-          id={props.id}
-          InputLabelProps={{ shrink: true }}
-          helperText={props.helperText ? props.helperText : ""}
-          variant="filled"
+      <Grid item xs={7}>
+        <TextField
+          inputProps={{ pattern: props.number ? "[0-9]*" : "[\s\S]*" }}
+          variant="standard"
+          margin="none"
           onChange={handleChange}
           value={props.value}
-        ></StyledTextField>
+          fullWidth
+        />
       </Grid>
     </Grid>
   );

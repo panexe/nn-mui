@@ -16,12 +16,17 @@ import {
   NodeLayerArgs,
 } from "../..";
 import { Node, NodeProps } from "react-flow-renderer";
-import { DataBaseType, layerOutput } from "../../../../../../types";
+import {
+  DataBaseType,
+  layerOutput,
+  OptionTypes,
+} from "../../../../../../types";
 import { green } from "@mui/material/colors";
 import BaseNode from "./BaseNode";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import NumberInput from "../../../layer-info/NumberInput";
 import { data } from "@tensorflow/tfjs";
+import ArgsMenu from "../../../layer-info/ArgsMenu";
 
 interface DenseArgs extends NodeLayerArgs {
   units: number;
@@ -77,21 +82,33 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     return { layerOutput: ret, modelInput: input.modelInput } as layerOutput;
   };
 
+
+  const menuSkeleton = [
+    { option: "options:", type: OptionTypes.category },
+    { option: "name", type: OptionTypes.text },
+    { option: "units", type: OptionTypes.number },
+    { option: "activation", type: OptionTypes.activation },
+    { option: "useBias", type: OptionTypes.boolean },
+    { option: "advanced options", type: OptionTypes.category },
+    { option: "kernelInitializer", type: OptionTypes.initializer },
+    { option: "biasInitializer", type: OptionTypes.initializer },
+    { option: "kernelConstraint", type: OptionTypes.constraint },
+    { option: "biasConstraint", type: OptionTypes.constraint },
+    { option: "kernelRegularizer", type: OptionTypes.regularizer },
+    { option: "biasRegularizer", type: OptionTypes.regularizer },
+  ];
+  
+
   const menu = (
-    <NumberInput
-      id="unitsinput"
-      name="units"
-      value={args.units}
-      setValue={(val) => {
-        setArgs((old) => {
-          return { ...old, units: val as number };
-        });
-        props.data.changed = true;
-      }}
+    <ArgsMenu<DenseArgs>
+      args={args}
+      setArgs={setArgs}
+      menu={menuSkeleton}
+      name={props.id}
     />
   );
   useEffect(() => {
-    console.log("args", args);
+    props.data.changed = true;
   }, [args]);
 
   return (
@@ -101,7 +118,8 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
       layerFunction={layerFunction}
       layerTypeName="dense"
       args={args}
-    ></BaseNode>
+      
+    ><p>{args.units}</p></BaseNode>
   );
 };
 

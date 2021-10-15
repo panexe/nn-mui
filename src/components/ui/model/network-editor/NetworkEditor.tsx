@@ -111,6 +111,9 @@ const NetworkEditor = (props: Props) => {
         return el;
       })
     );
+    // select the node that got connected 
+    const targetNode = elements.find((el) => el.id === params.target);
+    setSelectedElements([targetNode]);
   };
 
   const onElementsRemove = (elementsToRemove: Elements) => {

@@ -36,7 +36,6 @@ const StyledSelect = styled((props: SelectProps<string>) => (
   },
 }));
 
-
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
@@ -55,39 +54,31 @@ const SelectInput = (props: Props) => {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
-      {false && '<FormControl fullWidth size="small">'}
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Grid item>
-          <InputLabel id={`inputLabel-${props.id}`}>{props.name}</InputLabel>
-        </Grid>
-        <Grid item>
-          <StyledSelect
-            labelId={`inputLabel-${props.id}`}
-            size="small"
-            fullWidth
-            id={props.id}
-            label={props.name}
-            onChange={handleChange}
-            value={props.value}
-          >
-            {props.options.map((val) => {
-              return (
-                <MenuItem key={`select-${props.id}-${val}`} value={val}>
-                  {val}
-                </MenuItem>
-              );
-            })}
-          </StyledSelect>
-        </Grid>
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-between"
+      alignItems="flex-end"
+    >
+      <Grid item xs={5}>
+        <InputLabel>{props.name}</InputLabel>
       </Grid>
-      {false && "(</FormControl>)"}
-    </Box>
+      <Grid item xs={7}>
+        <Select margin="none" value={props.value} fullWidth variant="standard" onChange={handleChange}>
+          {props.options.map((val) => {
+            return (
+              <MenuItem
+                id={`select-option-${props.id}-${val}`}
+                key={`select-option-${props.id}-${val}`}
+                value={val}
+              >
+                {val}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -13,3 +13,14 @@ export type layerOutput = { layerOutput: SymbolicTensor, modelInput: SymbolicTen
 export enum Portals{
     layerInfo='layer-info-portal'
 }
+
+export enum OptionTypes{
+  category,
+  text, 
+  number, 
+  boolean, 
+  activation, 
+  constraint, 
+  regularizer, 
+  initializer,
+}

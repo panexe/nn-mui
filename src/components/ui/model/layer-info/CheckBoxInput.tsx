@@ -1,5 +1,5 @@
 // MUI
-import { FormControlLabel } from "@mui/material";
+import { FormControlLabel, Grid, InputLabel } from "@mui/material";
 import { Checkbox } from "@mui/material";
 
 /**
@@ -21,21 +21,25 @@ interface Props {
  */
 const CheckBoxInput = (props: Props) => {
   const onChangeHandler = (
-    event: React.SyntheticEvent<Element, Event>,
-    checked: boolean
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    props.setValue(checked);
+    props.setValue(event.target.checked);
   };
+  console.log('checkbox props',props);
   return (
-    <FormControlLabel
-      sx={{ marginLeft: 0 }}
-      value="top"
-      control={<Checkbox />}
-      label={props.name}
-      labelPlacement="start"
-      checked={props.value}
-      onChange={onChangeHandler}
-    />
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
+    >
+      <Grid item xs={5}>
+        <InputLabel>{props.name}</InputLabel>
+      </Grid>
+      <Grid item xs={7}>
+        <Checkbox checked={props.value} onChange={onChangeHandler} sx={{ float: "right" }} />
+      </Grid>
+    </Grid>
   );
 };
 

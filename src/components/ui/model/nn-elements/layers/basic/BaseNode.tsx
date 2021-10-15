@@ -65,6 +65,7 @@ export interface BaseNodeProps<T> extends NodeProps<DataBaseType> {
   layerFunction: (input: layerOutput | undefined) => layerOutput | undefined;
   args: T;
   menu: ReactNode;
+  children?: ReactNode;
 }
 
 const BaseNode = <T,>(props: BaseNodeProps<T>) => {
@@ -109,6 +110,7 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
           <div>
             {data.inputValue ? data.inputValue.name : "no layer yet"}
             <p>{props.layerTypeName}</p>
+            {props.children}
             {data.outputValue ? data.outputValue.name : "no layer yet"}
             {}
           </div>
