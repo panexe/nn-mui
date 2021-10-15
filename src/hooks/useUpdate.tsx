@@ -32,7 +32,7 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
     }
     // update after argument change inside of 
     if (currentElement.data.inputValue === data.inputValue) {
-      console.log("currentElement: ", currentElement);
+      //console.log("currentElement: ", currentElement);
       // no updates necessary if the input hasnt changed
       if (!currentElement.data.changed) {
         return;

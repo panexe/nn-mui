@@ -23,7 +23,7 @@ import {
 } from "../../../../../../types";
 import { green } from "@mui/material/colors";
 import BaseNode from "./BaseNode";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import NumberInput from "../../../layer-info/NumberInput";
 import { data } from "@tensorflow/tfjs";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
@@ -53,6 +53,13 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     kernelRegularizer: REGULARIZERS.none,
     biasRegularizer: REGULARIZERS.none,
   });
+  const [outputShape, setOutputShape] = useState("");
+
+  useEffect(()=> {
+    if(props.data.outputValue === undefined){
+      setOutputShape('');
+    }
+  }, [props.data]);
 
   const layerFunction = (input: layerOutput | undefined) => {
     if (input === undefined) return input;
@@ -79,9 +86,13 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
       kernelRegularizer: kernelRegularizer,
       biasRegularizer: biasRegularizer,
     } as DenseLayerArgs).apply(input.layerOutput) as SymbolicTensor;
+
+
+    console.log("output layer dense: ", ret, ret.shape);
+    setOutputShape(ret.shape.slice(1).join("x")); 
+
     return { layerOutput: ret, modelInput: input.modelInput } as layerOutput;
   };
-
 
   const menuSkeleton = [
     { option: "options:", type: OptionTypes.category },
@@ -97,16 +108,17 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     { option: "kernelRegularizer", type: OptionTypes.regularizer },
     { option: "biasRegularizer", type: OptionTypes.regularizer },
   ];
-  
 
-  const menu = (
+  // may need some other performance optimization 
+  const menu = useMemo(() => (
     <ArgsMenu<DenseArgs>
+      key={`args-${props.id}`}
       args={args}
       setArgs={setArgs}
       menu={menuSkeleton}
       name={props.id}
     />
-  );
+  ), [args]);
   useEffect(() => {
     props.data.changed = true;
   }, [args]);
@@ -118,8 +130,9 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
       layerFunction={layerFunction}
       layerTypeName="dense"
       args={args}
-      
-    ><p>{args.units}</p></BaseNode>
+    >
+      <p>{outputShape}</p>
+    </BaseNode>
   );
 };
 

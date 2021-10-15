@@ -25,7 +25,6 @@ const CheckBoxInput = (props: Props) => {
   ) => {
     props.setValue(event.target.checked);
   };
-  console.log('checkbox props',props);
   return (
     <Grid
       container

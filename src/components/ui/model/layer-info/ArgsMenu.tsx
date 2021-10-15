@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { OptionTypes } from "../../../../types";
 import { ACTIVATIONS, CONSTRAINTS, INITIALIZERS, NodeLayerArgs, REGULARIZERS } from "../nn-elements";
 import CheckBoxInput from "./CheckBoxInput";

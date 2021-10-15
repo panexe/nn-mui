@@ -105,7 +105,8 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
           <Handle
             type="target"
             position={Position.Top}
-            onConnect={onSourceConnect}
+            
+            //onConnect={onSourceConnect}
           />
           <div>
             {data.inputValue ? data.inputValue.name : "no layer yet"}
@@ -119,7 +120,7 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
             type="source"
             position={Position.Bottom}
             id="a"
-            onConnect={onTargetConnect}
+            //onConnect={onTargetConnect}
             isConnectable={isConnectable}
           />
         </NodeWrapper>

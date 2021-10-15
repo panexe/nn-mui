@@ -5,14 +5,14 @@
 
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { Handle, NodeProps, Position, useStoreActions, useStoreState } from "react-flow-renderer";
 import { purple } from "@mui/material/colors";
 import { memo, useState } from "react";
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import ModelContext from "../../../../../../context/model-context";
 import { useOnConnect } from "../../../../../../hooks/useOnConnect";
-import { model, SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { LayersModel, model, SymbolicTensor } from "@tensorflow/tfjs-layers";
 import { layerOutput } from "../../../../../../types";
 
 /*--------------------------------------------------------*/
@@ -38,17 +38,18 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
-  const modelContext = useContext(ModelContext);
-  
+const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {  
   const nodes = useStoreState((state) => state.nodes);
   
   const { onTargetConnect } = useOnConnect(data, id);
   const [summary, setSummary] = useState(["summary"]);
+  const [layerModel, setLayerModel] = useState<LayersModel | undefined>();
 
   // applys input to this layer
   const fn = (input: layerOutput) => {
+    console.log('output lfn',input);
     const nnModel = model({ inputs: input.modelInput, outputs: input.layerOutput });
+    setLayerModel(nnModel);
     //modelContext.setModel(nnModel);
     return nnModel;
   };
@@ -59,8 +60,8 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
   useEffect(() => {
     setSummary(["summary: "]);
     // put summary to screen
-    if (modelContext.model) {
-      modelContext.model.summary(
+    if (layerModel) {
+      layerModel.summary(
         undefined,
         undefined,
         (message?: any, ...optionalParams: any[]) => {
@@ -69,7 +70,7 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
       );
     }
     console.log("summary: ", summary);
-  }, [modelContext.model]);
+  }, [layerModel]);
 
   return (
     <NodeWrapper>
@@ -78,14 +79,14 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
         position={Position.Top}
         id="a"
         isConnectable={isConnectable}
-        onConnect={onTargetConnect}
+        //onConnect={onTargetConnect}
       />
 
       <StyledTypography>{labelText}</StyledTypography>
       {summary.length === 1 && <p>No summary available.</p>}
       {summary.length > 1 &&
         summary.map((line, index) => {
-          return <p key={`$output-node-p-${index}`}>{line}</p>;
+          return <Typography key={`$output-node-p-${index}`}>{line}</Typography>;
         })}
     </NodeWrapper>
   );

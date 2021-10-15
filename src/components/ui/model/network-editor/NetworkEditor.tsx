@@ -97,6 +97,7 @@ const NetworkEditor = (props: Props) => {
   };
 
   const onConnect = (params: Connection | Edge) => {
+    console.log('params:',params);
     const sourceNode = elements.find((el) => params.source === el.id);
     if (sourceNode === undefined) return;
     setElements(
