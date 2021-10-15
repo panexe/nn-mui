@@ -151,7 +151,6 @@ const LayerInfo = () => {
                     key={key}
                     value={selectedNode.data.args[key]}
                     setValue={setValue(key)}
-                    id={`text-${key}`}
                     name={key}
                   />
                 );

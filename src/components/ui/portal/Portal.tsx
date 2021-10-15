@@ -15,7 +15,12 @@ const Portal = (props: Props) => {
         return () => {mount?.removeChild(el)};
     },[mount, el]);
 
-    return createPortal(props.children, el);
+    const portalContent = () => {
+        return <div>{props.children}</div>;
+    }
+
+
+    return createPortal(portalContent(), el, `${props.destination}-portal`);
 }
 
 export default Portal;

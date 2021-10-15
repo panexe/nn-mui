@@ -4,6 +4,7 @@ import { FilledTextFieldProps } from "@mui/material";
 import { Grid } from "@mui/material";
 import { InputLabel } from "@mui/material";
 import { styled } from "@mui/system";
+import React, { Ref, useEffect } from "react";
 
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
@@ -13,12 +14,13 @@ interface Props {
   name: string;
   value: string | number;
   setValue: React.Dispatch<React.SetStateAction<string | number>>;
-  id: string;
   helperText?: string;
   number?: boolean;
+  onFocus? : React.FocusEventHandler,
 }
 
-const TextInput = (props: Props) => {
+const TextInput = React.forwardRef<HTMLInputElement, Props> ((props, ref) => {
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (props.number) {
       if( isNaN(parseInt(event.target.value))){
@@ -44,16 +46,18 @@ const TextInput = (props: Props) => {
       </Grid>
       <Grid item xs={7}>
         <TextField
+          inputRef={ref}
           inputProps={{ pattern: props.number ? "[0-9]*" : "[\s\S]*" }}
           variant="standard"
           margin="none"
           onChange={handleChange}
           value={props.value}
           fullWidth
+          onFocus={props.onFocus}
         />
       </Grid>
     </Grid>
   );
-};
+});
 
 export default TextInput;

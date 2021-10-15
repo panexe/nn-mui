@@ -27,6 +27,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import NumberInput from "../../../layer-info/NumberInput";
 import { data } from "@tensorflow/tfjs";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
+import TextInput from "../../../layer-info/TextInput";
+import React from "react";
 
 interface DenseArgs extends NodeLayerArgs {
   units: number;
@@ -54,10 +56,11 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     biasRegularizer: REGULARIZERS.none,
   });
   const [outputShape, setOutputShape] = useState("");
+  const [focused, setFocused] = useState("name");
 
-  useEffect(()=> {
-    if(props.data.outputValue === undefined){
-      setOutputShape('');
+  useEffect(() => {
+    if (props.data.outputValue === undefined) {
+      setOutputShape("");
     }
   }, [props.data]);
 
@@ -87,9 +90,8 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
       biasRegularizer: biasRegularizer,
     } as DenseLayerArgs).apply(input.layerOutput) as SymbolicTensor;
 
-
     console.log("output layer dense: ", ret, ret.shape);
-    setOutputShape(ret.shape.slice(1).join("x")); 
+    setOutputShape(ret.shape.slice(1).join("x"));
 
     return { layerOutput: ret, modelInput: input.modelInput } as layerOutput;
   };
@@ -109,19 +111,32 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     { option: "biasRegularizer", type: OptionTypes.regularizer },
   ];
 
-  // may need some other performance optimization 
-  const menu = useMemo(() => (
-    <ArgsMenu<DenseArgs>
-      key={`args-${props.id}`}
-      args={args}
-      setArgs={setArgs}
-      menu={menuSkeleton}
-      name={props.id}
-    />
-  ), [args]);
+  const [textTest, setTextTest] = useState<string | number>("test");
+  const testRef = React.createRef<HTMLInputElement>();
+  // may need some other performance optimization
+  const menu = useMemo(
+    () => (
+      <ArgsMenu<DenseArgs>
+        ref={testRef}
+        key={`args-${props.id}`}
+        args={args}
+        setArgs={setArgs}
+        menu={menuSkeleton}
+        name={props.id}
+        focus={focused}
+        setFocus={setFocused}
+      />
+    ),
+    [args]
+  );
   useEffect(() => {
     props.data.changed = true;
   }, [args]);
+
+  useEffect(() => {
+    console.log("testref", testRef);
+    testRef.current?.focus();
+  }, [textTest]);
 
   return (
     <BaseNode
@@ -131,7 +146,16 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
       layerTypeName="dense"
       args={args}
     >
-      <p>{outputShape}</p>
+      <p>
+        {
+          <TextInput
+            //ref={testRef}
+            name="test"
+            value={textTest}
+            setValue={setTextTest}
+          />
+        }
+      </p>
     </BaseNode>
   );
 };

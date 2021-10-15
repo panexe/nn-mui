@@ -13,9 +13,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, Ref, useEffect, useRef, useState } from "react";
 import { OptionTypes } from "../../../../types";
-import { ACTIVATIONS, CONSTRAINTS, INITIALIZERS, NodeLayerArgs, REGULARIZERS } from "../nn-elements";
+import {
+  ACTIVATIONS,
+  CONSTRAINTS,
+  INITIALIZERS,
+  NodeLayerArgs,
+  REGULARIZERS,
+} from "../nn-elements";
 import CheckBoxInput from "./CheckBoxInput";
 import SelectInput from "./SelectInput";
 import TextInput from "./TextInput";
@@ -34,15 +40,15 @@ interface Props<T> {
   args: T;
   setArgs: React.Dispatch<React.SetStateAction<T>>;
   name: string;
+  focus: string;
+  setFocus: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ArgsMenu = <T extends Object>(props: Props<T>) => {
-  const [selectState, setSelectState] = useState("hello");
-  const [textState, setTextState] = useState<string | number>("text");
-  const [numberState, setNumberState] = useState<string | number>(0);
-  const [check, setCheck] = useState(false);
+const ArgsMenu = React.forwardRef(<T extends Object>(props: Props<T>, ref: Ref<HTMLInputElement>) => {
+  const lastRef = React.createRef<HTMLInputElement>();
 
   const getSetArg = (arg: string) => {
+    //console.log("last ref", lastRef);
     return (val: any) => {
       props.setArgs((old) => {
         return { ...old, [arg]: val };
@@ -67,29 +73,33 @@ const ArgsMenu = <T extends Object>(props: Props<T>) => {
         return (
           <React.Fragment key={`option-fragment-${opt.option}`}>
             <TextInput
+              //ref={ref}
               number
               value={(props.args as any)[opt.option]}
               setValue={getSetArg(opt.option)}
               name={opt.option}
-              id={`${props.name}number-option-${opt.option}`}
               key={`${props.name}key-number-option-${opt.option}`}
+              onFocus={() => {
+                props.setFocus(opt.option);
+              }}
             />
             <Divider key={`${props.name}div-under-option-${opt.option}`} />
           </React.Fragment>
         );
       case OptionTypes.text:
-        return (
+        const ret = (
           <React.Fragment key={`option-fragment-${opt.option}`}>
             <TextInput
+              //ref={ref} //{props.focus === opt.option? lastRef : undefined}
               key={`${props.name}key-text-option-${opt.option}`}
               value={(props.args as any)[opt.option]}
               setValue={getSetArg(opt.option)}
               name={opt.option}
-              id={`${props.name}text-option-${opt.option}`}
             />
             <Divider key={`${props.name}div-under-option-${opt.option}`} />
           </React.Fragment>
         );
+        return ret;
       case OptionTypes.boolean:
         return (
           <React.Fragment key={`option-fragment-${opt.option}`}>
@@ -170,7 +180,7 @@ const ArgsMenu = <T extends Object>(props: Props<T>) => {
         );
     }
   });
-
+  const [textTest, setTextTest] = useState<string | number>("test");
   return (
     <Stack
       direction="column"
@@ -179,9 +189,16 @@ const ArgsMenu = <T extends Object>(props: Props<T>) => {
       spacing={0}
       sx={{ margin: "1em", fontSize: "24px" }}
     >
+       <TextInput
+            ref={ref}
+            name="test"
+            value={textTest}
+            setValue={setTextTest}
+          />
       {options}
     </Stack>
   );
-};
+});
 
-export default ArgsMenu;
+// workaround because forwardRef doesnt really work with generics
+export default ArgsMenu as <T,>(props: Props<T> & {ref: Ref<HTMLInputElement>}) => JSX.Element;
