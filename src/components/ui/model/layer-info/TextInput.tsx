@@ -46,13 +46,14 @@ const TextInput = React.forwardRef(
         </Grid>
         <Grid item xs={7}>
           <TextField
-            ref={ref}
+            inputRef={ref}
             inputProps={{ pattern: props.number ? "[0-9]*" : "[sS]*" }}
             variant="standard"
             margin="none"
             onChange={handleChange}
             value={props.value}
             fullWidth
+            onFocus={props.onFocus}
           />
         </Grid>
       </Grid>

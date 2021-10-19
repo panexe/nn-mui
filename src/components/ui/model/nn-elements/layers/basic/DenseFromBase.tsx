@@ -29,6 +29,8 @@ import { data } from "@tensorflow/tfjs";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
 import React from "react";
+import { Divider, Stack, Typography } from "@mui/material";
+import SelectInput from "../../../layer-info/SelectInput";
 
 interface DenseArgs extends NodeLayerArgs {
   units: number;
@@ -43,20 +45,32 @@ interface DenseArgs extends NodeLayerArgs {
 }
 
 const DenseNode = (props: NodeProps<DataBaseType>) => {
-  const [args, setArgs] = useState<DenseArgs>({
-    units: -32,
-    // set standard values
-    activation: ACTIVATIONS.none,
-    useBias: true,
-    kernelInitializer: INITIALIZERS.none,
-    biasInitializer: INITIALIZERS.none,
-    kernelConstraint: CONSTRAINTS.none,
-    biasConstraint: CONSTRAINTS.none,
-    kernelRegularizer: REGULARIZERS.none,
-    biasRegularizer: REGULARIZERS.none,
-  });
+  const [nameArg, setNameArg] = useState<string>("");
+  const [unitsArg, setUnitsArg] = useState<number>(32);
+  const [activationArg, setActivationArg] = useState<ACTIVATIONS>(
+    ACTIVATIONS.none
+  );
+  const [useBiasArg, setUseBiasArg] = useState<boolean>(true);
+  const [kernelInitializerArg, setKernelInitializerArg] =
+    useState<INITIALIZERS>(INITIALIZERS.none);
+  const [biasInitializerArg, setBiasInitializerArg] = useState<INITIALIZERS>(
+    INITIALIZERS.none
+  );
+  const [kernelConstraintArg, setKernelConstraintArg] = useState<CONSTRAINTS>(
+    CONSTRAINTS.none
+  );
+  const [biasConstraintArg, setBiasConstraintArg] = useState<CONSTRAINTS>(
+    CONSTRAINTS.none
+  );
+  const [kernelRegularizerArg, setKernelRegularizerArg] =
+    useState<REGULARIZERS>(REGULARIZERS.none);
+  const [biasRegularizerArg, setBiasRegularizerArg] = useState<REGULARIZERS>(
+    REGULARIZERS.none
+  );
+
   const [outputShape, setOutputShape] = useState("");
   const [focused, setFocused] = useState("name");
+  const focusRef = React.createRef<HTMLInputElement>();
 
   useEffect(() => {
     if (props.data.outputValue === undefined) {
@@ -67,16 +81,16 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
   const layerFunction = (input: layerOutput | undefined) => {
     if (input === undefined) return input;
 
-    const name = args.name;
-    const units = args.units;
-    const useBias = args.useBias;
-    const activation = getActivation(args.activation);
-    const kernelInitializer = getInitializer(args.kernelInitializer);
-    const biasInitializer = getInitializer(args.biasInitializer);
-    const kernelConstraint = getConstraint(args.kernelConstraint);
-    const biasConstraint = getConstraint(args.biasConstraint);
-    const kernelRegularizer = getRegularizer(args.kernelRegularizer);
-    const biasRegularizer = getRegularizer(args.biasRegularizer);
+    const name = nameArg.length === 0 ? undefined : nameArg;
+    const units = unitsArg;
+    const useBias = useBiasArg;
+    const activation = getActivation(activationArg);
+    const kernelInitializer = getInitializer(kernelInitializerArg);
+    const biasInitializer = getInitializer(biasInitializerArg);
+    const kernelConstraint = getConstraint(kernelConstraintArg);
+    const biasConstraint = getConstraint(biasConstraintArg);
+    const kernelRegularizer = getRegularizer(kernelRegularizerArg);
+    const biasRegularizer = getRegularizer(biasRegularizerArg);
     const ret = dense({
       name: name,
       units: units,
@@ -96,52 +110,72 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     return { layerOutput: ret, modelInput: input.modelInput } as layerOutput;
   };
 
-  const menuSkeleton = [
-    { option: "options:", type: OptionTypes.category },
-    { option: "name", type: OptionTypes.text },
-    { option: "units", type: OptionTypes.number },
-    { option: "activation", type: OptionTypes.activation },
-    { option: "useBias", type: OptionTypes.boolean },
-    { option: "advanced options", type: OptionTypes.category },
-    { option: "kernelInitializer", type: OptionTypes.initializer },
-    { option: "biasInitializer", type: OptionTypes.initializer },
-    { option: "kernelConstraint", type: OptionTypes.constraint },
-    { option: "biasConstraint", type: OptionTypes.constraint },
-    { option: "kernelRegularizer", type: OptionTypes.regularizer },
-    { option: "biasRegularizer", type: OptionTypes.regularizer },
-  ];
-
-  const [textTest, setTextTest] = useState<string | number>("test");
-  const testRef = React.createRef<HTMLInputElement>();
   // may need some other performance optimization
-  const menu = <ArgsMenu >
 
-  </ArgsMenu>;
   useEffect(() => {
     props.data.changed = true;
-  }, [args]);
+  }, [unitsArg]);
 
+  // portals dont work well with focus
+  // so we have to implement our own focus logic
   useEffect(() => {
-    console.log("testref", testRef);
-    testRef.current?.focus();
-  }, [textTest]);
+    if (focusRef.current) {
+      focusRef.current.focus();
+    }
+  });
 
   return (
     <BaseNode
       {...props}
-      menu={menu}
+      menu={
+        <ArgsMenu>
+          <Typography variant="h4" mt={2}>
+            options
+          </Typography>
+
+          <TextInput<string>
+            name="name"
+            value={nameArg}
+            setValue={setNameArg}
+            ref={focused === "name" ? focusRef : null}
+            onFocus={() => {
+              setFocused("name");
+              console.log("focus name");
+            }}
+          />
+          <Divider />
+          <TextInput<number>
+            number
+            name="units"
+            value={unitsArg}
+            setValue={setUnitsArg}
+            ref={focused === "units" ? focusRef : null}
+            onFocus={() => {
+              setFocused("units");
+              console.log("focus units");
+            }}
+          />
+          <Divider />
+          <SelectInput
+            value={activationArg}
+            setValue={(value: string) => {
+              setActivationArg(ACTIVATIONS[value as keyof typeof ACTIVATIONS]);
+            }}
+            name="activation"
+            options={Object.keys(ACTIVATIONS)}
+            ref={focused === "activation" ? focusRef : null}
+            onFocus={() => {
+              setFocused("activation");
+              console.log("focus activation");
+            }}
+          />
+          <Divider />
+        </ArgsMenu>
+      }
       layerFunction={layerFunction}
       layerTypeName="dense"
     >
-      <p>
-        {
-          <TextInput
-            //ref={testRef}
-            name="test"
-            value={textTest}
-            setValue={setTextTest} ref={null}          />
-        }
-      </p>
+      {}
     </BaseNode>
   );
 };
