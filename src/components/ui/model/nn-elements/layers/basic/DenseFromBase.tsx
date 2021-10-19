@@ -114,21 +114,9 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
   const [textTest, setTextTest] = useState<string | number>("test");
   const testRef = React.createRef<HTMLInputElement>();
   // may need some other performance optimization
-  const menu = useMemo(
-    () => (
-      <ArgsMenu<DenseArgs>
-        ref={testRef}
-        key={`args-${props.id}`}
-        args={args}
-        setArgs={setArgs}
-        menu={menuSkeleton}
-        name={props.id}
-        focus={focused}
-        setFocus={setFocused}
-      />
-    ),
-    [args]
-  );
+  const menu = <ArgsMenu >
+
+  </ArgsMenu>;
   useEffect(() => {
     props.data.changed = true;
   }, [args]);
@@ -144,7 +132,6 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
       menu={menu}
       layerFunction={layerFunction}
       layerTypeName="dense"
-      args={args}
     >
       <p>
         {
@@ -152,8 +139,7 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
             //ref={testRef}
             name="test"
             value={textTest}
-            setValue={setTextTest}
-          />
+            setValue={setTextTest} ref={null}          />
         }
       </p>
     </BaseNode>

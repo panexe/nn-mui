@@ -4,60 +4,60 @@ import { FilledTextFieldProps } from "@mui/material";
 import { Grid } from "@mui/material";
 import { InputLabel } from "@mui/material";
 import { styled } from "@mui/system";
-import React, { Ref, useEffect } from "react";
+import React from "react";
+import { Ref } from "react";
 
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
-interface Props {
+interface Props<T extends string | number> {
   children?: React.ReactNode;
   name: string;
-  value: string | number;
-  setValue: React.Dispatch<React.SetStateAction<string | number>>;
+  value: T;
+  setValue: React.Dispatch<React.SetStateAction<T>>;
   helperText?: string;
   number?: boolean;
   onFocus? : React.FocusEventHandler,
 }
 
-const TextInput = React.forwardRef<HTMLInputElement, Props> ((props, ref) => {
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (props.number) {
-      if( isNaN(parseInt(event.target.value))){
-        props.setValue(0);
-      }else{
-        props.setValue(parseInt(event.target.value));
+const TextInput = React.forwardRef(
+  <T extends number | string>(props: Props<T>, ref: Ref<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (props.number) {
+        if (isNaN(parseInt(event.target.value))) {
+          props.setValue(0 as T);
+        } else {
+          props.setValue(parseInt(event.target.value) as T);
+        }
+      } else {
+        props.setValue(event.target.value as T);
       }
-      
-    } else {
-      props.setValue(event.target.value);
-    }
-  };
+    };
 
-  return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="space-between"
-      alignItems="flex-end"
-    >
-      <Grid item xs={5}>
-        <InputLabel>{props.name}</InputLabel>
+    return (
+      <Grid
+        container
+        direction="row"
+        justifyContent="space-between"
+        alignItems="flex-end"
+      >
+        <Grid item xs={5}>
+          <InputLabel>{props.name}</InputLabel>
+        </Grid>
+        <Grid item xs={7}>
+          <TextField
+            ref={ref}
+            inputProps={{ pattern: props.number ? "[0-9]*" : "[sS]*" }}
+            variant="standard"
+            margin="none"
+            onChange={handleChange}
+            value={props.value}
+            fullWidth
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={7}>
-        <TextField
-          inputRef={ref}
-          inputProps={{ pattern: props.number ? "[0-9]*" : "[\s\S]*" }}
-          variant="standard"
-          margin="none"
-          onChange={handleChange}
-          value={props.value}
-          fullWidth
-          onFocus={props.onFocus}
-        />
-      </Grid>
-    </Grid>
-  );
-});
+    );
+  }
+);
 
-export default TextInput;
+export default TextInput as <T extends number | string>(props: Props<T> & {ref : Ref<HTMLInputElement>}) => JSX.Element;

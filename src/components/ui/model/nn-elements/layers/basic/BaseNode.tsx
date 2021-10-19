@@ -59,16 +59,15 @@ const NodeTopDiv = styled("div")(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-export interface BaseNodeProps<T> extends NodeProps<DataBaseType> {
+export interface BaseNodeProps extends NodeProps<DataBaseType> {
   backgroundColor?: string;
   layerTypeName: string;
   layerFunction: (input: layerOutput | undefined) => layerOutput | undefined;
-  args: T;
   menu: ReactNode;
   children?: ReactNode;
 }
 
-const BaseNode = <T,>(props: BaseNodeProps<T>) => {
+const BaseNode = (props: BaseNodeProps) => {
   const { data, id, isConnectable } = props;
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
 
@@ -87,7 +86,7 @@ const BaseNode = <T,>(props: BaseNodeProps<T>) => {
   return (
     <Grid container direction="row">
       {selected && (
-        <Portal destination={Portals.layerInfo}>
+        <Portal destination={Portals.layerInfo} id={id}>
           {props.menu}
         </Portal>
       )}

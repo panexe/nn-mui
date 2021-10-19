@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 interface Props{
     children?: ReactNode,
     destination: string,
+    id: string;
 }
 
 const Portal = (props: Props) => {
@@ -15,12 +16,7 @@ const Portal = (props: Props) => {
         return () => {mount?.removeChild(el)};
     },[mount, el]);
 
-    const portalContent = () => {
-        return <div>{props.children}</div>;
-    }
-
-
-    return createPortal(portalContent(), el, `${props.destination}-portal`);
+    return createPortal(props.children, el, `${props.id}-portal`);
 }
 
 export default Portal;

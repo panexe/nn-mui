@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { memo, Ref, useEffect, useRef, useState } from "react";
+import React, { memo, ReactNode, useEffect, useState } from "react";
 import { OptionTypes } from "../../../../types";
 import {
   ACTIVATIONS,
@@ -35,28 +35,13 @@ const StyledPaper = styled((props: PaperProps) => <Paper {...props} />)(
   })
 );
 
-interface Props<T> {
-  menu: { option: string; type: OptionTypes }[];
-  args: T;
-  setArgs: React.Dispatch<React.SetStateAction<T>>;
-  name: string;
-  focus: string;
-  setFocus: React.Dispatch<React.SetStateAction<string>>;
+interface Props {
+  children?: ReactNode;
 }
 
-const ArgsMenu = React.forwardRef(<T extends Object>(props: Props<T>, ref: Ref<HTMLInputElement>) => {
-  const lastRef = React.createRef<HTMLInputElement>();
+const ArgsMenu =(props: Props) => {
 
-  const getSetArg = (arg: string) => {
-    //console.log("last ref", lastRef);
-    return (val: any) => {
-      props.setArgs((old) => {
-        return { ...old, [arg]: val };
-      });
-      console.log(arg, val);
-    };
-  };
-
+  /*
   const options = props.menu.map((opt) => {
     switch (opt.type) {
       case OptionTypes.category:
@@ -180,7 +165,7 @@ const ArgsMenu = React.forwardRef(<T extends Object>(props: Props<T>, ref: Ref<H
         );
     }
   });
-  const [textTest, setTextTest] = useState<string | number>("test");
+  */
   return (
     <Stack
       direction="column"
@@ -189,16 +174,10 @@ const ArgsMenu = React.forwardRef(<T extends Object>(props: Props<T>, ref: Ref<H
       spacing={0}
       sx={{ margin: "1em", fontSize: "24px" }}
     >
-       <TextInput
-            ref={ref}
-            name="test"
-            value={textTest}
-            setValue={setTextTest}
-          />
-      {options}
+      {props.children}
     </Stack>
   );
-});
+};
 
 // workaround because forwardRef doesnt really work with generics
-export default ArgsMenu as <T,>(props: Props<T> & {ref: Ref<HTMLInputElement>}) => JSX.Element;
+export default ArgsMenu;
