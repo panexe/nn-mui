@@ -15,7 +15,7 @@ import {
   getRegularizer,
   NodeLayerArgs,
 } from "../..";
-import { Node, NodeProps } from "react-flow-renderer";
+import { Node, NodeProps, useStoreActions } from "react-flow-renderer";
 import {
   DataBaseType,
   layerOutput,
@@ -72,6 +72,20 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
   const [focused, setFocused] = useState("name");
   const focusRef = React.createRef<HTMLInputElement>();
 
+  const [openSelet, setOpenSelect] = useState("");
+
+  const [denseLayerArgs, setDenseLayerArgs] = useState<DenseLayerArgs>({units:32});
+
+  const setElements = useStoreActions((store) => store.setElements);
+
+  const onOpen = (select : string) => {
+    setOpenSelect(select);
+  }
+  const onClose = () => {
+    setOpenSelect('');
+  }
+
+
   useEffect(() => {
     if (props.data.outputValue === undefined) {
       setOutputShape("");
@@ -114,7 +128,11 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
 
   useEffect(() => {
     props.data.changed = true;
-  }, [unitsArg]);
+    //setElements(elements);
+    // set all elements new
+    console.log("changed data");
+    console.log("denselayerargs", denseLayerArgs);
+  }, [unitsArg, nameArg, activationArg]);
 
   // portals dont work well with focus
   // so we have to implement our own focus logic
@@ -168,6 +186,9 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
               setFocused("activation");
               console.log("focus activation");
             }}
+            open={openSelet === 'activation'}
+            onOpen={()=>{onOpen('activation')} }
+            onClose={onClose}
           />
           <Divider />
         </ArgsMenu>

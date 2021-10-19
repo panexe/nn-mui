@@ -47,6 +47,9 @@ interface Props {
   setValue: (value: string) => void;
   options: string[];
   onFocus: React.FocusEventHandler;
+  open?: boolean;
+  onOpen? : (event: React.SyntheticEvent<Element, Event>) => void;
+  onClose?: (event: React.SyntheticEvent<Element, Event>) => void;
 }
 
 const SelectInput = React.forwardRef(
@@ -67,13 +70,16 @@ const SelectInput = React.forwardRef(
         </Grid>
         <Grid item xs={7}>
           <Select
-            ref={ref}
+            inputRef={ref}
             margin="none"
             value={props.value}
             fullWidth
             variant="standard"
             onChange={handleChange}
             onFocus={props.onFocus}
+            open={props.open}
+            onOpen={props.onOpen}
+            onClose={props.onClose}
           >
             {props.options.map((val) => {
               return (
