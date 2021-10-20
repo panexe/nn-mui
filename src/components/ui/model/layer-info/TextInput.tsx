@@ -14,7 +14,7 @@ interface Props<T extends string | number> {
   children?: React.ReactNode;
   name: string;
   value: T;
-  setValue: React.Dispatch<React.SetStateAction<T>>;
+  setValue: React.Dispatch<React.SetStateAction<T>> | ((value: T) => void);
   helperText?: string;
   number?: boolean;
   onFocus? : React.FocusEventHandler,

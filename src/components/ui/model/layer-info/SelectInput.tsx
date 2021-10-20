@@ -46,7 +46,8 @@ interface Props {
   value: string;
   setValue: (value: string) => void;
   options: string[];
-  onFocus: React.FocusEventHandler;
+  onFocus?: React.FocusEventHandler;
+  onBlur?: React.FocusEventHandler;
   open?: boolean;
   onOpen? : (event: React.SyntheticEvent<Element, Event>) => void;
   onClose?: (event: React.SyntheticEvent<Element, Event>) => void;
@@ -77,6 +78,7 @@ const SelectInput = React.forwardRef(
             variant="standard"
             onChange={handleChange}
             onFocus={props.onFocus}
+            onBlur={props.onBlur}
             open={props.open}
             onOpen={props.onOpen}
             onClose={props.onClose}
