@@ -66,7 +66,6 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
     console.log(Object.keys(layerArgs));
   }, [layerArgs]);
 
-
   useEffect(() => {
     if (props.data.outputValue === undefined) {
       setOutputShape("");
@@ -74,16 +73,16 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
   }, [props.data]);
 
   /**
-   * 
-   * @param input 
-   * @returns 
+   *
+   * @param input
+   * @returns
    */
   const layerFunction = (input: layerOutput | undefined) => {
     if (input === undefined) return input;
 
-    const ret = props.tfjsLayer(layerArgs).apply(
-      input.layerOutput
-    ) as SymbolicTensor;
+    const ret = props
+      .tfjsLayer(layerArgs)
+      .apply(input.layerOutput) as SymbolicTensor;
 
     console.log("output layer dense: ", ret, ret.shape);
     setOutputShape(ret.shape.slice(1).join("x"));
@@ -284,49 +283,53 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
     );
   };
 
+  const menuJSX = useMemo(() => {
+    return (
+      <ArgsMenu>
+        {Object.entries(menu).map(([key, val]) => {
+          switch (val) {
+            case OptionTypes.category:
+              return createCategory(key, `${key}-${props.id}`);
+            case OptionTypes.text:
+              return createText(key, `${key}-${props.id}`);
+            case OptionTypes.number:
+              return createNumber(key, `${key}-${props.id}`);
+            case OptionTypes.boolean:
+              return createCheckbox(key, `${key}-${props.id}`);
+            case OptionTypes.activation:
+              return createSelect(
+                key,
+                Object.keys(ACTIVATIONS),
+                `${key}-${props.id}`
+              );
+            case OptionTypes.constraint:
+              return createSelect(
+                key,
+                Object.keys(CONSTRAINTS),
+                `${key}-${props.id}`
+              );
+            case OptionTypes.initializer:
+              return createSelect(
+                key,
+                Object.keys(INITIALIZERS),
+                `${key}-${props.id}`
+              );
+            case OptionTypes.regularizer:
+              return createSelect(
+                key,
+                Object.keys(REGULARIZERS),
+                `${key}-${props.id}`
+              );
+          }
+        })}
+      </ArgsMenu>
+    );
+  }, [layerArgs]);
+
   return (
     <BaseNode
       {...props}
-      menu={
-        <ArgsMenu>
-          {Object.entries(menu).map(([key, val]) => {
-            switch (val) {
-              case OptionTypes.category:
-                return createCategory(key, `${key}-${props.id}`);
-              case OptionTypes.text:
-                return createText(key, `${key}-${props.id}`);
-              case OptionTypes.number:
-                return createNumber(key, `${key}-${props.id}`);
-              case OptionTypes.boolean:
-                return createCheckbox(key, `${key}-${props.id}`);
-              case OptionTypes.activation:
-                return createSelect(
-                  key,
-                  Object.keys(ACTIVATIONS),
-                  `${key}-${props.id}`
-                );
-              case OptionTypes.constraint:
-                return createSelect(
-                  key,
-                  Object.keys(CONSTRAINTS),
-                  `${key}-${props.id}`
-                );
-              case OptionTypes.initializer:
-                return createSelect(
-                  key,
-                  Object.keys(INITIALIZERS),
-                  `${key}-${props.id}`
-                );
-              case OptionTypes.regularizer:
-                return createSelect(
-                  key,
-                  Object.keys(REGULARIZERS),
-                  `${key}-${props.id}`
-                );
-            }
-          })}
-        </ArgsMenu>
-      }
+      menu={menuJSX}
       layerFunction={layerFunction}
       layerTypeName={props.layerTypeName}
     >
