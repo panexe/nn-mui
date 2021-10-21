@@ -97,11 +97,23 @@ const NetworkEditor = (props: Props) => {
   };
 
   const onConnect = (params: Connection | Edge) => {
-    console.log('params:',params);
+    console.log("params:", params);
     const sourceNode = elements.find((el) => params.source === el.id);
     if (sourceNode === undefined) return;
+
+    let newEdge: Connection | Edge = params;
+    if (!isEdge(params) && params.source !== null && params.target !== null) {
+      newEdge = {
+        id: `e${params.source}-${params.target}`,
+        type: 'smoothstep', 
+        source: params.source, 
+        target: params.target, 
+        style: {strokeWidth: 2},
+      };
+    }
+
     setElements(
-      addEdge(params, elements).map((el) => {
+      addEdge(newEdge, elements).map((el) => {
         if (el.id == params.target) {
           el.data = {
             ...el.data,
@@ -112,7 +124,7 @@ const NetworkEditor = (props: Props) => {
         return el;
       })
     );
-    // select the node that got connected 
+    // select the node that got connected
     const targetNode = elements.find((el) => el.id === params.target);
     setSelectedElements([targetNode]);
   };

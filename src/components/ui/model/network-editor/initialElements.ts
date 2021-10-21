@@ -7,7 +7,7 @@ export const initialElements = [
     {
       id: "input",
       type: "inputNode", // input node
-      position: { x: 250, y: 25 },
+      position: { x: 240, y: 20 },
       data: {
         inputValue: null,
         outputValue: null,
@@ -26,9 +26,8 @@ export const initialElements = [
       id: 'e2-3',
       source: '2',
       target: '3',
-      type: 'nnedge',
-      data: { text: 'custom edge' },
-      arrowHeadType: ArrowHeadType.Arrow,
+      type: 'smoothstep',
+      style: {strokeWidth: 2},
     },
     {
       id: "output",

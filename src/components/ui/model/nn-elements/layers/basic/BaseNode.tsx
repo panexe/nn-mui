@@ -4,8 +4,7 @@
  */
 
 // REACT
-import { memo, ReactNode, useEffect, useState } from "react";
-import { useContext } from "react";
+import { memo, ReactNode, useState } from "react";
 
 // REACT FLOW
 import { Handle, useStoreState } from "react-flow-renderer";
@@ -29,7 +28,7 @@ import { DataBaseType, layerOutput, Portals } from "../../../../../../types";
 import { Alert, Grid } from "@mui/material";
 import Portal from "../../../../portal/Portal";
 
-import { createPortal } from "react-dom";
+import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -39,10 +38,10 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   padding: 10,
   backgroundColor: green[800],
   textAlign: "center",
-  minWidth: "120px",
-  maxWidth: "120px",
-  minHeight: "120px",
-  maxHeight: "120px",
+  minWidth: NODE_WIDTH,
+  maxWidth: NODE_WIDTH,
+  minHeight: NODE_HEIGHT,
+  maxHeight: NODE_HEIGHT,
   overflow: "hidden",
 
   ".react-flow__handle": {
@@ -79,9 +78,7 @@ const BaseNode = (props: BaseNodeProps) => {
     selectedElements !== null &&
     selectedElements.find((el) => el.id === props.id);
 
-  
   useUpdate(data, id, props.layerFunction);
-
 
   return (
     <Grid container direction="row">
@@ -91,7 +88,8 @@ const BaseNode = (props: BaseNodeProps) => {
         </Portal>
       )}
       <Grid item>
-        <NodeWrapper className='drag-handle'
+        <NodeWrapper
+          className="drag-handle"
           sx={{
             border: selected
               ? `4px solid ${blue[800]}`
@@ -99,20 +97,19 @@ const BaseNode = (props: BaseNodeProps) => {
             backgroundColor: props.backgroundColor
               ? props.backgroundColor
               : grey[800],
+            paddingTop: 0,
+            paddingBottom: 0,
           }}
         >
           <Handle
             type="target"
             position={Position.Top}
-            
+
             //onConnect={onSourceConnect}
           />
-          <div>
-            {data.inputValue ? data.inputValue.name : "no layer yet"}
+          <div >
             <p>{props.layerTypeName}</p>
             {props.children}
-            {data.outputValue ? data.outputValue.name : "no layer yet"}
-            {}
           </div>
 
           <Handle

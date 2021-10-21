@@ -58,7 +58,10 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   padding: 10,
   backgroundColor: purple[800],
   textAlign: "center",
-  minWidth: "128px",
+  minWidth: "240px",
+  maxWidth: '240px',
+  minHeight: '80px', 
+  maxHeight: '80px',
 
   ".react-flow__handle": {
     background: theme.palette.text.primary,

@@ -1,37 +1,28 @@
+// REACT
+import React from "react";
+import { useEffect, useMemo, useState } from "react";
+
+// REACT FLOW
+import { Node } from "react-flow-renderer";
+import { NodeProps } from "react-flow-renderer/dist/types";
+
 // TFJS
-import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
-import { DenseLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
-import { constraints, SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { SymbolicTensor } from "@tensorflow/tfjs-layers";
+
+// MUI
+import { Divider, Typography } from "@mui/material";
 
 // NNUI
-import {
-  ACTIVATIONS,
-  getActivation,
-  INITIALIZERS,
-  getInitializer,
-  CONSTRAINTS,
-  getConstraint,
-  REGULARIZERS,
-  getRegularizer,
-  NodeLayerArgs,
-} from "../..";
-import { Node, useStoreActions } from "react-flow-renderer";
+import { ACTIVATIONS, INITIALIZERS, CONSTRAINTS, REGULARIZERS } from "../..";
 import {
   DataBaseType,
   layerOutput,
   OptionTypes,
 } from "../../../../../../types";
-import { green } from "@mui/material/colors";
 import BaseNode from "./BaseNode";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import NumberInput from "../../../layer-info/NumberInput";
-import { data } from "@tensorflow/tfjs";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
-import React from "react";
-import { Divider, Stack, Typography } from "@mui/material";
 import SelectInput from "../../../layer-info/SelectInput";
-import { NodeProps } from "react-flow-renderer/dist/types";
 import CheckBoxInput from "../../../layer-info/CheckBoxInput";
 
 /**
