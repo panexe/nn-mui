@@ -1,5 +1,6 @@
 import { ArrowHeadType } from "react-flow-renderer";
 import { createDense } from "../nn-elements/layers/basic/DenseNode";
+import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 //import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
 
 // setup elements, prob. move this to its own file
@@ -21,7 +22,7 @@ export const initialElements = [
     // default node
     createDense('2', 360, 160),
     createDense('3', 460, 160),
-    //createDropoutFromBase('4', 360, 160),
+    createDropout('4', 360, 160),
     {
       id: 'e2-3',
       source: '2',

@@ -10,7 +10,6 @@ import { NodeProps } from "react-flow-renderer";
 import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
 
-
 const DenseNode = (props: NodeProps<DataBaseType>) => {
   const initialArgs: DenseLayerArgs = {
     units: 32,
@@ -54,25 +53,22 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
 };
 export default DenseNode;
 
-
 export const createDense = (
-    id: string,
-    posX: number,
-    posY: number
-  ): Node<DataBaseType> => {
-    return {
-      id: id,
-      type: "denseNode",
-      position: { x: posX, y: posY },
-      dragHandle: ".drag-handle",
-      data: {
-        inputValue: undefined,
-        outputValue: undefined,
-        changed: true,
-        error: "",
-        layerName: "dense",
-      },
-    }; //as Node<DataBaseType>;
-  };
-
-
+  id: string,
+  posX: number,
+  posY: number
+): Node<DataBaseType> => {
+  return {
+    id: id,
+    type: "denseNode",
+    position: { x: posX, y: posY },
+    dragHandle: ".drag-handle",
+    data: {
+      inputValue: undefined,
+      outputValue: undefined,
+      changed: true,
+      error: "",
+      layerName: "dense",
+    },
+  }; //as Node<DataBaseType>;
+};

@@ -1,18 +1,63 @@
-import { dropout } from "@tensorflow/tfjs-layers/dist/exports_layers";
-import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-
+import { BaseNodeProps } from "./BaseNode";
+import MenuBaseNode from "./MenuBaseNode";
 import { DropoutLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
-import { DataBaseType, layerOutput } from "../../../../../../types";
+import {
+  DataBaseType,
+  layerOutput,
+  OptionTypes,
+} from "../../../../../../types";
+import { NodeProps } from "react-flow-renderer";
+import { dropout } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
-import { blue } from "@mui/material/colors";
-import { NodeLayerArgs } from "../..";
 
 
-interface DropoutArgs extends NodeLayerArgs{
-    rate: number; 
-    noiseShape: number[] | undefined; 
-    seed: number | undefined;
-}
+const DropoutNode = (props: NodeProps<DataBaseType>) => {
+  const initialArgs: DropoutLayerArgs = {
+    rate: 0.5, 
+    seed: undefined,
+  };
+
+  const menu = {
+    options: OptionTypes.category,
+    rate: OptionTypes.number, 
+    seed: OptionTypes.text,
+  };
+
+  return (
+    <MenuBaseNode<DropoutLayerArgs>
+      {...props}
+      initialArgs={initialArgs}
+      menu={menu}
+      tfjsLayer={dropout}
+      layerTypeName="dropout"
+    />
+  );
+};
+export default DropoutNode;
+
+
+export const createDropout = (
+    id: string,
+    posX: number,
+    posY: number
+  ): Node<DataBaseType> => {
+    return {
+      id: id,
+      type: "dropoutNode",
+      position: { x: posX, y: posY },
+      dragHandle: ".drag-handle",
+      data: {
+        inputValue: undefined,
+        outputValue: undefined,
+        changed: true,
+        error: "",
+        layerName: "dropout",
+      },
+    }; //as Node<DataBaseType>;
+  };
+
+
+
 
 
 /*

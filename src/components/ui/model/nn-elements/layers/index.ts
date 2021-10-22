@@ -4,6 +4,7 @@ import { NodeTypesType } from "react-flow-renderer";
 import BaseNode from "./basic/BaseNode";
 //import DenseNode from "./basic/DenseFromBase";
 import DenseNode from './basic/DenseNode';
+import DropoutNode from "./basic/DropoutNode";
 
 export { InputNode, OutputNode };
 
@@ -15,6 +16,7 @@ export const nodeTypes: NodeTypesType = {
   outputNode: OutputNode,
   baseNode: BaseNode,
   denseNode: DenseNode, 
+  dropoutNode: DropoutNode,
 };
 
 export const nodesMenu = {

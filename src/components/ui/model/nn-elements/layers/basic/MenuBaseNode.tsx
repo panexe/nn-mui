@@ -91,7 +91,7 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
   // html-refrence to focus an element
   const focusRef = React.createRef<HTMLInputElement>();
   // stores wheter a select is opened (neccesary because of focus management)
-  const [openSelet, setOpenSelect] = useState("");
+  const [openSelect, setOpenSelect] = useState("");
   /**
    * Called on opening a select.
    *
@@ -99,6 +99,7 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
    * @param select name of the select-attribute
    */
   const onOpen = (select: string) => {
+    console.log("onOpen", select);
     setOpenSelect(select);
   };
 
@@ -232,7 +233,7 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
             setFocused("");
             console.log(`loose focus`);
           }}
-          open={openSelet === name}
+          open={openSelect === name}
           onOpen={() => {
             onOpen(name);
           }}
@@ -315,7 +316,7 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
         })}
       </ArgsMenu>
     );
-  }, [layerArgs]);
+  }, [layerArgs, openSelect, focused]);
 
   return (
     <BaseNode

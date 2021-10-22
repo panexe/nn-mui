@@ -52,6 +52,7 @@ import { updateNodePos } from "react-flow-renderer/dist/store/actions";
 import * as constants from "../../../../constants/constants";
 import { initialElements } from "./initialElements";
 import { convertToObject } from "typescript";
+import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 
 // parameters for react flow
 // should be in a global settings context
@@ -187,7 +188,7 @@ const NetworkEditor = (props: Props) => {
           newNode = createDenseFromBase(getId(), position.x, position.y);
           break;
         case "dropout":
-          //newNode = createDropoutFromBase(getId(), position.x, position.y);
+          newNode = createDropout(getId(), position.x, position.y);
           break;
         default:
           return;
