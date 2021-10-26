@@ -1,6 +1,6 @@
 import { BaseNodeProps } from "./BaseNode";
 import MenuBaseNode from "./MenuBaseNode";
-import { DropoutLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
+import { Dropout, DropoutLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
 import {
   DataBaseType,
   layerOutput,
@@ -9,6 +9,8 @@ import {
 import { NodeProps } from "react-flow-renderer";
 import { dropout } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
+import { SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { IArgType } from "../../../../../../adapters/INNLib";
 
 
 const DropoutNode = (props: NodeProps<DataBaseType>) => {
@@ -17,14 +19,23 @@ const DropoutNode = (props: NodeProps<DataBaseType>) => {
     seed: undefined,
   };
 
+  const CategoryArg: IArgType = {
+    type: "category",
+  };
+
+  const NumberArg: IArgType = {
+    type: "number",
+  };
+
   const menu = {
-    options: OptionTypes.category,
-    rate: OptionTypes.number, 
-    seed: OptionTypes.text,
+    elements: [
+      { name: "options", type: CategoryArg },
+      { name: "rate", type: NumberArg },
+    ],
   };
 
   return (
-    <MenuBaseNode<DropoutLayerArgs>
+    <MenuBaseNode<Dropout, DropoutLayerArgs, SymbolicTensor>
       {...props}
       initialArgs={initialArgs}
       menu={menu}

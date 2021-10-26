@@ -19,13 +19,16 @@
     "react-scripts": "latest",
     "react-split": "^2.0.13",
     "react-splitter-layout": "^4.0.0",
+    "ts-transformer-keys": "^0.4.3",
     "typescript": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "styleguide": "styleguidist server",
+    "styleguide:build": "styleguidist build"
   },
   "browserslist": {
     "production": [
@@ -40,7 +43,8 @@
     ]
   },
   "devDependencies": {
-    "@types/react-splitter-layout": "^3.0.2"
+    "@types/react-splitter-layout": "^3.0.2",
+    "react-styleguidist": "^11.1.7"
   },
   "eslintConfig": {
     "extends": [

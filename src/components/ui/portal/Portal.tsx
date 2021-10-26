@@ -1,13 +1,28 @@
-import React, { ReactNode, useEffect } from "react";
+// REACT
+import { ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
 
-interface Props{
+/**
+ * 
+ */
+export interface PortalProps{
     children?: ReactNode,
+    /** id of destination-element   */
     destination: string,
+    /** unique id of this portal */
     id: string;
 }
 
-const Portal = (props: Props) => {
+/**
+ * Creates a portal to the given destination.
+ * Elements placed inside the portal will be placed at the endpoint in the DOM-tree.
+ * 
+ * To use this portal, a HTMLElement with the given destination 
+ * as id must exist in the document. 
+ * @param props 
+ * @returns 
+ */
+const Portal = (props: PortalProps) => {
     const mount = document.getElementById(props.destination);
     const el = document.createElement('div');
 
@@ -18,5 +33,4 @@ const Portal = (props: Props) => {
 
     return createPortal(props.children, el, `${props.id}-portal`);
 }
-
 export default Portal;

@@ -1,5 +1,4 @@
 import Split from "react-split";
-import './ThreeColLayout.css';
 import { styled } from "@mui/system";
 
 const StyledSplit = styled(Split)(({ theme }) => ({
@@ -14,14 +13,34 @@ const StyledSplit = styled(Split)(({ theme }) => ({
   }
 }));
 
-interface Props {
-  children?: React.ReactNode;
+/**
+ * 
+ */
+export interface ThreeColLayoutProps {
+  /** Left sidebar. */
   leftContent: JSX.Element;
+  /** Content in the center. */
   mainContent: JSX.Element;
+  /** Ride sidebar.  */
   rightContent: JSX.Element;
 }
 
-const ThreeColLayout = (props: Props) => {
+/**
+ * Three column layout with movable splits.
+ * 
+ * Standard size-distribution: 
+ * - left: 20% 
+ * - center: 57%
+ * - right: 23%
+ * 
+ * 
+ * **TODO:** 
+ * make minSize, maxSize adjustable
+ * 
+ * @param props 
+ * @returns 
+ */
+const ThreeColLayout = (props: ThreeColLayoutProps) => {
   return (
     <StyledSplit
       sizes={[20, 57, 23]}

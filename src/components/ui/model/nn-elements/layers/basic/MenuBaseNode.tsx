@@ -6,9 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Node } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer/dist/types";
 
-// TFJS
-import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-
 // MUI
 import { Divider, Typography } from "@mui/material";
 
@@ -24,14 +21,16 @@ import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
 import SelectInput from "../../../layer-info/SelectInput";
 import CheckBoxInput from "../../../layer-info/CheckBoxInput";
+import { ILayerFactory, ILayerMenu, ILayerOutput, ILayerPlaceholder, INNLayer } from "../../../../../../adapters/INNLib";
 
 /**
  *
  */
-interface MenuBaseProps<T> extends NodeProps<DataBaseType> {
-  initialArgs: T;
-  menu: any;
-  tfjsLayer: (args: T) => any; // maybe second generic type
+interface MenuBaseProps<Layer extends INNLayer, LayerArgs>
+  extends NodeProps<DataBaseType> {
+  initialArgs: LayerArgs;
+  menu: ILayerMenu;
+  tfjsLayer: ILayerFactory<Layer, LayerArgs>; // maybe second generic type
   layerTypeName: string;
 }
 
@@ -40,12 +39,14 @@ interface MenuBaseProps<T> extends NodeProps<DataBaseType> {
  * @param props
  * @returns
  */
-const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
+const MenuBaseNode = <Layer extends INNLayer, LayerArgs, PlaceholderType extends ILayerPlaceholder>(
+  props: MenuBaseProps<Layer, LayerArgs>
+) => {
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
 
   // state for layer args
-  const [layerArgs, setLayerArgs] = useState<T>(props.initialArgs);
+  const [layerArgs, setLayerArgs] = useState<LayerArgs>(props.initialArgs);
   const menu = props.menu;
 
   useEffect(() => {
@@ -64,21 +65,21 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
   }, [props.data]);
 
   /**
-   *
+   * Gets passed to BaseNode 
    * @param input
    * @returns
    */
-  const layerFunction = (input: layerOutput | undefined) => {
+  const layerFunction = (input: ILayerOutput<PlaceholderType> | undefined) => {
     if (input === undefined) return input;
 
     const ret = props
       .tfjsLayer(layerArgs)
-      .apply(input.layerOutput) as SymbolicTensor;
+      .apply(input.layerOutput) as ILayerPlaceholder;
 
     console.log("output layer dense: ", ret, ret.shape);
     setOutputShape(ret.shape.slice(1).join("x"));
 
-    return { layerOutput: ret, modelInput: input.modelInput } as layerOutput;
+    return { layerOutput: ret, modelInput: input.modelInput } as ILayerOutput<PlaceholderType>;
   };
 
   /*++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -278,23 +279,23 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
   const menuJSX = useMemo(() => {
     return (
       <ArgsMenu>
-        {Object.entries(menu).map(([key, val]) => {
-          switch (val) {
-            case OptionTypes.category:
-              return createCategory(key, `${key}-${props.id}`);
-            case OptionTypes.text:
-              return createText(key, `${key}-${props.id}`);
-            case OptionTypes.number:
-              return createNumber(key, `${key}-${props.id}`);
-            case OptionTypes.boolean:
-              return createCheckbox(key, `${key}-${props.id}`);
-            case OptionTypes.activation:
+        {menu.elements.map(val => {
+          switch (val.type.type) {
+            case 'category':
+              return createCategory(val.name, `${val.name}-${props.id}`);
+            case 'string':
+              return createText(val.name, `${val.name}-${props.id}`);
+            case 'number':
+              return createNumber(val.name, `${val.name}-${props.id}`);
+            case 'boolean':
+              return createCheckbox(val.name, `${val.name}-${props.id}`);
+            case 'select':
               return createSelect(
-                key,
-                Object.keys(ACTIVATIONS),
-                `${key}-${props.id}`
+                val.name,
+                val.type.options,
+                `${val.name}-${props.id}`
               );
-            case OptionTypes.constraint:
+            /*case OptionTypes.constraint:
               return createSelect(
                 key,
                 Object.keys(CONSTRAINTS),
@@ -311,7 +312,7 @@ const MenuBaseNode = <T,>(props: MenuBaseProps<T>) => {
                 key,
                 Object.keys(REGULARIZERS),
                 `${key}-${props.id}`
-              );
+              );*/
           }
         })}
       </ArgsMenu>

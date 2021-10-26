@@ -11,11 +11,6 @@ import { Handle, useStoreState } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
 
-// TFJS
-import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
-import { DenseLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
-
 // MUI
 import { styled } from "@mui/system";
 import { blue, green, grey } from "@mui/material/colors";
@@ -29,6 +24,7 @@ import { Alert, Grid } from "@mui/material";
 import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
+import { ILayerFunction } from "../../../../../../adapters/INNLib";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -61,7 +57,7 @@ const NodeTopDiv = styled("div")(({ theme }) => ({
 export interface BaseNodeProps extends NodeProps<DataBaseType> {
   backgroundColor?: string;
   layerTypeName: string;
-  layerFunction: (input: layerOutput | undefined) => layerOutput | undefined;
+  layerFunction: ILayerFunction<any>;
   menu: ReactNode;
   children?: ReactNode;
 }
@@ -69,9 +65,6 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
 const BaseNode = (props: BaseNodeProps) => {
   const { data, id, isConnectable } = props;
   const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
-
-  const [inputValue, setInputValue] = useState(props.data.inputValue);
-  const [outputValue, setOutputValue] = useState(props.data.outputValue);
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =

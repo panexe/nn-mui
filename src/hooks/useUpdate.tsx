@@ -1,19 +1,22 @@
-import { useContext, useEffect } from "react";
-import {
-  Elements,
-  getOutgoers,
-  Node,
-  useStore,
-  useStoreActions,
-  useStoreState,
-} from "react-flow-renderer";
+// REACT
+import { useEffect } from "react";
+
+// REACT-FLOW
+import { Elements } from "react-flow-renderer";
+import { getOutgoers } from "react-flow-renderer";
+import { Node } from "react-flow-renderer";
+import { useStoreActions } from "react-flow-renderer";
+import { useStoreState } from "react-flow-renderer";
+
+// NN-UI
 import { DataBaseType } from "../types";
+
 
 export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
   const setElements = useStoreActions((actions) => actions.setElements);
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
-  const elements: Elements = [...nodes,...edges];
+  const elements: Elements = [...nodes, ...edges];
 
   useEffect(() => {
     const currentElement = nodes.find((el) => el.id === id);
@@ -22,15 +25,18 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
     if (
       currentElement === undefined ||
       currentElement === null ||
-      currentElement.data.inputValue === null 
+      currentElement.data.inputValue === null
     ) {
       return;
     }
     // update after deletion
-    if(currentElement.data.inputValue === undefined && !currentElement?.data.changed){
+    if (
+      currentElement.data.inputValue === undefined &&
+      !currentElement?.data.changed
+    ) {
       return;
     }
-    // update after argument change inside of 
+    // update after argument change inside of
     if (currentElement.data.inputValue === data.inputValue) {
       //console.log("currentElement: ", currentElement);
       // no updates necessary if the input hasnt changed
@@ -54,7 +60,7 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
     // get outgoing connection to update their input values
     const outGoers = getOutgoers(currentElement, elements);
 
-    // update nodes 
+    // update nodes
     setElements(
       elements.map((el) => {
         // update output value of this node

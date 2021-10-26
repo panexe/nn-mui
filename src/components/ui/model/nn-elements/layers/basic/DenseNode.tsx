@@ -1,6 +1,9 @@
 import { BaseNodeProps } from "./BaseNode";
 import MenuBaseNode from "./MenuBaseNode";
-import { DenseLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
+import {
+  Dense,
+  DenseLayerArgs,
+} from "@tensorflow/tfjs-layers/dist/layers/core";
 import {
   DataBaseType,
   layerOutput,
@@ -9,6 +12,10 @@ import {
 import { NodeProps } from "react-flow-renderer";
 import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
+import { SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { IArgType } from "../../../../../../adapters/INNLib";
+import { Category } from "@mui/icons-material";
+import { keys } from 'ts-transformer-keys';
 
 const DenseNode = (props: NodeProps<DataBaseType>) => {
   const initialArgs: DenseLayerArgs = {
@@ -25,7 +32,35 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     trainable: true,
   };
 
+  type Complete<T> = {
+    [P in keyof Required<T>]: Pick<T, P> extends Required<Pick<T, P>>
+      ? T[P]
+      : T[P] | undefined;
+  };
+  type f =  Complete<DenseLayerArgs>;
+
+  type K1 = keyof Complete<DenseLayerArgs>;
+  
+  //const argTest: Complete<DenseLayerArgs> = { units: 1 };
+  console.log("argTest:");
+  console.log(K1);
+
+  const CategoryArg: IArgType = {
+    type: "category",
+  };
+
+  const NumberArg: IArgType = {
+    type: "number",
+  };
+
   const menu = {
+    elements: [
+      { name: "options", type: CategoryArg },
+      { name: "units", type: NumberArg },
+    ],
+  };
+
+  /*const menu = {
     options: OptionTypes.category,
     units: OptionTypes.number,
     name: OptionTypes.text,
@@ -39,10 +74,10 @@ const DenseNode = (props: NodeProps<DataBaseType>) => {
     kernelRegularizer: OptionTypes.regularizer,
     biasRegularizer: OptionTypes.regularizer,
     trainable: OptionTypes.boolean,
-  };
+  }; */
 
   return (
-    <MenuBaseNode<DenseLayerArgs>
+    <MenuBaseNode<Dense, DenseLayerArgs, SymbolicTensor>
       {...props}
       initialArgs={initialArgs}
       menu={menu}
