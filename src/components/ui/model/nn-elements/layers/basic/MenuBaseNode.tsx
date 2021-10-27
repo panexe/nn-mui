@@ -21,16 +21,18 @@ import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
 import SelectInput from "../../../layer-info/SelectInput";
 import CheckBoxInput from "../../../layer-info/CheckBoxInput";
-import { ILayerFactory, ILayerMenu, ILayerOutput, ILayerPlaceholder, INNLayer } from "../../../../../../adapters/INNLib";
+import {ILayer, ILayerFactory, ILayerMenu, ILayerOutput, ILayerPlaceholder, INNLayer, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
 
 /**
  *
  */
-interface MenuBaseProps<Layer extends INNLayer, LayerArgs>
+interface MenuBaseProps
   extends NodeProps<DataBaseType> {
-  initialArgs: LayerArgs;
-  menu: ILayerMenu;
-  tfjsLayer: ILayerFactory<Layer, LayerArgs>; // maybe second generic type
+  nnLib: INNLib<any, any, any>;
+  layer: ILayer<any,any>;
+  //initialArgs: LayerArgs;
+  //menu: ILayerMenu;
+  //tfjsLayer: ILayerFactory<Layer, LayerArgs>; // maybe second generic type
   layerTypeName: string;
 }
 
@@ -39,15 +41,22 @@ interface MenuBaseProps<Layer extends INNLayer, LayerArgs>
  * @param props
  * @returns
  */
-const MenuBaseNode = <Layer extends INNLayer, LayerArgs, PlaceholderType extends ILayerPlaceholder>(
-  props: MenuBaseProps<Layer, LayerArgs>
+const MenuBaseNode = (
+ {nnLib, layer, layerTypeName, ...props}: MenuBaseProps
 ) => {
+
+  //type LayerType = ExtractLayerType<NNLib>;
+  //type PlaceholderType = ExtractPlaceholderType<NNLib>;
+
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
 
   // state for layer args
-  const [layerArgs, setLayerArgs] = useState<LayerArgs>(props.initialArgs);
-  const menu = props.menu;
+  const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(layer.initialArgs);
+  const menu = layer.menu;
+
+  //console.log("layerArgs: ", layerArgs); 
+  
 
   useEffect(() => {
     props.data.changed = true;
@@ -69,17 +78,19 @@ const MenuBaseNode = <Layer extends INNLayer, LayerArgs, PlaceholderType extends
    * @param input
    * @returns
    */
-  const layerFunction = (input: ILayerOutput<PlaceholderType> | undefined) => {
+  const layerFunction = (input: ILayerOutput<any> | undefined) => {
     if (input === undefined) return input;
+    //console.log("in layerFunction: ",input);
 
-    const ret = props
-      .tfjsLayer(layerArgs)
-      .apply(input.layerOutput) as ILayerPlaceholder;
+    const newLayer = layer.create(layerArgs);
 
-    console.log("output layer dense: ", ret, ret.shape);
-    setOutputShape(ret.shape.slice(1).join("x"));
+    //console.log("new layer: ", newLayer);
+    const ret = nnLib.connect(input, newLayer);
 
-    return { layerOutput: ret, modelInput: input.modelInput } as ILayerOutput<PlaceholderType>;
+    //console.log("output layer dense: ", ret, nnLib.getOutputShape(newLayer));
+    setOutputShape(nnLib.getOutputShape(newLayer));
+
+    return ret as ILayerOutput<any>;
   };
 
   /*++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -322,9 +333,10 @@ const MenuBaseNode = <Layer extends INNLayer, LayerArgs, PlaceholderType extends
   return (
     <BaseNode
       {...props}
+      lib={nnLib}
       menu={menuJSX}
       layerFunction={layerFunction}
-      layerTypeName={props.layerTypeName}
+      layerTypeName={layerTypeName}
     >
       {}
     </BaseNode>
@@ -347,6 +359,7 @@ export const createMenuBaseNode = (
       changed: true,
       error: "",
       layerName: "dense",
+      lib: new TensorflowAdapter(),
     },
   }; //as Node<DataBaseType>;
 };

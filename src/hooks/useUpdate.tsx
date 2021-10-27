@@ -54,6 +54,7 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
       outputValue = fn(currentElement.data.inputValue);
     } catch (e) {
       error = (e as Error).message;
+      console.log("call stack: ", (e as Error).stack?.toString());
       connectable = false;
     }
 

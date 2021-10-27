@@ -24,7 +24,7 @@ import { Alert, Grid } from "@mui/material";
 import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
-import { ILayerFunction } from "../../../../../../adapters/INNLib";
+import { ILayerFunction, INNLib } from "../../../../../../adapters/INNLib";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -60,6 +60,7 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
   layerFunction: ILayerFunction<any>;
   menu: ReactNode;
   children?: ReactNode;
+  lib: INNLib<any, any, any>;
 }
 
 const BaseNode = (props: BaseNodeProps) => {

@@ -1,11 +1,13 @@
 import { SymbolicTensor } from "@tensorflow/tfjs-layers";
+import { ILayerPlaceholder, INNLib } from "../adapters/INNLib";
 
 export interface DataBaseType {
-  inputValue: SymbolicTensor | undefined; // should also include SymbolicTensor[]
-  outputValue: SymbolicTensor | undefined;
+  inputValue: ILayerPlaceholder | undefined; // should also include SymbolicTensor[]
+  outputValue: ILayerPlaceholder | undefined;
   changed: boolean;
   error: string;
   layerName?: string;
+  lib: INNLib<any, any, any>;
 }
 
 export type layerOutput = { layerOutput: SymbolicTensor, modelInput: SymbolicTensor | SymbolicTensor [] };

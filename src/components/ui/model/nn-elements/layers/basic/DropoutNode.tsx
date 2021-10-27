@@ -10,36 +10,16 @@ import { NodeProps } from "react-flow-renderer";
 import { dropout } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
 import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { IArgType } from "../../../../../../adapters/INNLib";
+import { IArgType, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
 
 
 const DropoutNode = (props: NodeProps<DataBaseType>) => {
-  const initialArgs: DropoutLayerArgs = {
-    rate: 0.5, 
-    seed: undefined,
-  };
-
-  const CategoryArg: IArgType = {
-    type: "category",
-  };
-
-  const NumberArg: IArgType = {
-    type: "number",
-  };
-
-  const menu = {
-    elements: [
-      { name: "options", type: CategoryArg },
-      { name: "rate", type: NumberArg },
-    ],
-  };
 
   return (
-    <MenuBaseNode<Dropout, DropoutLayerArgs, SymbolicTensor>
+    <MenuBaseNode
       {...props}
-      initialArgs={initialArgs}
-      menu={menu}
-      tfjsLayer={dropout}
+      nnLib={props.data.lib}
+      layer={props.data.lib.dropout}
       layerTypeName="dropout"
     />
   );
@@ -63,6 +43,7 @@ export const createDropout = (
         changed: true,
         error: "",
         layerName: "dropout",
+        lib: new TensorflowAdapter(),
       },
     }; //as Node<DataBaseType>;
   };

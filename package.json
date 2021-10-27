@@ -19,6 +19,7 @@
     "react-scripts": "latest",
     "react-split": "^2.0.13",
     "react-splitter-layout": "^4.0.0",
+    "ts-file-parser": "^0.0.21",
     "ts-transformer-keys": "^0.4.3",
     "typescript": "latest"
   },
