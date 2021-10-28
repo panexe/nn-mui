@@ -1,41 +1,10 @@
 // MUI
-import { styled } from "@mui/system";
 import { Select } from "@mui/material";
-import { SelectProps } from "@mui/material";
-import { Box } from "@mui/material";
 import { InputLabel } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { Grid } from "@mui/material";
 import React, { Ref } from "react";
-
-/*--------------------------------------------------------*/
-/*                         CSS                            */
-/*--------------------------------------------------------*/
-const StyledSelect = styled((props: SelectProps<string>) => (
-  <Select {...props} />
-))(({ theme }) => ({
-  margin: theme.spacing(1),
-  backgroundColor: theme.palette.action.disabledBackground,
-  borderRadius: 0,
-  fontSize: "18px",
-
-  "& label.Mui-focused": {
-    color: "pink",
-  },
-
-  "& .MuiFilledInput-root": {
-    "& fieldset": {
-      border: "none",
-    },
-    "&:hover fieldset": {
-      borderColor: "yellow",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary,
-    },
-  },
-}));
 
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
@@ -49,7 +18,7 @@ interface Props {
   onFocus?: React.FocusEventHandler;
   onBlur?: React.FocusEventHandler;
   open?: boolean;
-  onOpen? : (event: React.SyntheticEvent<Element, Event>) => void;
+  onOpen?: (event: React.SyntheticEvent<Element, Event>) => void;
   onClose?: (event: React.SyntheticEvent<Element, Event>) => void;
 }
 

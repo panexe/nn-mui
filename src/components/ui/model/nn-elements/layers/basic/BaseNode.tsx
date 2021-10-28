@@ -4,7 +4,7 @@
  */
 
 // REACT
-import { memo, ReactNode, useState } from "react";
+import { memo, ReactNode } from "react";
 
 // REACT FLOW
 import { Handle, useStoreState } from "react-flow-renderer";
@@ -17,9 +17,8 @@ import { blue, green, grey } from "@mui/material/colors";
 import theme from "../../../../../../theme";
 
 // NNUI
-import { useOnConnect } from "../../../../../../hooks/useOnConnect";
 import { useUpdate } from "../../../../../../hooks/useUpdate";
-import { DataBaseType, layerOutput, Portals } from "../../../../../../types";
+import { DataBaseType, Portals } from "../../../../../../types";
 import { Alert, Grid } from "@mui/material";
 import Portal from "../../../../portal/Portal";
 
@@ -45,11 +44,6 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-const NodeTopDiv = styled("div")(({ theme }) => ({
-  position: "relative",
-  display: "inline-block",
-}));
-
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
@@ -60,12 +54,16 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
   layerFunction: ILayerFunction<any>;
   menu: ReactNode;
   children?: ReactNode;
-  lib: INNLib<any, any, any>;
+  lib: INNLib;
 }
 
+/**
+ * 
+ * @param props 
+ * @returns 
+ */
 const BaseNode = (props: BaseNodeProps) => {
   const { data, id, isConnectable } = props;
-  const { onSourceConnect, onTargetConnect } = useOnConnect(data, id);
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
@@ -101,9 +99,9 @@ const BaseNode = (props: BaseNodeProps) => {
 
             //onConnect={onSourceConnect}
           />
-          <div >
+          <div>
             <p>{props.layerTypeName}</p>
-            {props.children}
+            <p>Dim: {props.children}</p>
           </div>
 
           <Handle
