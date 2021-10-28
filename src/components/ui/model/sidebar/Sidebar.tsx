@@ -1,5 +1,5 @@
 import SidebarCategory from "./SidebarCategory";
-import { MenuItem, MenuList } from "@mui/material";
+import { MenuItem } from "@mui/material";
 import { styled } from "@mui/system";
 import { nodesMenu } from "../nn-elements/layers";
 import { DragEvent } from "react";

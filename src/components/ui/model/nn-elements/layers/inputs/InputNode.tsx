@@ -5,7 +5,6 @@
 
 // REACT
 import { memo } from "react";
-import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 
@@ -19,20 +18,19 @@ import {
 import { Handle } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
+import { Node } from "react-flow-renderer";
 
 // MUI
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import { purple } from "@mui/material/colors";
 
-// TFJS
-import * as tf from "@tensorflow/tfjs";
-import { DataType } from "@tensorflow/tfjs-core";
-import { Shape } from "@tensorflow/tfjs-layers";
-
 // NNUI
-import { useOnConnect } from "../../../../../../hooks/useOnConnect";
-import { useOnDisconnect } from "../../../../../../hooks/useOnDisconnect";
+import { DataBaseType, Portals } from "../../../../../../types";
+import { TensorflowAdapter } from "../../../../../../adapters/INNLib";
+import Portal from "../../../../portal/Portal";
+
+
 
 /** this basicly is a copy of InputConfig from tfjs
  *  but we want import their type directly
@@ -42,13 +40,7 @@ import { useOnDisconnect } from "../../../../../../hooks/useOnDisconnect";
  *
  *
  */
-export interface InputArgs {
-  shape?: Shape;
-  batchShape?: Shape;
-  name?: string;
-  dtype?: DataType;
-  sparse?: boolean;
-}
+
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -59,9 +51,9 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   backgroundColor: purple[800],
   textAlign: "center",
   minWidth: "240px",
-  maxWidth: '240px',
-  minHeight: '80px', 
-  maxHeight: '80px',
+  maxWidth: "240px",
+  minHeight: "80px",
+  maxHeight: "80px",
 
   ".react-flow__handle": {
     background: theme.palette.text.primary,
@@ -77,26 +69,29 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
+const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
-  //useStoreActions((actions) => actions.)
 
+  const selectedElements = useStoreState((state) => state.selectedElements);
+  const selected =
+    selectedElements !== null &&
+    selectedElements.find((el) => el.id === id);
 
-  //const { onSourceConnect } = useOnConnect(data, id);
-  const { onSourceDisconnect } = useOnDisconnect(data, id);
   const [counter, setCounter] = useState(0);
-  const [args, setArgs] = useState<InputArgs>({ shape: [32], name: "input" });
+  const [args, setArgs] = useState<typeof data.lib.input.initialArgs>(
+    data.lib.input.initialArgs
+  );
+
   const labelText = "Input";
 
-  useEffect(() => {
-    data.args = args;
-  }, [args]);
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setArgs({ shape: [parseInt(event.target.value)] });
+    setArgs((old) => {
+      return { ...old, shape: [parseInt(event.target.value)] };
+    });
     setCounter(parseInt(event.target.value));
   };
 
@@ -105,9 +100,9 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     const currentElement = nodes.find((el) => el.id === id);
     if (currentElement === undefined) return; // not elegant, refactor!
     const outGoers = getOutgoers(currentElement, elements);
-    const layer = tf.input(args);
-    const outputValue = { layerOutput: layer, modelInput: layer };
 
+    const layer = data.lib.input.create(args);
+    const outputValue = { layerOutput: layer, modelInput: layer };
 
     setElements(
       elements.map((el) => {
@@ -131,8 +126,13 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
     );
   }, [args]);
 
-
   return (
+    <>
+    {selected && (
+      <Portal destination={Portals.layerInfo} id={id}>
+        {"Test"}
+      </Portal>
+    )}
     <NodeWrapper>
       <StyledTypography>{labelText}</StyledTypography>
       <input type="number" value={counter} onChange={onInputChange} />
@@ -144,7 +144,29 @@ const InputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
         //onConnect={onSourceConnect}
       />
     </NodeWrapper>
+    </>
   );
+};
+
+export const createInput = (
+  id: string,
+  posX: number,
+  posY: number
+): Node<DataBaseType> => {
+  return {
+    id: id,
+    type: "inputNode",
+    position: { x: posX, y: posY },
+    //dragHandle: ".drag-handle",
+    data: {
+      inputValue: undefined,
+      outputValue: undefined,
+      changed: true,
+      error: "",
+      layerName: "input",
+      lib: new TensorflowAdapter(),
+    },
+  }; //as Node<DataBaseType>;
 };
 
 export default memo(InputNode);

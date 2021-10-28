@@ -1,17 +1,14 @@
 // TFJS
-import { SymbolicTensor } from "@tensorflow/tfjs";
-import { input } from "@tensorflow/tfjs-layers";
-import { dense, Layer } from "@tensorflow/tfjs-layers/dist/exports_layers";
-import { model } from "@tensorflow/tfjs-layers";
-import { LayersModel } from "@tensorflow/tfjs-layers";
+import { LayersModel, SymbolicTensor } from "@tensorflow/tfjs";
+import { Layer } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import "@tensorflow/tfjs-backend-cpu";
 import {
   DenseLayerArgs,
   DropoutLayerArgs,
-  Dense,
 } from "@tensorflow/tfjs-layers/dist/layers/core";
 import * as tf from "@tensorflow/tfjs";
 import { LayerArgs } from "@tensorflow/tfjs-layers/dist/engine/topology";
+import {InputConfig} from '@tensorflow/tfjs-layers/dist/engine/input_layer';
 
 /**
  * Interface that describes a generic arg type.
@@ -32,6 +29,9 @@ export interface ILayerMenu {
 // https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
 //type ExtractArgType<Layer> = Layer extends INNLayer<infer T> ? T : never;
 //export type ExtractLayerType<N> = N extends INNLib<infer T, any> ? T : never;
+
+export type ExtractModelType<N> = N extends INNLib<any, any,any, infer T> ? T : never;
+
 
 export interface INNLayer {}
 
@@ -69,9 +69,10 @@ export interface ILayerFunction<T> {
  * Interface for adapter pattern
  */
 export interface INNLib<
-  LayerType extends INNLayer,
-  LayerArgs extends INNLayerArgs,
-  LayerPlaceholder extends ILayerPlaceholder
+  LayerType extends INNLayer = any,
+  LayerArgs extends INNLayerArgs = any,
+  LayerPlaceholder extends ILayerPlaceholder = any, 
+  ModelType = any
 > {
   getOutputShape(layer: LayerType): string;
 
@@ -85,6 +86,11 @@ export interface INNLib<
     target: any
   ): ILayerOutput<ILayerPlaceholder>;
 
+  createModel(input: LayerPlaceholder | LayerPlaceholder[], output: LayerPlaceholder): ModelType;
+
+  // not totally accurate because tf.input returns a symbolic tensor
+  // sould be resolved another way
+  input: ILayer<any, any>;
   dense: ILayer<any, any>;
   dropout: ILayer<any, any>;
 }
@@ -93,7 +99,7 @@ export interface INNLib<
  * Tensorflow Adapter
  */
 export class TensorflowAdapter
-  implements INNLib<Layer, LayerArgs, SymbolicTensor>
+  implements INNLib<Layer, LayerArgs, SymbolicTensor, LayersModel>
 {
   categoryType: IArgType = { type: "category" };
   numberType: IArgType = { type: "number" };
@@ -146,6 +152,23 @@ export class TensorflowAdapter
       layerOutput: target.apply(source.layerOutput) as SymbolicTensor,
       modelInput: source.modelInput,
     };
+  };
+
+  createModel = (input: tf.SymbolicTensor | [], output: tf.SymbolicTensor) => {
+    return tf.model({ inputs: input, outputs: output });
+  }
+
+  input = {
+    menu: {
+      elements: [{ name: "options", type: this.categoryType }],
+    },
+    initialArgs: {
+      shape: [32],
+      name: undefined,
+    },
+    create: (args: InputConfig) => {
+      return tf.layers.input(args);
+    },
   };
 
   // dense layer

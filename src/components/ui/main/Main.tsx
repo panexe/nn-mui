@@ -3,6 +3,7 @@ import AppContext from "../../../context/app-context";
 import { Box } from "@mui/system";
 import { styled } from "@mui/styles";
 import Model from "../model/Model";
+import Dataset from "../dataset/Dataset";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   paddingTop: "56px",
@@ -17,7 +18,7 @@ const Main = () => {
 
   switch (appContext.tabIndex) {
     case 0:
-      selectedTab = <p style={{ bottom: "0" }}>Dataset</p>;
+      selectedTab = <Dataset />;
       break;
     case 1:
       selectedTab = (

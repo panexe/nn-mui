@@ -1,26 +1,11 @@
-import { BaseNodeProps } from "./BaseNode";
 import MenuBaseNode from "./MenuBaseNode";
-import {
-  Dense,
-  DenseLayerArgs,
-} from "@tensorflow/tfjs-layers/dist/layers/core";
-import {
-  DataBaseType,
-  layerOutput,
-  OptionTypes,
-} from "../../../../../../types";
+
+import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
-import { dense } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
-import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { IArgType, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
-import { Category, LibraryAdd } from "@mui/icons-material";
-import { keys } from 'ts-transformer-keys';
-
-
+import { INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
 
 const DenseNode = (props: NodeProps<DataBaseType>) => {
-  
   return (
     <MenuBaseNode
       {...props}
@@ -35,7 +20,8 @@ export default DenseNode;
 export const createDense = (
   id: string,
   posX: number,
-  posY: number
+  posY: number, 
+  lib: INNLib,
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -48,7 +34,7 @@ export const createDense = (
       changed: true,
       error: "",
       layerName: "dense",
-      lib: new TensorflowAdapter(),
+      lib: lib,
     },
   }; //as Node<DataBaseType>;
 };

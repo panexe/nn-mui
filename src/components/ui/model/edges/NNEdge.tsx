@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
 import { ArrowHeadType, Edge, EdgeProps } from "react-flow-renderer";
 import { getBezierPath } from "react-flow-renderer";
 import { getMarkerEnd } from "react-flow-renderer";
-import { useCloseConnect } from "../../../../hooks/useCloseConnect";
 import { Connection } from "react-flow-renderer";
 
 export const createNNEdge = (c : Connection) => {
@@ -37,11 +35,8 @@ const NNEdge: React.FC<EdgeProps> = ({
     targetY,
     targetPosition,
   });
-  const [closeEnough, setCloseEnough] = useState(false);
 
   
-  //useCloseConnect(id, true, { x: sourceX, y: sourceY });
-
   const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
   return (
     <>

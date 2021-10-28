@@ -1,25 +1,15 @@
 // REACT
-import React, {
-  MouseEvent,
-  ReactNode,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
-import { useContext } from "react";
+import React, { MouseEvent, ReactNode, useRef, useState } from "react";
 import { DragEvent } from "react";
 
 // REACT FLOW
 import ReactFlow, {
   BackgroundVariant,
   FlowElement,
-  getConnectedEdges,
-  getIncomers,
   isEdge,
   isNode,
   removeElements,
   useStoreState,
-  XYPosition,
 } from "react-flow-renderer";
 import { addEdge } from "react-flow-renderer";
 import { Background } from "react-flow-renderer";
@@ -35,7 +25,6 @@ import { useStoreActions } from "react-flow-renderer";
 // NNUI
 import ContextMenu from "../../context-menu/ContextMenu";
 import ToolSelectBar from "./ToolSelectBar";
-import ModelContext from "../../../../context/model-context";
 import { nodeTypes } from "../nn-elements/layers";
 
 // MUI
@@ -47,13 +36,11 @@ import "@tensorflow/tfjs-backend-cpu";
 
 //import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
 import { edgeTypes } from "../edges";
-import NNEdge, { createNNEdge } from "../edges/NNEdge";
-import { updateNodePos } from "react-flow-renderer/dist/store/actions";
 import * as constants from "../../../../constants/constants";
 import { initialElements } from "./initialElements";
-import { convertToObject } from "typescript";
 import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 import { createDense } from "../nn-elements/layers/basic/DenseNode";
+import { TensorflowAdapter } from "../../../../adapters/INNLib";
 
 // parameters for react flow
 // should be in a global settings context
@@ -68,7 +55,6 @@ const getId = (): ElementId => `node_${id++}`;
 
 interface Props {
   children?: ReactNode;
-  elements: Elements;
 }
 
 /*--------------------------------------------------------*/
@@ -76,7 +62,7 @@ interface Props {
 /*--------------------------------------------------------*/
 const NetworkEditor = (props: Props) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<OnLoadParams>();
-  const [elementsState, setElementsState] = useState<Elements>(initialElements);
+  const [elementsState] = useState<Elements>(initialElements);
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
@@ -107,16 +93,16 @@ const NetworkEditor = (props: Props) => {
     if (!isEdge(params) && params.source !== null && params.target !== null) {
       newEdge = {
         id: `e${params.source}-${params.target}`,
-        type: 'smoothstep', 
-        source: params.source, 
-        target: params.target, 
-        style: {strokeWidth: 2},
+        type: "smoothstep",
+        source: params.source,
+        target: params.target,
+        style: { strokeWidth: 2 },
       };
     }
 
     setElements(
       addEdge(newEdge, elements).map((el) => {
-        if (el.id == params.target) {
+        if (el.id === params.target) {
           el.data = {
             ...el.data,
             inputValue: sourceNode?.data.outputValue,
@@ -142,7 +128,7 @@ const NetworkEditor = (props: Props) => {
       removeElements(
         elementsToRemove,
         elements.map((el) => {
-          if (removeEdges.find((e) => e.target == el.id)) {
+          if (removeEdges.find((e) => e.target === el.id)) {
             el.data = {
               ...el.data,
               inputValue: undefined,
@@ -186,38 +172,16 @@ const NetworkEditor = (props: Props) => {
       let newNode: Node = { id: "uninit", position: { x: 0, y: 0 } };
       switch (type) {
         case "dense":
-          newNode = createDense(getId(), position.x, position.y);
+          newNode = createDense(getId(), position.x, position.y, new TensorflowAdapter());
           break;
         case "dropout":
-          newNode = createDropout(getId(), position.x, position.y);
+          newNode = createDropout(getId(), position.x, position.y, new TensorflowAdapter());
           break;
         default:
           return;
       }
       setElements(elements.concat(newNode));
     }
-  };
-
-  const onSelectionDragStop = (event: React.MouseEvent, elements: Node[]) => {
-    console.log("selection drag stop: ", elements);
-    const newElement = elements.map((el) => {
-      const newX =
-        Math.ceil(el.position!.x / constants.GRID_SNAP_SIZE) *
-        constants.GRID_SNAP_SIZE;
-      const newY =
-        Math.ceil(el.position!.y / constants.GRID_SNAP_SIZE) *
-        constants.GRID_SNAP_SIZE;
-      console.log("new x/y", newX, newY);
-      setElements(
-        elements.map((e) => {
-          if (e.id === el.id) {
-            e = { ...el, position: { x: newX, y: newY } };
-          }
-          return e;
-        })
-      );
-    });
-    //setSelectedElements(elements);
   };
 
   return (

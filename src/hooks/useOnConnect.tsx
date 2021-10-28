@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { Elements, useStoreActions, useStoreState } from "react-flow-renderer";
 
 export const useOnConnect = (data: any, id: string) => {

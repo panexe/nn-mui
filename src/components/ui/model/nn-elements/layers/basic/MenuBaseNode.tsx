@@ -10,25 +10,22 @@ import { NodeProps } from "react-flow-renderer/dist/types";
 import { Divider, Typography } from "@mui/material";
 
 // NNUI
-import { ACTIVATIONS, INITIALIZERS, CONSTRAINTS, REGULARIZERS } from "../..";
 import {
   DataBaseType,
-  layerOutput,
-  OptionTypes,
 } from "../../../../../../types";
 import BaseNode from "./BaseNode";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
 import SelectInput from "../../../layer-info/SelectInput";
 import CheckBoxInput from "../../../layer-info/CheckBoxInput";
-import {ILayer, ILayerFactory, ILayerMenu, ILayerOutput, ILayerPlaceholder, INNLayer, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
+import {ILayer,  ILayerOutput, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
 
 /**
  *
  */
 interface MenuBaseProps
   extends NodeProps<DataBaseType> {
-  nnLib: INNLib<any, any, any>;
+  nnLib: INNLib;
   layer: ILayer<any,any>;
   //initialArgs: LayerArgs;
   //menu: ILayerMenu;
@@ -57,14 +54,10 @@ const MenuBaseNode = (
 
   //console.log("layerArgs: ", layerArgs); 
   
-
+  
   useEffect(() => {
     props.data.changed = true;
-    //setElements(elements);
-    // set all elements new
-    console.log("changed data");
-    console.log("denselayerargs", layerArgs);
-    console.log(Object.keys(layerArgs));
+    // eslint-disable-next-line
   }, [layerArgs]);
 
   useEffect(() => {
@@ -306,28 +299,13 @@ const MenuBaseNode = (
                 val.type.options,
                 `${val.name}-${props.id}`
               );
-            /*case OptionTypes.constraint:
-              return createSelect(
-                key,
-                Object.keys(CONSTRAINTS),
-                `${key}-${props.id}`
-              );
-            case OptionTypes.initializer:
-              return createSelect(
-                key,
-                Object.keys(INITIALIZERS),
-                `${key}-${props.id}`
-              );
-            case OptionTypes.regularizer:
-              return createSelect(
-                key,
-                Object.keys(REGULARIZERS),
-                `${key}-${props.id}`
-              );*/
+            default: 
+              return <p>ERROR: unknown value</p>;
           }
         })}
       </ArgsMenu>
     );
+    // eslint-disable-next-line
   }, [layerArgs, openSelect, focused]);
 
   return (
@@ -338,7 +316,7 @@ const MenuBaseNode = (
       layerFunction={layerFunction}
       layerTypeName={layerTypeName}
     >
-      {}
+      {outputShape}
     </BaseNode>
   );
 };

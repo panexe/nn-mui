@@ -1,20 +1,10 @@
-import { BaseNodeProps } from "./BaseNode";
 import MenuBaseNode from "./MenuBaseNode";
-import { Dropout, DropoutLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
-import {
-  DataBaseType,
-  layerOutput,
-  OptionTypes,
-} from "../../../../../../types";
+import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
-import { dropout } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import { Node } from "react-flow-renderer";
-import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { IArgType, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
-
+import { INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
 
 const DropoutNode = (props: NodeProps<DataBaseType>) => {
-
   return (
     <MenuBaseNode
       {...props}
@@ -26,31 +16,27 @@ const DropoutNode = (props: NodeProps<DataBaseType>) => {
 };
 export default DropoutNode;
 
-
 export const createDropout = (
-    id: string,
-    posX: number,
-    posY: number
-  ): Node<DataBaseType> => {
-    return {
-      id: id,
-      type: "dropoutNode",
-      position: { x: posX, y: posY },
-      dragHandle: ".drag-handle",
-      data: {
-        inputValue: undefined,
-        outputValue: undefined,
-        changed: true,
-        error: "",
-        layerName: "dropout",
-        lib: new TensorflowAdapter(),
-      },
-    }; //as Node<DataBaseType>;
-  };
-
-
-
-
+  id: string,
+  posX: number,
+  posY: number, 
+  lib: INNLib, 
+): Node<DataBaseType> => {
+  return {
+    id: id,
+    type: "dropoutNode",
+    position: { x: posX, y: posY },
+    dragHandle: ".drag-handle",
+    data: {
+      inputValue: undefined,
+      outputValue: undefined,
+      changed: true,
+      error: "",
+      layerName: "dropout",
+      lib: lib,
+    },
+  }; //as Node<DataBaseType>;
+};
 
 /*
 const getDropoutLayerFunction = (args: DropoutArgs) => {

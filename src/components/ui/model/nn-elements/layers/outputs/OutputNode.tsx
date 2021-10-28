@@ -3,17 +3,26 @@
     Can only be once in our model (for now). 
 */
 
+// REACT 
+import {  useEffect } from "react";
+import { memo, useState } from "react";
+
+// REACT-FLOW
+import { Handle, NodeProps, Position, Node } from "react-flow-renderer";
+
+
+// MUI
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import { useContext, useEffect, useMemo } from "react";
-import { Handle, NodeProps, Position, useStoreActions, useStoreState } from "react-flow-renderer";
 import { purple } from "@mui/material/colors";
-import { memo, useState } from "react";
+
+// NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
-import ModelContext from "../../../../../../context/model-context";
-import { useOnConnect } from "../../../../../../hooks/useOnConnect";
-import { LayersModel, model, SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { layerOutput } from "../../../../../../types";
+import { DataBaseType} from "../../../../../../types";
+
+
+import { ExtractModelType, ILayerOutput, TensorflowAdapter } from "../../../../../../adapters/INNLib";
+
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -38,19 +47,19 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {  
-  const nodes = useStoreState((state) => state.nodes);
+const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {  
   
-  const { onTargetConnect } = useOnConnect(data, id);
   const [summary, setSummary] = useState(["summary"]);
-  const [layerModel, setLayerModel] = useState<LayersModel | undefined>();
+  const [layerModel, setLayerModel] = useState<ExtractModelType<typeof data.lib> | undefined>();
 
   // applys input to this layer
-  const fn = (input: layerOutput) => {
+  const fn = (input: ILayerOutput<any>) => {
+    if(input === undefined) return undefined;
+
     console.log('output lfn',input);
-    const nnModel = model({ inputs: input.modelInput, outputs: input.layerOutput });
+    const nnModel = data.lib.createModel(input.modelInput, input.layerOutput);
+
     setLayerModel(nnModel);
-    //modelContext.setModel(nnModel);
     return nnModel;
   };
   useUpdate(data, id, fn);
@@ -70,6 +79,7 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
       );
     }
     console.log("summary: ", summary);
+    // eslint-disable-next-line
   }, [layerModel]);
 
   return (
@@ -78,7 +88,7 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
         type="target"
         position={Position.Top}
         id="a"
-        isConnectable={isConnectable}
+        isConnectable={ true }//isConnectable}
         //onConnect={onTargetConnect}
       />
 
@@ -90,6 +100,27 @@ const OutputNode: React.FC<NodeProps> = ({ data, id, isConnectable }) => {
         })}
     </NodeWrapper>
   );
+};
+
+export const createOutput = (
+  id: string,
+  posX: number,
+  posY: number
+): Node<DataBaseType> => {
+  return {
+    id: id,
+    type: "outputNode",
+    position: { x: posX, y: posY },
+    //dragHandle: ".drag-handle",
+    data: {
+      inputValue: undefined,
+      outputValue: undefined,
+      changed: true,
+      error: "",
+      layerName: "output",
+      lib: new TensorflowAdapter(),
+    },
+  }; //as Node<DataBaseType>;
 };
 
 export default memo(OutputNode);

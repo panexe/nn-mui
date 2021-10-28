@@ -1,5 +1,5 @@
 // MUI
-import { FormControlLabel, Grid, InputLabel } from "@mui/material";
+import { Grid, InputLabel } from "@mui/material";
 import { Checkbox } from "@mui/material";
 import React, { Ref } from "react";
 
@@ -45,7 +45,6 @@ const CheckBoxInput = React.forwardRef(
             onChange={onChangeHandler}
             sx={{ float: "right" }}
             onFocus={props.onFocus}
-            
           />
         </Grid>
       </Grid>

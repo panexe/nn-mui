@@ -1,9 +1,7 @@
 // MUI
 import { TextField } from "@mui/material";
-import { FilledTextFieldProps } from "@mui/material";
 import { Grid } from "@mui/material";
 import { InputLabel } from "@mui/material";
-import { styled } from "@mui/system";
 import React from "react";
 import { Ref } from "react";
 
@@ -17,7 +15,7 @@ interface Props<T extends string | number> {
   setValue: React.Dispatch<React.SetStateAction<T>> | ((value: T) => void);
   helperText?: string;
   number?: boolean;
-  onFocus? : React.FocusEventHandler,
+  onFocus?: React.FocusEventHandler;
 }
 
 const TextInput = React.forwardRef(
@@ -61,4 +59,6 @@ const TextInput = React.forwardRef(
   }
 );
 
-export default TextInput as <T extends number | string>(props: Props<T> & {ref : Ref<HTMLInputElement>}) => JSX.Element;
+export default TextInput as <T extends number | string>(
+  props: Props<T> & { ref: Ref<HTMLInputElement> }
+) => JSX.Element;
