@@ -13,6 +13,7 @@
     "@tensorflow/tfjs-backend-cpu": "^3.9.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "astar-typescript": "^1.2.5",
     "react": "latest",
     "react-dom": "latest",
     "react-flow-renderer": "^9.6.8",

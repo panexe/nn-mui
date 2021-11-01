@@ -2,7 +2,7 @@ import MenuBaseNode from "./MenuBaseNode";
 import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
-import { INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
+import { INNLib} from "../../../../../../adapters/INNLib";
 
 const DropoutNode = (props: NodeProps<DataBaseType>) => {
   return (

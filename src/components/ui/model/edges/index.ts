@@ -1,6 +1,6 @@
 import { EdgeTypesType } from "react-flow-renderer";
-import NNEdge from "./NNEdge";
+import CustomEdge from "./NNEdge";
 
 export const edgeTypes : EdgeTypesType = {
-    nnedge: NNEdge,
+    nnedge: CustomEdge,
 }

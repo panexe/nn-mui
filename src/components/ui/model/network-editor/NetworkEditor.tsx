@@ -25,7 +25,7 @@ import { useStoreActions } from "react-flow-renderer";
 // NNUI
 import ContextMenu from "../../context-menu/ContextMenu";
 import ToolSelectBar from "./ToolSelectBar";
-import { nodeTypes } from "../nn-elements/layers";
+import { getNodeTypes } from "../nn-elements/layers";
 
 // MUI
 import { Box } from "@mui/material";
@@ -37,10 +37,17 @@ import "@tensorflow/tfjs-backend-cpu";
 //import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
 import { edgeTypes } from "../edges";
 import * as constants from "../../../../constants/constants";
-import { initialElements } from "./initialElements";
+import { getInitialElements } from "./initialElements";
 import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 import { createDense } from "../nn-elements/layers/basic/DenseNode";
 import { TensorflowAdapter } from "../../../../adapters/INNLib";
+import { math } from "@tensorflow/tfjs-core";
+import {
+  checkIntersection,
+  findNextFreeSpot,
+  nodesToGrid,
+  placeNodeOnGrid,
+} from "./utils";
 
 // parameters for react flow
 // should be in a global settings context
@@ -62,7 +69,7 @@ interface Props {
 /*--------------------------------------------------------*/
 const NetworkEditor = (props: Props) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<OnLoadParams>();
-  const [elementsState] = useState<Elements>(initialElements);
+  const [elementsState] = useState<Elements>(getInitialElements());
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
@@ -156,6 +163,70 @@ const NetworkEditor = (props: Props) => {
     setSelectedElements([element]);
   };
 
+  const onNodeDragStop = (event: React.MouseEvent, element: Node) => {
+    console.log(element.position);
+    const newElements = elements.map((el) => {
+      if (el.id === element.id) {
+        (el as Node).position.x = Math.round(element.position.x);
+        (el as Node).position.y = Math.round(element.position.y);
+      }
+      return el;
+    });
+    const { grid, offset } = nodesToGrid(
+      newElements.filter((el) => isNode(el)) as Node[],
+      constants.NODE_WIDTH,
+      constants.NODE_HEIGHT,
+      constants.GRID_SNAP_SIZE,
+      element.id,
+      true
+    );
+
+    let gridCopy = grid.map((arr) => arr.slice());
+
+    const intersects = checkIntersection(
+      element,
+      gridCopy,
+      offset,
+      constants.NODE_WIDTH,
+      constants.NODE_HEIGHT,
+      constants.GRID_SNAP_SIZE
+    );
+
+    if (intersects) {
+      console.log("intersects!!!!");
+      const freeSpotOffset = findNextFreeSpot(
+        element,
+        grid,
+        offset,
+        constants.NODE_WIDTH,
+        constants.NODE_HEIGHT,
+        constants.GRID_SNAP_SIZE
+      );
+      console.log("next free spot:", freeSpotOffset);
+
+      // place
+      setElements(
+        newElements.map((el) => {
+          if (el.id === element.id) {
+            (el as Node).position = {
+              x:
+                (el as Node).position.x +
+                freeSpotOffset * constants.GRID_SNAP_SIZE,
+              y: (el as Node).position.y,
+            };
+            console.log(
+              (el as Node).position.x +
+                freeSpotOffset * constants.GRID_SNAP_SIZE
+            );
+          }
+          return el;
+        })
+      );
+    }else{
+      setElements(newElements);
+    }
+  };
+
   const onDrop = (event: DragEvent) => {
     event.preventDefault();
     if (reactFlowInstance) {
@@ -172,10 +243,20 @@ const NetworkEditor = (props: Props) => {
       let newNode: Node = { id: "uninit", position: { x: 0, y: 0 } };
       switch (type) {
         case "dense":
-          newNode = createDense(getId(), position.x, position.y, new TensorflowAdapter());
+          newNode = createDense(
+            getId(),
+            position.x,
+            position.y,
+            new TensorflowAdapter()
+          );
           break;
         case "dropout":
-          newNode = createDropout(getId(), position.x, position.y, new TensorflowAdapter());
+          newNode = createDropout(
+            getId(),
+            position.x,
+            position.y,
+            new TensorflowAdapter()
+          );
           break;
         default:
           return;
@@ -196,11 +277,17 @@ const NetworkEditor = (props: Props) => {
     >
       <ContextMenu>
         <ToolSelectBar />
+        {nodes.map((node) => (
+          <div key={node.id}>
+            Node {node.id} - x: {node.__rf.position.x.toFixed(2)}, y:{" "}
+            {node.__rf.position.y.toFixed(2)}
+          </div>
+        ))}
 
         <Box sx={{ flex: "auto", overflow: "hidden", height: "100%" }}>
           <ReactFlow
             elements={elementsState}
-            nodeTypes={nodeTypes}
+            nodeTypes={getNodeTypes(new TensorflowAdapter())}
             edgeTypes={edgeTypes}
             snapToGrid={true}
             snapGrid={snapGrid}
@@ -212,6 +299,7 @@ const NetworkEditor = (props: Props) => {
             onDragOver={onDragOver}
             onDrop={onDrop}
             onNodeDragStart={onNodeDragStart}
+            onNodeDragStop={onNodeDragStop}
           >
             <Background gap={20} size={0.7} variant={BackgroundVariant.Dots} />
           </ReactFlow>

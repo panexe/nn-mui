@@ -8,7 +8,7 @@ import {
 } from "@tensorflow/tfjs-layers/dist/layers/core";
 import * as tf from "@tensorflow/tfjs";
 import { LayerArgs } from "@tensorflow/tfjs-layers/dist/engine/topology";
-import {InputConfig} from '@tensorflow/tfjs-layers/dist/engine/input_layer';
+import { InputConfig } from "@tensorflow/tfjs-layers/dist/engine/input_layer";
 
 /**
  * Interface that describes a generic arg type.
@@ -30,8 +30,9 @@ export interface ILayerMenu {
 //type ExtractArgType<Layer> = Layer extends INNLayer<infer T> ? T : never;
 //export type ExtractLayerType<N> = N extends INNLib<infer T, any> ? T : never;
 
-export type ExtractModelType<N> = N extends INNLib<any, any,any, infer T> ? T : never;
-
+export type ExtractModelType<N> = N extends INNLib<any, any, any, infer T>
+  ? T
+  : never;
 
 export interface INNLayer {}
 
@@ -71,7 +72,7 @@ export interface ILayerFunction<T> {
 export interface INNLib<
   LayerType extends INNLayer = any,
   LayerArgs extends INNLayerArgs = any,
-  LayerPlaceholder extends ILayerPlaceholder = any, 
+  LayerPlaceholder extends ILayerPlaceholder = any,
   ModelType = any
 > {
   getOutputShape(layer: LayerType): string;
@@ -86,7 +87,13 @@ export interface INNLib<
     target: any
   ): ILayerOutput<ILayerPlaceholder>;
 
-  createModel(input: LayerPlaceholder | LayerPlaceholder[], output: LayerPlaceholder): ModelType;
+  createModel(
+    input: LayerPlaceholder | LayerPlaceholder[],
+    output: LayerPlaceholder
+  ): ModelType;
+
+  getAvailableLayers(): { name: string; layer: ILayer<any, any> }[];
+  getAvailableLayerNames(): string[];
 
   // not totally accurate because tf.input returns a symbolic tensor
   // sould be resolved another way
@@ -156,6 +163,16 @@ export class TensorflowAdapter
 
   createModel = (input: tf.SymbolicTensor | [], output: tf.SymbolicTensor) => {
     return tf.model({ inputs: input, outputs: output });
+  };
+
+  getAvailableLayers = () => {
+    return [
+      { name: "dense", layer: this.dense },
+      { name: "dropout", layer: this.dropout },
+    ];
+  };
+  getAvailableLayerNames = () => {
+    return ['dense', 'dropout'];
   }
 
   input = {

@@ -21,7 +21,7 @@ import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType} from "../../../../../../types";
 
 
-import { ExtractModelType, ILayerOutput, TensorflowAdapter } from "../../../../../../adapters/INNLib";
+import { ExtractModelType, ILayerOutput, INNLib } from "../../../../../../adapters/INNLib";
 
 
 /*--------------------------------------------------------*/
@@ -83,7 +83,7 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   }, [layerModel]);
 
   return (
-    <NodeWrapper>
+    <NodeWrapper className="drag-handle">
       <Handle
         type="target"
         position={Position.Top}
@@ -105,7 +105,8 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 export const createOutput = (
   id: string,
   posX: number,
-  posY: number
+  posY: number, 
+  lib: INNLib, 
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -118,7 +119,7 @@ export const createOutput = (
       changed: true,
       error: "",
       layerName: "output",
-      lib: new TensorflowAdapter(),
+      lib: lib,
     },
   }; //as Node<DataBaseType>;
 };

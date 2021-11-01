@@ -27,7 +27,7 @@ import { purple } from "@mui/material/colors";
 
 // NNUI
 import { DataBaseType, Portals } from "../../../../../../types";
-import { TensorflowAdapter } from "../../../../../../adapters/INNLib";
+import { INNLib } from "../../../../../../adapters/INNLib";
 import Portal from "../../../../portal/Portal";
 
 
@@ -133,7 +133,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
         {"Test"}
       </Portal>
     )}
-    <NodeWrapper>
+    <NodeWrapper className="drag-handle">
       <StyledTypography>{labelText}</StyledTypography>
       <input type="number" value={counter} onChange={onInputChange} />
       <Handle
@@ -151,7 +151,8 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 export const createInput = (
   id: string,
   posX: number,
-  posY: number
+  posY: number, 
+  lib: INNLib, 
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -164,7 +165,7 @@ export const createInput = (
       changed: true,
       error: "",
       layerName: "input",
-      lib: new TensorflowAdapter(),
+      lib: lib,
     },
   }; //as Node<DataBaseType>;
 };
