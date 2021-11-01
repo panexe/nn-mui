@@ -19,7 +19,7 @@ import theme from "../../../../../../theme";
 // NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType, Portals } from "../../../../../../types";
-import { Alert, Grid } from "@mui/material";
+import { Alert, Divider, Grid } from "@mui/material";
 import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
@@ -58,9 +58,9 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
 }
 
 /**
- * 
- * @param props 
- * @returns 
+ *
+ * @param props
+ * @returns
  */
 const BaseNode = (props: BaseNodeProps) => {
   const { data, id, isConnectable } = props;
@@ -99,10 +99,21 @@ const BaseNode = (props: BaseNodeProps) => {
 
             //onConnect={onSourceConnect}
           />
-          <div>
-            <p>{props.layerTypeName}</p>
-            <p>Dim: {props.children}</p>
-          </div>
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="stretch"
+          >
+            <Grid item xs={4}>
+              <p>{props.layerTypeName}</p>
+            </Grid>
+            <Divider orientation="vertical" flexItem>
+            </Divider>
+            <Grid item xs={6}>
+              <p>Dim: {props.children}</p>
+            </Grid>
+          </Grid>
 
           <Handle
             type="source"

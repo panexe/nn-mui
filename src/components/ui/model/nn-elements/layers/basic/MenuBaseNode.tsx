@@ -82,6 +82,7 @@ const MenuBaseNode = (
 
     //console.log("output layer dense: ", ret, nnLib.getOutputShape(newLayer));
     setOutputShape(nnLib.getOutputShape(newLayer));
+    console.log("")
 
     return ret as ILayerOutput<any>;
   };

@@ -11,27 +11,27 @@ import { createOutput } from "../nn-elements/layers/outputs/OutputNode";
 export const getInitialElements = () => {
   let ret: Elements = [];
 
-  let newNode = createNode( "input","1", 240, 20, new TensorflowAdapter());
+  let newNode = createNode( "input","1", 160, 60, new TensorflowAdapter());
   if( newNode !== null){
     ret.push(newNode);
   }
 
-  newNode = createNode("dense", "2", 360, 160, new TensorflowAdapter());
+  newNode = createNode("dense", "2", 200, 200, new TensorflowAdapter());
   if( newNode !== null){
     ret.push(newNode);
   }
 
-  newNode = createNode("dense", "3", 460, 160, new TensorflowAdapter());
+  newNode = createNode("dense", "3", 200, 300, new TensorflowAdapter());
   if( newNode !== null){
     ret.push(newNode);
   }
 
-  newNode = createNode("dropout", "4", 460, 160, new TensorflowAdapter());
+  newNode = createNode("dropout", "4", 200, 400, new TensorflowAdapter());
   if( newNode !== null){
     ret.push(newNode);
   }
 
-  newNode = createNode("output", "5", 460, 160, new TensorflowAdapter());
+  newNode = createNode("output", "5", 200, 500, new TensorflowAdapter());
   if( newNode !== null){
     ret.push(newNode);
   }

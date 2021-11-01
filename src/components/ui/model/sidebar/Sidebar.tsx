@@ -3,6 +3,7 @@ import { MenuItem } from "@mui/material";
 import { styled } from "@mui/system";
 import { nodesMenu } from "../nn-elements/layers";
 import { DragEvent } from "react";
+import { TensorflowAdapter } from "../../../../adapters/INNLib";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -24,10 +25,10 @@ const Sidebar = () => {
   }
 
 
-  const objs = Object.entries(nodesMenu).map(([cat, vals]) => {
+  const objs = nodesMenu(new TensorflowAdapter()).map((cat) => {
     return (
-      <SidebarCategory key={cat} title={cat}>
-        {vals.map((val) => {
+      <SidebarCategory key={cat.categoryName} title={cat.categoryName}>
+        {cat.layers.map((val) => {
           return (
             <MenuItem draggable onDragStart={(event: DragEvent) => onDragStart(event, val)} key={cat + val}>
               <div >{val}</div>

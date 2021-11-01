@@ -40,7 +40,7 @@ import * as constants from "../../../../constants/constants";
 import { getInitialElements } from "./initialElements";
 import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 import { createDense } from "../nn-elements/layers/basic/DenseNode";
-import { TensorflowAdapter } from "../../../../adapters/INNLib";
+import { INNLib, TensorflowAdapter } from "../../../../adapters/INNLib";
 import { math } from "@tensorflow/tfjs-core";
 import {
   checkIntersection,
@@ -48,6 +48,15 @@ import {
   nodesToGrid,
   placeNodeOnGrid,
 } from "./utils";
+import {
+  createLayerNode,
+  createNode,
+} from "../nn-elements/layers/basic/LayerNode";
+
+import localforage from "localforage";
+
+localforage.config({name: 'react-flow-condig', storeName:'flows'});
+const flowKey = 'nnui-flow';
 
 // parameters for react flow
 // should be in a global settings context
@@ -62,6 +71,7 @@ const getId = (): ElementId => `node_${id++}`;
 
 interface Props {
   children?: ReactNode;
+  lib: INNLib;
 }
 
 /*--------------------------------------------------------*/
@@ -222,7 +232,7 @@ const NetworkEditor = (props: Props) => {
           return el;
         })
       );
-    }else{
+    } else {
       setElements(newElements);
     }
   };
@@ -240,28 +250,16 @@ const NetworkEditor = (props: Props) => {
       });
       console.log("onDrop: ", type);
 
-      let newNode: Node = { id: "uninit", position: { x: 0, y: 0 } };
-      switch (type) {
-        case "dense":
-          newNode = createDense(
-            getId(),
-            position.x,
-            position.y,
-            new TensorflowAdapter()
-          );
-          break;
-        case "dropout":
-          newNode = createDropout(
-            getId(),
-            position.x,
-            position.y,
-            new TensorflowAdapter()
-          );
-          break;
-        default:
-          return;
+      let newNode = createNode(
+        type,
+        getId(),
+        position.x,
+        position.y,
+        props.lib
+      );
+      if (newNode !== null) {
+        setElements(elements.concat(newNode));
       }
-      setElements(elements.concat(newNode));
     }
   };
 
@@ -277,12 +275,16 @@ const NetworkEditor = (props: Props) => {
     >
       <ContextMenu>
         <ToolSelectBar />
-        {nodes.map((node) => (
-          <div key={node.id}>
-            Node {node.id} - x: {node.__rf.position.x.toFixed(2)}, y:{" "}
-            {node.__rf.position.y.toFixed(2)}
-          </div>
-        ))}
+
+        {
+          /*maybe needed again, if not delete */ false &&
+            nodes.map((node) => (
+              <div key={node.id}>
+                Node {node.id} - x: {node.__rf.position.x.toFixed(2)}, y:{" "}
+                {node.__rf.position.y.toFixed(2)}
+              </div>
+            ))
+        }
 
         <Box sx={{ flex: "auto", overflow: "hidden", height: "100%" }}>
           <ReactFlow

@@ -6,6 +6,7 @@ import ModelContextProvider from "../../context-providers/ModelContextProvider";
 import { ReactFlowProvider } from "react-flow-renderer";
 import { Portals } from "../../../types";
 import theme from "../../../theme";
+import { TensorflowAdapter } from "../../../adapters/INNLib";
 
 const Model = () => {
   return (
@@ -13,7 +14,7 @@ const Model = () => {
       <ModelContextProvider>
         <ThreeColLayout
           leftContent={<Sidebar />}
-          mainContent={<NetworkEditor />}
+          mainContent={<NetworkEditor lib={new TensorflowAdapter()} />}
           rightContent={
             <div
               id={Portals.layerInfo}

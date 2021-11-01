@@ -14,6 +14,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "astar-typescript": "^1.2.5",
+    "localforage": "^1.10.0",
     "react": "latest",
     "react-dom": "latest",
     "react-flow-renderer": "^9.6.8",

@@ -94,6 +94,7 @@ export interface INNLib<
 
   getAvailableLayers(): { name: string; layer: ILayer<any, any> }[];
   getAvailableLayerNames(): string[];
+  getLayerMenu(): { categoryName: string; layers: string[] }[];
 
   // not totally accurate because tf.input returns a symbolic tensor
   // sould be resolved another way
@@ -172,8 +173,15 @@ export class TensorflowAdapter
     ];
   };
   getAvailableLayerNames = () => {
-    return ['dense', 'dropout'];
-  }
+    return ["dense", "dropout"];
+  };
+
+  getLayerMenu = () => {
+    return [
+      { categoryName: "basic", layers: ["dense", "dropout"] },
+      { categoryName: "advanced", layers: ['input'] },
+    ];
+  };
 
   input = {
     menu: {

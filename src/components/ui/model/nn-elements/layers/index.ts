@@ -30,6 +30,6 @@ export const getNodeTypes = (lib : INNLib) => {
   return ret;
 };
 
-export const nodesMenu = {
-    'basic':['dense', 'dropout'],
+export const nodesMenu = (lib: INNLib) => {
+    return lib.getLayerMenu();
 }
