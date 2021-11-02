@@ -7,8 +7,10 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import { useContext } from "react";
-import AppContext from "../../../context/app-context";
+import { useSelector } from "react-redux";
+
+import { RootState, useAppDispatch } from "../../../store";
+import { uiActions } from "../../../store/ui";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   color: theme.palette.text.primary,
@@ -30,9 +32,9 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   borderLeft: "solid 1px",
   paddingLeft: "0px",
   borderColor: theme.palette.divider,
-  fontSize: '18px',
+  fontSize: "18px",
   height: "100%",
-  '&.Mui-selected': {
+  "&.Mui-selected": {
     backgroundColor: theme.palette.background.default,
     color: theme.palette.text.primary,
   },
@@ -49,7 +51,8 @@ const StyledGrid = styled(Grid)(({ theme }) => ({
 }));
 
 const Header = () => {
-  const appContext = useContext(AppContext);
+  const dispatch = useAppDispatch();
+  const tabIndex = useSelector<RootState>((state) => state.ui.tabIndex);
 
   function tabProps(index: number) {
     return {
@@ -59,7 +62,8 @@ const Header = () => {
   }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    appContext.setTabIndex(newValue);
+    //appContext.setTabIndex(newValue);
+    dispatch(uiActions.setTab(newValue));
   };
 
   const tabs = [
@@ -71,7 +75,10 @@ const Header = () => {
 
   return (
     <>
-      <StyledAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <StyledAppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
         <StyledToolbar disableGutters>
           <StyledGrid
             container
@@ -83,8 +90,19 @@ const Header = () => {
               <Typography variant="h3">nn-ui</Typography>
             </Grid>
             <Grid item xs={8}>
-              <StyledTabs variant="fullWidth" onChange={handleChange} value={appContext.tabIndex}>
-                {tabs.map( tab => <StyledTab disableRipple={true} label={tab.name} key={tab.index} {...tabProps(tab.index)}   /> )}
+              <StyledTabs
+                variant="fullWidth"
+                onChange={handleChange}
+                value={tabIndex}
+              >
+                {tabs.map((tab) => (
+                  <StyledTab
+                    disableRipple={true}
+                    label={tab.name}
+                    key={tab.index}
+                    {...tabProps(tab.index)}
+                  />
+                ))}
               </StyledTabs>
             </Grid>
           </StyledGrid>
