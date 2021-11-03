@@ -12,7 +12,7 @@ const Model = () => {
     <ReactFlowProvider>
       <ThreeColLayout
         leftContent={<Sidebar />}
-        mainContent={<NetworkEditor lib={new TensorflowAdapter()} />}
+        mainContent={<NetworkEditor lib={new TensorflowAdapter()} libName="tensorflow"/>}
         rightContent={
           <div
             id={Portals.layerInfo}

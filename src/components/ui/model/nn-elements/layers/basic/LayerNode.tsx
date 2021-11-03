@@ -3,16 +3,21 @@ import MenuBaseNode from "./MenuBaseNode";
 import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
-import { ILayer, INNLib } from "../../../../../../adapters/INNLib";
+import { getNNLib, ILayer, INNLib } from "../../../../../../adapters/INNLib";
 
 export const createLayerNode = (
-  lib: INNLib,
+  libName: string,
   layer: ILayer<any, any>,
   name: string
 ) => {
   return (props: NodeProps<DataBaseType>) => {
     return (
-      <MenuBaseNode {...props} nnLib={lib} layer={layer} layerTypeName={name} />
+      <MenuBaseNode
+        {...props}
+        libName={libName}
+        layer={layer}
+        layerTypeName={name}
+      />
     );
   };
 };
@@ -22,8 +27,10 @@ export const createNode = (
   id: string,
   posX: number,
   posY: number,
-  lib: INNLib
+  libName: string
 ): Node<DataBaseType> | null => {
+  const lib = getNNLib(libName);
+
   // if node is not available
   if (lib.getAvailableLayerNames().includes(type) === false) {
     if (!(type === "input" || type === "output")) {
@@ -42,7 +49,7 @@ export const createNode = (
       changed: true,
       error: "",
       layerName: type,
-      lib: lib,
+      libName: libName,
     },
   }; //as Node<DataBaseType>;
 };

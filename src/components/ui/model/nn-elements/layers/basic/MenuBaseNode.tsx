@@ -1,5 +1,5 @@
 // REACT
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 // REACT FLOW
@@ -10,23 +10,26 @@ import { NodeProps } from "react-flow-renderer/dist/types";
 import { Divider, Typography } from "@mui/material";
 
 // NNUI
-import {
-  DataBaseType,
-} from "../../../../../../types";
+import { DataBaseType } from "../../../../../../types";
 import BaseNode from "./BaseNode";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
 import SelectInput from "../../../layer-info/SelectInput";
 import CheckBoxInput from "../../../layer-info/CheckBoxInput";
-import {ILayer,  ILayerOutput, INNLib, TensorflowAdapter } from "../../../../../../adapters/INNLib";
+import {
+  getNNLib,
+  ILayer,
+  ILayerOutput,
+  INNLib,
+  TensorflowAdapter,
+} from "../../../../../../adapters/INNLib";
 
 /**
  *
  */
-interface MenuBaseProps
-  extends NodeProps<DataBaseType> {
-  nnLib: INNLib;
-  layer: ILayer<any,any>;
+interface MenuBaseProps extends NodeProps<DataBaseType> {
+  libName: string;
+  layer: ILayer<any, any>;
   //initialArgs: LayerArgs;
   //menu: ILayerMenu;
   //tfjsLayer: ILayerFactory<Layer, LayerArgs>; // maybe second generic type
@@ -38,10 +41,13 @@ interface MenuBaseProps
  * @param props
  * @returns
  */
-const MenuBaseNode = (
- {nnLib, layer, layerTypeName, ...props}: MenuBaseProps
-) => {
-
+const MenuBaseNode = ({
+  libName,
+  layer,
+  layerTypeName,
+  ...props
+}: MenuBaseProps) => {
+  const nnLib = getNNLib(libName);
   //type LayerType = ExtractLayerType<NNLib>;
   //type PlaceholderType = ExtractPlaceholderType<NNLib>;
 
@@ -49,12 +55,13 @@ const MenuBaseNode = (
   const [outputShape, setOutputShape] = useState("");
 
   // state for layer args
-  const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(layer.initialArgs);
+  const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(
+    layer.initialArgs
+  );
   const menu = layer.menu;
 
-  //console.log("layerArgs: ", layerArgs); 
-  
-  
+  //console.log("layerArgs: ", layerArgs);
+
   useEffect(() => {
     props.data.changed = true;
     // eslint-disable-next-line
@@ -67,7 +74,7 @@ const MenuBaseNode = (
   }, [props.data]);
 
   /**
-   * Gets passed to BaseNode 
+   * Gets passed to BaseNode
    * @param input
    * @returns
    */
@@ -81,8 +88,10 @@ const MenuBaseNode = (
     const ret = nnLib.connect(input, newLayer);
 
     //console.log("output layer dense: ", ret, nnLib.getOutputShape(newLayer));
+
     setOutputShape(nnLib.getOutputShape(newLayer));
-    console.log("")
+
+    console.log("");
 
     return ret as ILayerOutput<any>;
   };
@@ -284,23 +293,23 @@ const MenuBaseNode = (
   const menuJSX = useMemo(() => {
     return (
       <ArgsMenu>
-        {menu.elements.map(val => {
+        {menu.elements.map((val) => {
           switch (val.type.type) {
-            case 'category':
+            case "category":
               return createCategory(val.name, `${val.name}-${props.id}`);
-            case 'string':
+            case "string":
               return createText(val.name, `${val.name}-${props.id}`);
-            case 'number':
+            case "number":
               return createNumber(val.name, `${val.name}-${props.id}`);
-            case 'boolean':
+            case "boolean":
               return createCheckbox(val.name, `${val.name}-${props.id}`);
-            case 'select':
+            case "select":
               return createSelect(
                 val.name,
                 val.type.options,
                 `${val.name}-${props.id}`
               );
-            default: 
+            default:
               return <p>ERROR: unknown value</p>;
           }
         })}
@@ -338,7 +347,7 @@ export const createMenuBaseNode = (
       changed: true,
       error: "",
       layerName: "dense",
-      lib: new TensorflowAdapter(),
+      libName: "tensorflow",
     },
   }; //as Node<DataBaseType>;
 };

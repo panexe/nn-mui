@@ -3,14 +3,17 @@ import MenuBaseNode from "./MenuBaseNode";
 import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
-import { INNLib } from "../../../../../../adapters/INNLib";
+import { getNNLib, INNLib } from "../../../../../../adapters/INNLib";
 
 const DenseNode = (props: NodeProps<DataBaseType>) => {
+  const lib = getNNLib(props.data.libName);
+
+
   return (
     <MenuBaseNode
       {...props}
-      nnLib={props.data.lib}
-      layer={props.data.lib.dense}
+      libName={props.data.libName}
+      layer={lib.dense}
       layerTypeName="dense"
     />
   );
@@ -21,7 +24,7 @@ export const createDense = (
   id: string,
   posX: number,
   posY: number, 
-  lib: INNLib,
+  libName: string,
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -34,7 +37,7 @@ export const createDense = (
       changed: true,
       error: "",
       layerName: "dense",
-      lib: lib,
+      libName: libName,
     },
-  }; //as Node<DataBaseType>;
+  }; //as Node<DataBaseTypse>;
 };

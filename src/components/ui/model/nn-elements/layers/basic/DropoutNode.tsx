@@ -2,14 +2,16 @@ import MenuBaseNode from "./MenuBaseNode";
 import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
-import { INNLib} from "../../../../../../adapters/INNLib";
+import { getNNLib, INNLib} from "../../../../../../adapters/INNLib";
 
 const DropoutNode = (props: NodeProps<DataBaseType>) => {
+  const lib = getNNLib(props.data.libName);
+
   return (
     <MenuBaseNode
       {...props}
-      nnLib={props.data.lib}
-      layer={props.data.lib.dropout}
+      libName={props.data.libName}
+      layer={lib.dropout}
       layerTypeName="dropout"
     />
   );
@@ -20,7 +22,7 @@ export const createDropout = (
   id: string,
   posX: number,
   posY: number, 
-  lib: INNLib, 
+  libName: string,
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -33,7 +35,7 @@ export const createDropout = (
       changed: true,
       error: "",
       layerName: "dropout",
-      lib: lib,
+      libName: libName,
     },
   }; //as Node<DataBaseType>;
 };

@@ -21,7 +21,7 @@ import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType} from "../../../../../../types";
 
 
-import { ExtractModelType, ILayerOutput, INNLib } from "../../../../../../adapters/INNLib";
+import { ExtractModelType, getNNLib, ILayerOutput, INNLib } from "../../../../../../adapters/INNLib";
 
 
 /*--------------------------------------------------------*/
@@ -48,16 +48,17 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*--------------------------------------------------------*/
 
 const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {  
-  
+  const lib = getNNLib(data.libName);
+
   const [summary, setSummary] = useState(["summary"]);
-  const [layerModel, setLayerModel] = useState<ExtractModelType<typeof data.lib> | undefined>();
+  const [layerModel, setLayerModel] = useState<ExtractModelType<typeof lib> | undefined>();
 
   // applys input to this layer
   const fn = (input: ILayerOutput<any>) => {
     if(input === undefined) return undefined;
 
     console.log('output lfn',input);
-    const nnModel = data.lib.createModel(input.modelInput, input.layerOutput);
+    const nnModel = lib.createModel(input.modelInput, input.layerOutput);
 
     setLayerModel(nnModel);
     return nnModel;
@@ -106,7 +107,7 @@ export const createOutput = (
   id: string,
   posX: number,
   posY: number, 
-  lib: INNLib, 
+  libName: string,
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -119,7 +120,7 @@ export const createOutput = (
       changed: true,
       error: "",
       layerName: "output",
-      lib: lib,
+      libName: libName,
     },
   }; //as Node<DataBaseType>;
 };

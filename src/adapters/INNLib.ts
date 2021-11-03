@@ -103,6 +103,15 @@ export interface INNLib<
   dropout: ILayer<any, any>;
 }
 
+export const getNNLib = (name: string) => {
+  switch (name){
+    case 'tensorflow': 
+      return new TensorflowAdapter();
+    default: // tensorflow as fallback
+      return new TensorflowAdapter();
+  }
+}
+
 /**
  * Tensorflow Adapter
  */

@@ -1,8 +1,10 @@
 // REACT
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 
 // MUI
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import SaveIcon from '@mui/icons-material/Save';
+import RestorePageIcon from '@mui/icons-material/RestorePage';
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import { ToggleButton } from "@mui/material";
 import { ToggleButtonGroup } from "@mui/material";
@@ -39,7 +41,14 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
-const ToolSelectBar = () => {
+
+interface ToolSelectBarProps{
+  children?: ReactNode; 
+  onSave: () => void;
+  onRestore: () => void;
+};
+
+const ToolSelectBar = (props: ToolSelectBarProps) => {
   const [value, setValue] = useState<string | null>("val1");
 
   const handleValue = (
@@ -52,12 +61,12 @@ const ToolSelectBar = () => {
   return (
     <StyledDiv>
       <StyledToggleButtonGroup value={value} exclusive onChange={handleValue}>
-        <ToggleButton value="val1">
-          <CheckBoxOutlineBlankIcon />
+        <ToggleButton onClick={props.onSave} value="val1">
+          <SaveIcon />
         </ToggleButton>
 
-        <ToggleButton value="val2">
-          <ControlPointIcon />
+        <ToggleButton onClick={props.onRestore} value="val2">
+          <RestorePageIcon />
         </ToggleButton>
 
         <ToggleButton value="val3">

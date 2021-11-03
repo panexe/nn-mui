@@ -7,7 +7,7 @@ export interface DataBaseType {
   changed: boolean;
   error: string;
   layerName?: string;
-  lib: INNLib;
+  libName: string;
 }
 
 export type layerOutput = { layerOutput: SymbolicTensor, modelInput: SymbolicTensor | SymbolicTensor [] };

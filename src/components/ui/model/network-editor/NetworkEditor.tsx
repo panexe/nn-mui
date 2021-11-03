@@ -1,11 +1,12 @@
 // REACT
-import React, { MouseEvent, ReactNode, useRef, useState } from "react";
+import React, { MouseEvent, ReactNode, useCallback, useRef, useState } from "react";
 import { DragEvent } from "react";
 
 // REACT FLOW
 import ReactFlow, {
   BackgroundVariant,
   FlowElement,
+  FlowExportObject,
   isEdge,
   isNode,
   removeElements,
@@ -72,6 +73,7 @@ const getId = (): ElementId => `node_${id++}`;
 interface Props {
   children?: ReactNode;
   lib: INNLib;
+  libName: string;
 }
 
 /*--------------------------------------------------------*/
@@ -100,6 +102,25 @@ const NetworkEditor = (props: Props) => {
       console.log("loaded flow:", _reactFlowInstance);
     }
   };
+
+  const onSave = useCallback(() => {
+    if(reactFlowInstance){
+      const flow = reactFlowInstance.toObject();
+      localforage.setItem(flowKey, flow);
+    }
+  }, [reactFlowInstance]);
+
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const flow = await localforage.getItem(flowKey) ;
+
+      if (flow) {
+        const [x = 0, y = 0] = (flow as FlowExportObject).position;
+        setElements((flow as FlowExportObject).elements || []);
+      }
+    }; 
+    restoreFlow();
+  }, [setElements]);
 
   const onConnect = (params: Connection | Edge) => {
     console.log("params:", params);
@@ -255,7 +276,7 @@ const NetworkEditor = (props: Props) => {
         getId(),
         position.x,
         position.y,
-        props.lib
+        props.libName,
       );
       if (newNode !== null) {
         setElements(elements.concat(newNode));
@@ -274,7 +295,7 @@ const NetworkEditor = (props: Props) => {
       }}
     >
       <ContextMenu>
-        <ToolSelectBar />
+        <ToolSelectBar onSave={onSave} onRestore={onRestore} />
 
         {
           /*maybe needed again, if not delete */ false &&
@@ -289,7 +310,7 @@ const NetworkEditor = (props: Props) => {
         <Box sx={{ flex: "auto", overflow: "hidden", height: "100%" }}>
           <ReactFlow
             elements={elementsState}
-            nodeTypes={getNodeTypes(new TensorflowAdapter())}
+            nodeTypes={getNodeTypes("tensorflow")}
             edgeTypes={edgeTypes}
             snapToGrid={true}
             snapGrid={snapGrid}

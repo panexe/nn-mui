@@ -27,10 +27,8 @@ import { purple } from "@mui/material/colors";
 
 // NNUI
 import { DataBaseType, Portals } from "../../../../../../types";
-import { INNLib } from "../../../../../../adapters/INNLib";
+import { getNNLib, INNLib } from "../../../../../../adapters/INNLib";
 import Portal from "../../../../portal/Portal";
-
-
 
 /** this basicly is a copy of InputConfig from tfjs
  *  but we want import their type directly
@@ -40,7 +38,6 @@ import Portal from "../../../../portal/Portal";
  *
  *
  */
-
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -70,6 +67,8 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*--------------------------------------------------------*/
 
 const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
+  const lib = getNNLib(data.libName);
+
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
@@ -77,16 +76,14 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
-    selectedElements !== null &&
-    selectedElements.find((el) => el.id === id);
+    selectedElements !== null && selectedElements.find((el) => el.id === id);
 
   const [counter, setCounter] = useState(0);
-  const [args, setArgs] = useState<typeof data.lib.input.initialArgs>(
-    data.lib.input.initialArgs
+  const [args, setArgs] = useState<typeof lib.input.initialArgs>(
+    lib.input.initialArgs
   );
 
   const labelText = "Input";
-
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArgs((old) => {
@@ -101,7 +98,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
     if (currentElement === undefined) return; // not elegant, refactor!
     const outGoers = getOutgoers(currentElement, elements);
 
-    const layer = data.lib.input.create(args);
+    const layer = lib.input.create(args);
     const outputValue = { layerOutput: layer, modelInput: layer };
 
     setElements(
@@ -128,22 +125,22 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 
   return (
     <>
-    {selected && (
-      <Portal destination={Portals.layerInfo} id={id}>
-        {"Test"}
-      </Portal>
-    )}
-    <NodeWrapper className="drag-handle">
-      <StyledTypography>{labelText}</StyledTypography>
-      <input type="number" value={counter} onChange={onInputChange} />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="a"
-        isConnectable={isConnectable}
-        //onConnect={onSourceConnect}
-      />
-    </NodeWrapper>
+      {selected && (
+        <Portal destination={Portals.layerInfo} id={id}>
+          {"Test"}
+        </Portal>
+      )}
+      <NodeWrapper className="drag-handle">
+        <StyledTypography>{labelText}</StyledTypography>
+        <input type="number" value={counter} onChange={onInputChange} />
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id="a"
+          isConnectable={isConnectable}
+          //onConnect={onSourceConnect}
+        />
+      </NodeWrapper>
     </>
   );
 };
@@ -151,8 +148,8 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 export const createInput = (
   id: string,
   posX: number,
-  posY: number, 
-  lib: INNLib, 
+  posY: number,
+  libName: string
 ): Node<DataBaseType> => {
   return {
     id: id,
@@ -165,7 +162,7 @@ export const createInput = (
       changed: true,
       error: "",
       layerName: "input",
-      lib: lib,
+      libName: libName,
     },
   }; //as Node<DataBaseType>;
 };

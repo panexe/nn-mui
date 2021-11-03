@@ -11,28 +11,28 @@ import { createOutput } from "../nn-elements/layers/outputs/OutputNode";
 export const getInitialElements = () => {
   let ret: Elements = [];
 
-  let newNode = createNode( "input","1", 160, 60, new TensorflowAdapter());
-  if( newNode !== null){
+  let newNode = createNode("input", "1", 160, 60, "tensorflow");
+  if (newNode !== null) {
     ret.push(newNode);
   }
 
-  newNode = createNode("dense", "2", 200, 200, new TensorflowAdapter());
-  if( newNode !== null){
+  newNode = createNode("dense", "2", 200, 200, "tensorflow");
+  if (newNode !== null) {
     ret.push(newNode);
   }
 
-  newNode = createNode("dense", "3", 200, 300, new TensorflowAdapter());
-  if( newNode !== null){
+  newNode = createNode("dense", "3", 200, 300, "tensorflow");
+  if (newNode !== null) {
     ret.push(newNode);
   }
 
-  newNode = createNode("dropout", "4", 200, 400, new TensorflowAdapter());
-  if( newNode !== null){
+  newNode = createNode("dropout", "4", 200, 400, "tensorflow");
+  if (newNode !== null) {
     ret.push(newNode);
   }
 
-  newNode = createNode("output", "5", 200, 500, new TensorflowAdapter());
-  if( newNode !== null){
+  newNode = createNode("output", "5", 200, 500, "tensorflow");
+  if (newNode !== null) {
     ret.push(newNode);
   }
 
@@ -45,7 +45,3 @@ export const getInitialElements = () => {
   });
   return ret;
 };
-
-
-    
-  

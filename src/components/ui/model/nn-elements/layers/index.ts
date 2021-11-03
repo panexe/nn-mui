@@ -5,7 +5,7 @@ import BaseNode from "./basic/BaseNode";
 //import DenseNode from "./basic/DenseFromBase";
 import DenseNode from './basic/DenseNode';
 import DropoutNode from "./basic/DropoutNode";
-import { INNLib } from "../../../../../adapters/INNLib";
+import { getNNLib, INNLib, TensorflowAdapter } from "../../../../../adapters/INNLib";
 import { createLayerNode } from "./basic/LayerNode";
 
 export { InputNode, OutputNode };
@@ -16,7 +16,13 @@ export { InputNode, OutputNode };
 /**
  * This Object is neccesary for the react-flow component  
  */
-export const getNodeTypes = (lib : INNLib) => {
+export const getNodeTypes = (libName : string) => {
+  const lib = getNNLib(libName);
+  if(lib === undefined){
+    console.log("cant find lib: ", libName);
+    return [];
+  }
+
   let ret: {[k: string]: any} = {
     inputNode: InputNode,
   outputNode: OutputNode,
@@ -24,7 +30,7 @@ export const getNodeTypes = (lib : INNLib) => {
 
   }; //as NodeTypesType;
   lib.getAvailableLayers().map(({name, layer}) => {
-    ret[`${name}Node`] = createLayerNode(lib, layer, name);
+    ret[`${name}Node`] = createLayerNode(libName, layer, name);
   })
 
   return ret;
