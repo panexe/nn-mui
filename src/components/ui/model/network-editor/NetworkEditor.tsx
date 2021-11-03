@@ -1,5 +1,11 @@
 // REACT
-import React, { MouseEvent, ReactNode, useCallback, useRef, useState } from "react";
+import React, {
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { DragEvent } from "react";
 
 // REACT FLOW
@@ -56,8 +62,8 @@ import {
 
 import localforage from "localforage";
 
-localforage.config({name: 'react-flow-condig', storeName:'flows'});
-const flowKey = 'nnui-flow';
+localforage.config({ name: "react-flow-config", storeName: "flows" });
+const flowKey = "nnui-flow";
 
 // parameters for react flow
 // should be in a global settings context
@@ -104,21 +110,29 @@ const NetworkEditor = (props: Props) => {
   };
 
   const onSave = useCallback(() => {
-    if(reactFlowInstance){
+    if (reactFlowInstance) {
       const flow = reactFlowInstance.toObject();
       localforage.setItem(flowKey, flow);
+      console.log("flow storage", flow);
     }
   }, [reactFlowInstance]);
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
-      const flow = await localforage.getItem(flowKey) ;
+      const flow = await localforage.getItem(flowKey);
 
       if (flow) {
         const [x = 0, y = 0] = (flow as FlowExportObject).position;
-        setElements((flow as FlowExportObject).elements || []);
+        setElements(
+          (flow as FlowExportObject).elements.map((el) => {
+            if (isNode(el)) {
+              el.data.fromLoad = true;
+            }
+            return el;
+          }) || []
+        );
       }
-    }; 
+    };
     restoreFlow();
   }, [setElements]);
 
@@ -276,7 +290,7 @@ const NetworkEditor = (props: Props) => {
         getId(),
         position.x,
         position.y,
-        props.libName,
+        props.libName
       );
       if (newNode !== null) {
         setElements(elements.concat(newNode));

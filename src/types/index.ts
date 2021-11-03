@@ -8,6 +8,8 @@ export interface DataBaseType {
   error: string;
   layerName?: string;
   libName: string;
+  fromLoad?: boolean;
+  layerArgs?: any;
 }
 
 export type layerOutput = { layerOutput: SymbolicTensor, modelInput: SymbolicTensor | SymbolicTensor [] };

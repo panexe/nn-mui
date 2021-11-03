@@ -1,5 +1,5 @@
 // REACT
-import React, { useCallback } from "react";
+import React from "react";
 import { useEffect, useMemo, useState } from "react";
 
 // REACT FLOW
@@ -20,9 +20,9 @@ import {
   getNNLib,
   ILayer,
   ILayerOutput,
-  INNLib,
-  TensorflowAdapter,
+  INNLayerArgs,
 } from "../../../../../../adapters/INNLib";
+import { data } from "@tensorflow/tfjs";
 
 /**
  *
@@ -30,9 +30,6 @@ import {
 interface MenuBaseProps extends NodeProps<DataBaseType> {
   libName: string;
   layer: ILayer<any, any>;
-  //initialArgs: LayerArgs;
-  //menu: ILayerMenu;
-  //tfjsLayer: ILayerFactory<Layer, LayerArgs>; // maybe second generic type
   layerTypeName: string;
 }
 
@@ -47,23 +44,27 @@ const MenuBaseNode = ({
   layerTypeName,
   ...props
 }: MenuBaseProps) => {
-  const nnLib = getNNLib(libName);
-  //type LayerType = ExtractLayerType<NNLib>;
-  //type PlaceholderType = ExtractPlaceholderType<NNLib>;
 
+  const nnLib = getNNLib(libName);
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
 
-  // state for layer args
+  console.log("in menu base node:", props.data.fromLoad, props.data.layerArgs);
+
   const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(
-    layer.initialArgs
+     layer.initialArgs
   );
   const menu = layer.menu;
 
-  //console.log("layerArgs: ", layerArgs);
+  if(props.data.fromLoad && props.data.layerArgs){
+
+    setLayerArgs(props.data.layerArgs as INNLayerArgs)
+    props.data.fromLoad = false;
+  }
 
   useEffect(() => {
     props.data.changed = true;
+    props.data.layerArgs = layerArgs;
     // eslint-disable-next-line
   }, [layerArgs]);
 
@@ -80,19 +81,10 @@ const MenuBaseNode = ({
    */
   const layerFunction = (input: ILayerOutput<any> | undefined) => {
     if (input === undefined) return input;
-    //console.log("in layerFunction: ",input);
 
     const newLayer = layer.create(layerArgs);
-
-    //console.log("new layer: ", newLayer);
     const ret = nnLib.connect(input, newLayer);
-
-    //console.log("output layer dense: ", ret, nnLib.getOutputShape(newLayer));
-
     setOutputShape(nnLib.getOutputShape(newLayer));
-
-    console.log("");
-
     return ret as ILayerOutput<any>;
   };
 
