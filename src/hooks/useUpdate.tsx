@@ -15,7 +15,7 @@ import { DataBaseType } from "../types";
 export const useUpdate = (
   data: DataBaseType,
   id: string,
-  fn: ILayerFunction<any> | ((input: ILayerOutput<any>) => IModel | undefined)
+  fn: ILayerFunction<any> 
 ) => {
   const setElements = useStoreActions((actions) => actions.setElements);
   const nodes = useStoreState((state) => state.nodes);
@@ -23,13 +23,13 @@ export const useUpdate = (
   const elements: Elements = [...nodes, ...edges];
 
   useEffect(() => {
-    const currentElement = nodes.find((el) => el.id === id);
+    const currentElement = nodes.find((el) => el.id === id) as Node<DataBaseType> | undefined;
 
     // only proceed when input values are valid
     if (
       currentElement === undefined ||
       currentElement === null ||
-      currentElement.data.inputValue === null
+      currentElement.data?.inputValue === null
     ) {
       console.log(
         currentElement?.type,
@@ -41,8 +41,8 @@ export const useUpdate = (
     }
     // update after deletion
     if (
-      currentElement.data.inputValue === undefined &&
-      !currentElement?.data.changed
+      currentElement.data?.inputValue === undefined &&
+      !currentElement?.data?.changed
     ) {
       console.log(
         currentElement?.type,
@@ -69,15 +69,18 @@ export const useUpdate = (
     console.log(currentElement?.type, "node ", id, " | change");
 
     // calc output value | should be the connection of the layers here later on
-    let outputValue: any = undefined;
+    let outputValue: ILayerOutput<any> | undefined = undefined;
     let error = "";
     let connectable = true;
     // catching the errors produced by tfjs to show them in the node
     try {
       outputValue = fn(currentElement.data.inputValue);
     } catch (e) {
+      outputValue = undefined;
       error = (e as Error).message;
+
       console.log("call stack: ", (e as Error).stack?.toString());
+      console.log(currentElement.data.inputValue);
       connectable = false;
     }
 

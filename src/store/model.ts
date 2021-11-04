@@ -1,14 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {IModel} from '../adapters/INNLib';
+import { IModel } from "../adapters/INNLib";
 
-interface modelState{
-  currentFlowKey: string; 
+interface modelState {
+  currentFlowKey: string;
   currentModel: undefined | IModel;
+  currentModelName: string;
 }
 
-const initialState : modelState = {
-    currentFlowKey: 'default-flow',
-    currentModel: undefined, 
+const initialState: modelState = {
+  currentFlowKey: "default-flow",
+  currentModel: undefined,
+  currentModelName: "default",
 };
 
 const modelSlice = createSlice({
@@ -16,14 +18,17 @@ const modelSlice = createSlice({
   initialState: initialState,
   reducers: {
     setCurrentFlowKey(state, action: PayloadAction<string>) {
-        state.currentFlowKey = action.payload;
+      state.currentFlowKey = action.payload;
     },
-    setCurrentModel(state, action: PayloadAction<IModel>){
+    setCurrentModel(state, action: PayloadAction<IModel>) {
       state.currentModel = action.payload;
     },
-    resetCurrentModel(state, action){
+    resetCurrentModel(state, action) {
       state.currentModel = undefined;
-    }
+    },
+    setCurrentModelName(state, action: PayloadAction<string>) {
+      state.currentModelName = action.payload;
+    },
   },
 });
 

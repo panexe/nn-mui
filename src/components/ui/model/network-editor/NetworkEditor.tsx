@@ -47,7 +47,11 @@ import * as constants from "../../../../constants/constants";
 import { getInitialElements } from "./initialElements";
 import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 import { createDense } from "../nn-elements/layers/basic/DenseNode";
-import { getNNLib, INNLib, TensorflowAdapter } from "../../../../adapters/INNLib";
+import {
+  getNNLib,
+  INNLib,
+  TensorflowAdapter,
+} from "../../../../adapters/INNLib";
 import { math } from "@tensorflow/tfjs-core";
 import {
   checkIntersection,
@@ -113,6 +117,16 @@ const NetworkEditor = (props: Props) => {
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
       const flow = reactFlowInstance.toObject();
+      const newElements = flow.elements.map((el) => {
+        if (isNode(el)) {
+          el.data.outputValue = undefined;
+          el.data.inputValue = undefined;
+        }
+        return el;
+      }) as Elements;
+
+      flow.elements = newElements;
+
       localforage.setItem(flowKey, flow);
       console.log("flow storage", flow);
     }

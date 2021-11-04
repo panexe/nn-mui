@@ -22,7 +22,6 @@ import {
   ILayerOutput,
   INNLayerArgs,
 } from "../../../../../../adapters/INNLib";
-import { data } from "@tensorflow/tfjs";
 
 /**
  *
@@ -48,14 +47,12 @@ const MenuBaseNode = ({
   const nnLib = getNNLib(libName);
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
-
   const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(
      layer.initialArgs
   );
-  const menu = layer.menu;
 
+  // set args from loaded status
   if(props.data.fromLoad && props.data.layerArgs){
-
     setLayerArgs(props.data.layerArgs as INNLayerArgs)
     props.data.fromLoad = false;
   }
@@ -70,7 +67,7 @@ const MenuBaseNode = ({
     if (props.data.outputValue === undefined) {
       setOutputShape("");
     }
-  }, [props.data]);
+  }, [props.data.outputValue]);
 
   /**
    * Gets passed to BaseNode
@@ -283,7 +280,7 @@ const MenuBaseNode = ({
   const menuJSX = useMemo(() => {
     return (
       <ArgsMenu>
-        {menu.elements.map((val) => {
+        {layer.menu.elements.map((val) => {
           switch (val.type.type) {
             case "category":
               return createCategory(val.name, `${val.name}-${props.id}`);

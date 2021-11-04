@@ -14,6 +14,8 @@ import {
   Position,
   Node,
   useStoreState,
+  getIncomers,
+  useStoreActions,
 } from "react-flow-renderer";
 
 // MUI
@@ -69,28 +71,71 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const model: undefined | IModel = useSelector<RootState>(
     (state) => state.model.currentModel
   ) as undefined | IModel;
+  const modelName: string = useSelector<RootState>(
+    (state) => state.model.currentModelName
+  ) as string;
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
     selectedElements !== null && selectedElements.find((el) => el.id === id);
 
-  const lib : INNLib = getNNLib(data.libName);
+  const lib: INNLib = getNNLib(data.libName);
 
   const [summary, setSummary] = useState("summary");
   //const [layerModel, setLayerModel] = useState<IModel | undefined>();
 
+  const nodes = useStoreState((state) => state.nodes);
+  const edges = useStoreState((state) => state.edges);
+  const elements = [...nodes, ...edges];
+  const setElements = useStoreActions((actions) => actions.setElements);
+
+  if (data.fromLoad) {
+    data.fromLoad = false;
+  }
+
+  const updateModel = async () => {
+    if (
+      data.inputValue !== undefined &&
+      data.changed === true &&
+      data.fromLoad === false
+    ) {
+      console.log(
+        "call createModel with",
+        data.inputValue.modelInput,
+        data.inputValue.layerOutput
+      );
+
+      const nnModel: IModel = lib.createModel(
+        data.inputValue.modelInput,
+        data.inputValue.layerOutput
+      );
+      //dispatch(modelActions.setCurrentModel(nnModel));
+      const saveResults = await nnModel.save(`localstorage://${modelName}`);
+      console.log("save results:", saveResults, modelName);
+    } else {
+      console.log("done nothing in output node");
+    }
+  };
+
+  useEffect(() => {
+    updateModel();
+  }, [data]);
+
   // applys input to this layer
-  const fn = (input: ILayerOutput<any>) => {
+  const fn = async (input: ILayerOutput<any> | undefined) => {
     if (input === undefined) return undefined;
 
     console.log("output lfn", input);
-    const nnModel: IModel = lib.createModel(input.modelInput, input.layerOutput);
-
-    //setLayerModel(nnModel);
+    const nnModel: IModel = lib.createModel(
+      input.modelInput,
+      input.layerOutput
+    );
     dispatch(modelActions.setCurrentModel(nnModel));
-    return nnModel;
+    const saveResults = await nnModel.save(`localstorage://${modelName}`);
+    console.log("save results:", saveResults, modelName);
   };
-  useUpdate(data, id, fn);
+
+  //useUpdate(data, id, fn);
 
   const labelText = "Output";
 

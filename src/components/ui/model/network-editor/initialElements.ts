@@ -14,7 +14,7 @@ export const getInitialElements = () => {
   let newNode = createNode("input", "1", 160, 60, "tensorflow");
   if (newNode !== null) {
     ret.push(newNode);
-  }
+  } 
 
   newNode = createNode("dense", "2", 200, 200, "tensorflow");
   if (newNode !== null) {

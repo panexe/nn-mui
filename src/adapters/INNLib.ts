@@ -66,9 +66,10 @@ export interface ILayerFunction<T> {
   (input: ILayerOutput<T> | undefined): ILayerOutput<T> | undefined;
 }
 
-export interface IModel{
+export interface IModel {
   model: any;
   summary(): string;
+  save(path: string): string | Promise<string>;
 }
 
 /**
@@ -109,33 +110,48 @@ export interface INNLib<
 }
 
 export const getNNLib = (name: string) => {
-  switch (name){
-    case 'tensorflow': 
+  switch (name) {
+    case "tensorflow":
       return new TensorflowAdapter();
-    default: // tensorflow as fallback
+    default:
+      // tensorflow as fallback
       return new TensorflowAdapter();
   }
-}
+};
 
 /**
  * Tensorflow Adapter
  */
 
-export class TensorflowModelAdapter implements IModel{
+export class TensorflowModelAdapter implements IModel {
   model: LayersModel;
 
-  constructor(inputModel: LayersModel){
+  constructor(inputModel: LayersModel) {
     this.model = inputModel;
   }
-  summary(){
+  summary() {
     let ret = "";
     this.model.summary(
       undefined,
       undefined,
       (message?: any, ...optionalParams: any[]) => {
-        ret += (message as string) + '\n';
+        ret += (message as string) + "\n";
       }
     );
+    return ret;
+  }
+  async save(path: string) {
+    let ret = "";
+    await this.model.save(path).then((res) => {
+      console.log(res);
+      ret =
+        "date saved: " +
+        res.modelArtifactsInfo.dateSaved.toDateString() +
+        "responses: " +
+        res.responses?.map((val) => val.text).join(" ") +
+        " errors: " +
+        res.errors?.map((val) => val.toString());
+    });
     return ret;
   }
 }
@@ -197,7 +213,9 @@ export class TensorflowAdapter
   };
 
   createModel = (input: tf.SymbolicTensor | [], output: tf.SymbolicTensor) => {
-    return new TensorflowModelAdapter(tf.model({ inputs: input, outputs: output }));
+    return new TensorflowModelAdapter(
+      tf.model({ inputs: input, outputs: output })
+    );
   };
 
   getAvailableLayers = () => {
@@ -213,7 +231,7 @@ export class TensorflowAdapter
   getLayerMenu = () => {
     return [
       { categoryName: "basic", layers: ["dense", "dropout"] },
-      { categoryName: "advanced", layers: ['input'] },
+      { categoryName: "advanced", layers: ["input"] },
     ];
   };
 

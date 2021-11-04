@@ -29,6 +29,9 @@ import { purple } from "@mui/material/colors";
 import { DataBaseType, Portals } from "../../../../../../types";
 import { getNNLib, INNLib } from "../../../../../../adapters/INNLib";
 import Portal from "../../../../portal/Portal";
+import { isSelected } from "../utils";
+import DimensionInput from "../../../layer-info/DimensionInput";
+import ArgsMenu from "../../../layer-info/ArgsMenu";
 
 /** this basicly is a copy of InputConfig from tfjs
  *  but we want import their type directly
@@ -68,43 +71,43 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 
 const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const lib: INNLib = getNNLib(data.libName);
-
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
 
   const selectedElements = useStoreState((state) => state.selectedElements);
-  const selected =
-    selectedElements !== null && selectedElements.find((el) => el.id === id);
+  const selected = isSelected(id, selectedElements);
 
-  const [counter, setCounter] = useState(0);
   const [args, setArgs] = useState<typeof lib.input.initialArgs>(
     lib.input.initialArgs
   );
-
   const labelText = "Input";
 
-  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setArgs((old) => {
-      return { ...old, shape: [parseInt(event.target.value)] };
-    });
-    setCounter(parseInt(event.target.value));
-  };
+  const [dim, setDim] = useState([0]);
+  console.log("dim", dim);
 
+
+  
+
+  if (data.fromLoad) {
+  }
+
+  console.log("output in input", data.outputValue);
   // update outgoing connections
   useEffect(() => {
     const currentElement = nodes.find((el) => el.id === id);
     if (currentElement === undefined) return; // not elegant, refactor!
 
-    // get connected elements 
+    // get connected elements
     const outGoers = getOutgoers(currentElement, elements);
 
-    // create the input layer 
+    // create the input layer
     const layer = lib.input.create(args);
     const outputValue = { layerOutput: layer, modelInput: layer };
+    console.log("output value in input node", outputValue);
 
-    // update data of this element and the ones connected 
+    // update data of this element and the ones connected
     setElements(
       elements.map((el) => {
         if (el.id === id) {
@@ -124,18 +127,32 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
         return el;
       })
     );
-  }, [args]);
+  }, [args, data.fromLoad]);
 
   return (
     <>
       {selected && (
         <Portal destination={Portals.layerInfo} id={id}>
-          {"Test"}
+          <ArgsMenu>
+            <Typography variant="h4" mt={2}>
+              dimensions
+            </Typography>
+            <DimensionInput
+              value={(args as any)["shape"]}
+              setValue={(value: number[]) => {
+                setArgs((old) => {
+                  return { ...old, shape: value };
+                });
+              }}
+              min={1}
+              max={4}
+            />
+          </ArgsMenu>
         </Portal>
       )}
       <NodeWrapper className="drag-handle">
         <StyledTypography>{labelText}</StyledTypography>
-        <input type="number" value={counter} onChange={onInputChange} />
+        {dim.join(",")}
         <Handle
           type="source"
           position={Position.Bottom}

@@ -5,6 +5,9 @@ import Dataset from "../dataset/Dataset";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import Train from "../train/Train";
+import DimensionInput from "../model/layer-info/DimensionInput";
+import ArgsMenu from "../model/layer-info/ArgsMenu";
+import { useState } from "react";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   paddingTop: "56px",
@@ -14,6 +17,9 @@ const StyledContainer = styled(Box)(({ theme }) => ({
 
 const Main = () => {
   const tabIndex = useSelector<RootState>((state) => state.ui.tabIndex);
+
+  const[ dim, setDim] = useState([0]);
+  console.log("dim", dim);
 
   let selectedTab = <p>No tab selected.</p>;
 
@@ -28,7 +34,7 @@ const Main = () => {
       selectedTab = <Train />;
       break;
     case 3:
-      selectedTab = <p>Eval</p>;
+      selectedTab = <ArgsMenu><DimensionInput value={dim} setValue={setDim} min={1} max={5} /></ArgsMenu>;
       break;
   }
 

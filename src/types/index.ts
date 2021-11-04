@@ -1,9 +1,9 @@
 import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { ILayerPlaceholder, INNLib } from "../adapters/INNLib";
+import { ILayerOutput, ILayerPlaceholder, INNLib } from "../adapters/INNLib";
 
 export interface DataBaseType {
-  inputValue: ILayerPlaceholder | undefined; // should also include SymbolicTensor[]
-  outputValue: ILayerPlaceholder | undefined;
+  inputValue: ILayerOutput<any> | undefined; // should also include SymbolicTensor[]
+  outputValue: ILayerOutput<any> | undefined;
   changed: boolean;
   error: string;
   layerName?: string;
