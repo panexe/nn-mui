@@ -3,26 +3,40 @@
     Can only be once in our model (for now). 
 */
 
-// REACT 
-import {  useEffect } from "react";
+// REACT
+import { useEffect } from "react";
 import { memo, useState } from "react";
 
 // REACT-FLOW
-import { Handle, NodeProps, Position, Node } from "react-flow-renderer";
-
+import {
+  Handle,
+  NodeProps,
+  Position,
+  Node,
+  useStoreState,
+} from "react-flow-renderer";
 
 // MUI
-import { Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import { purple } from "@mui/material/colors";
 
 // NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
-import { DataBaseType} from "../../../../../../types";
+import { DataBaseType, Portals } from "../../../../../../types";
 
-
-import { ExtractModelType, getNNLib, ILayerOutput, INNLib } from "../../../../../../adapters/INNLib";
-
+import {
+  getNNLib,
+  ILayerOutput,
+  IModel,
+  INNLib,
+} from "../../../../../../adapters/INNLib";
+import Portal from "../../../../portal/Portal";
+import ArgsMenu from "../../../layer-info/ArgsMenu";
+import * as constants from "../../../../../../constants/constants";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../../../../../store";
+import { modelActions } from "../../../../../../store/model";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -32,7 +46,10 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   padding: 10,
   backgroundColor: purple[800],
   textAlign: "center",
-  minWidth: "128px",
+  minWidth: constants.NODE_WIDTH,
+  maxWidth: constants.NODE_WIDTH,
+  minHeight: constants.NODE_HEIGHT,
+  maxHeight: constants.NODE_HEIGHT,
 
   ".react-flow__handle": {
     background: theme.palette.text.primary,
@@ -47,20 +64,30 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
 
-const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {  
-  const lib = getNNLib(data.libName);
+const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
+  const dispatch = useAppDispatch();
+  const model: undefined | IModel = useSelector<RootState>(
+    (state) => state.model.currentModel
+  ) as undefined | IModel;
 
-  const [summary, setSummary] = useState(["summary"]);
-  const [layerModel, setLayerModel] = useState<ExtractModelType<typeof lib> | undefined>();
+  const selectedElements = useStoreState((state) => state.selectedElements);
+  const selected =
+    selectedElements !== null && selectedElements.find((el) => el.id === id);
+
+  const lib : INNLib = getNNLib(data.libName);
+
+  const [summary, setSummary] = useState("summary");
+  //const [layerModel, setLayerModel] = useState<IModel | undefined>();
 
   // applys input to this layer
   const fn = (input: ILayerOutput<any>) => {
-    if(input === undefined) return undefined;
+    if (input === undefined) return undefined;
 
-    console.log('output lfn',input);
-    const nnModel = lib.createModel(input.modelInput, input.layerOutput);
+    console.log("output lfn", input);
+    const nnModel: IModel = lib.createModel(input.modelInput, input.layerOutput);
 
-    setLayerModel(nnModel);
+    //setLayerModel(nnModel);
+    dispatch(modelActions.setCurrentModel(nnModel));
     return nnModel;
   };
   useUpdate(data, id, fn);
@@ -68,37 +95,38 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const labelText = "Output";
 
   useEffect(() => {
-    setSummary(["summary: "]);
-    // put summary to screen
-    if (layerModel) {
-      layerModel.summary(
-        undefined,
-        undefined,
-        (message?: any, ...optionalParams: any[]) => {
-          setSummary((oldSummary) => [...oldSummary, message as string]);
-        }
-      );
+    if (model) {
+      setSummary(model.summary());
     }
-    console.log("summary: ", summary);
-    // eslint-disable-next-line
-  }, [layerModel]);
+  }, [model]);
 
   return (
     <NodeWrapper className="drag-handle">
+      {selected && (
+        <Portal destination={Portals.layerInfo} id={id}>
+          <ArgsMenu>
+            <Typography variant="h4" mt={2}>
+              {labelText}
+            </Typography>
+            {summary.length === 1 && <p>No summary available.</p>}
+            {summary.length > 1 && (
+              <Card sx={{ padding: "12px" }}>
+                <Typography>{summary}</Typography>
+              </Card>
+            )}
+          </ArgsMenu>
+        </Portal>
+      )}
       <Handle
         type="target"
         position={Position.Top}
         id="a"
-        isConnectable={ true }//isConnectable}
+        isConnectable={true} //isConnectable}
         //onConnect={onTargetConnect}
       />
-
-      <StyledTypography>{labelText}</StyledTypography>
-      {summary.length === 1 && <p>No summary available.</p>}
-      {summary.length > 1 &&
-        summary.map((line, index) => {
-          return <Typography key={`$output-node-p-${index}`}>{line}</Typography>;
-        })}
+      <div>
+        <StyledTypography>{labelText}</StyledTypography>
+      </div>
     </NodeWrapper>
   );
 };
@@ -106,8 +134,8 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 export const createOutput = (
   id: string,
   posX: number,
-  posY: number, 
-  libName: string,
+  posY: number,
+  libName: string
 ): Node<DataBaseType> => {
   return {
     id: id,

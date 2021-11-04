@@ -67,7 +67,7 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 /*--------------------------------------------------------*/
 
 const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
-  const lib = getNNLib(data.libName);
+  const lib: INNLib = getNNLib(data.libName);
 
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
@@ -96,11 +96,15 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   useEffect(() => {
     const currentElement = nodes.find((el) => el.id === id);
     if (currentElement === undefined) return; // not elegant, refactor!
+
+    // get connected elements 
     const outGoers = getOutgoers(currentElement, elements);
 
+    // create the input layer 
     const layer = lib.input.create(args);
     const outputValue = { layerOutput: layer, modelInput: layer };
 
+    // update data of this element and the ones connected 
     setElements(
       elements.map((el) => {
         if (el.id === id) {
@@ -117,7 +121,6 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
             changed: true,
           };
         }
-
         return el;
       })
     );

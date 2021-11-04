@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   FormControl,
   InputLabel,
   MenuItem,
@@ -53,7 +54,6 @@ const Dataset = () => {
 
   return (
     <>
-      <p>Dataset Tab</p>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Dataset</InputLabel>
         <Select value={ds} label="Dataset" onChange={handleDsChange}>

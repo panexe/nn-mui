@@ -1,6 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface uiState{
+  tabIndex: number;
+}
+
+const initialState: uiState = {
     tabIndex: 1,
 };
 
@@ -8,7 +12,7 @@ const uiSlice = createSlice({
   name: "ui",
   initialState: initialState,
   reducers: {
-    setTab(state, action) {
+    setTab(state, action: PayloadAction<number>) {
         state.tabIndex = action.payload;
     },
   },

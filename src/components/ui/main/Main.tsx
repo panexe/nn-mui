@@ -4,6 +4,7 @@ import Model from "../model/Model";
 import Dataset from "../dataset/Dataset";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import Train from "../train/Train";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   paddingTop: "56px",
@@ -24,7 +25,7 @@ const Main = () => {
       selectedTab = <Model />;
       break;
     case 2:
-      selectedTab = <p>Train</p>;
+      selectedTab = <Train />;
       break;
     case 3:
       selectedTab = <p>Eval</p>;

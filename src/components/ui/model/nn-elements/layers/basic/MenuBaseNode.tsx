@@ -49,8 +49,6 @@ const MenuBaseNode = ({
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
 
-  console.log("in menu base node:", props.data.fromLoad, props.data.layerArgs);
-
   const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(
      layer.initialArgs
   );

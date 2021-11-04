@@ -66,6 +66,11 @@ export interface ILayerFunction<T> {
   (input: ILayerOutput<T> | undefined): ILayerOutput<T> | undefined;
 }
 
+export interface IModel{
+  model: any;
+  summary(): string;
+}
+
 /**
  * Interface for adapter pattern
  */
@@ -73,7 +78,7 @@ export interface INNLib<
   LayerType extends INNLayer = any,
   LayerArgs extends INNLayerArgs = any,
   LayerPlaceholder extends ILayerPlaceholder = any,
-  ModelType = any
+  ModelType extends IModel = any
 > {
   getOutputShape(layer: LayerType): string;
 
@@ -115,8 +120,28 @@ export const getNNLib = (name: string) => {
 /**
  * Tensorflow Adapter
  */
+
+export class TensorflowModelAdapter implements IModel{
+  model: LayersModel;
+
+  constructor(inputModel: LayersModel){
+    this.model = inputModel;
+  }
+  summary(){
+    let ret = "";
+    this.model.summary(
+      undefined,
+      undefined,
+      (message?: any, ...optionalParams: any[]) => {
+        ret += (message as string) + '\n';
+      }
+    );
+    return ret;
+  }
+}
+
 export class TensorflowAdapter
-  implements INNLib<Layer, LayerArgs, SymbolicTensor, LayersModel>
+  implements INNLib<Layer, LayerArgs, SymbolicTensor, TensorflowModelAdapter>
 {
   categoryType: IArgType = { type: "category" };
   numberType: IArgType = { type: "number" };
@@ -172,7 +197,7 @@ export class TensorflowAdapter
   };
 
   createModel = (input: tf.SymbolicTensor | [], output: tf.SymbolicTensor) => {
-    return tf.model({ inputs: input, outputs: output });
+    return new TensorflowModelAdapter(tf.model({ inputs: input, outputs: output }));
   };
 
   getAvailableLayers = () => {

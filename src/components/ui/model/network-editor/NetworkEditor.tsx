@@ -47,7 +47,7 @@ import * as constants from "../../../../constants/constants";
 import { getInitialElements } from "./initialElements";
 import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
 import { createDense } from "../nn-elements/layers/basic/DenseNode";
-import { INNLib, TensorflowAdapter } from "../../../../adapters/INNLib";
+import { getNNLib, INNLib, TensorflowAdapter } from "../../../../adapters/INNLib";
 import { math } from "@tensorflow/tfjs-core";
 import {
   checkIntersection,
@@ -78,7 +78,6 @@ const getId = (): ElementId => `node_${id++}`;
 
 interface Props {
   children?: ReactNode;
-  lib: INNLib;
   libName: string;
 }
 
@@ -92,6 +91,7 @@ const NetworkEditor = (props: Props) => {
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
+  const lib = getNNLib(props.libName);
 
   const networkEditorRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +107,7 @@ const NetworkEditor = (props: Props) => {
       setReactFlowInstance(_reactFlowInstance);
       console.log("loaded flow:", _reactFlowInstance);
     }
+    onRestore();
   };
 
   const onSave = useCallback(() => {

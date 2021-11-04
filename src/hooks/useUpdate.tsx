@@ -7,12 +7,16 @@ import { getOutgoers } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
 import { useStoreActions } from "react-flow-renderer";
 import { useStoreState } from "react-flow-renderer";
+import { ILayerFunction, ILayerOutput, IModel } from "../adapters/INNLib";
 
 // NN-UI
 import { DataBaseType } from "../types";
 
-
-export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
+export const useUpdate = (
+  data: DataBaseType,
+  id: string,
+  fn: ILayerFunction<any> | ((input: ILayerOutput<any>) => IModel | undefined)
+) => {
   const setElements = useStoreActions((actions) => actions.setElements);
   const nodes = useStoreState((state) => state.nodes);
   const edges = useStoreState((state) => state.edges);
@@ -27,6 +31,12 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
       currentElement === null ||
       currentElement.data.inputValue === null
     ) {
+      console.log(
+        currentElement?.type,
+        "node ",
+        id,
+        " | no change because no input"
+      );
       return;
     }
     // update after deletion
@@ -34,6 +44,12 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
       currentElement.data.inputValue === undefined &&
       !currentElement?.data.changed
     ) {
+      console.log(
+        currentElement?.type,
+        "node ",
+        id,
+        " | no change because input still is undefined"
+      );
       return;
     }
     // update after argument change inside of
@@ -41,9 +57,16 @@ export const useUpdate = (data: DataBaseType, id: string, fn: any) => {
       //console.log("currentElement: ", currentElement);
       // no updates necessary if the input hasnt changed
       if (!currentElement.data.changed) {
+        console.log(
+          currentElement?.type,
+          "node",
+          id,
+          " | no change because has old value"
+        );
         return;
       }
     }
+    console.log(currentElement?.type, "node ", id, " | change");
 
     // calc output value | should be the connection of the layers here later on
     let outputValue: any = undefined;
