@@ -43,17 +43,16 @@ const MenuBaseNode = ({
   layerTypeName,
   ...props
 }: MenuBaseProps) => {
-
   const nnLib = getNNLib(libName);
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
   const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(
-     layer.initialArgs
+    layer.initialArgs
   );
 
   // set args from loaded status
-  if(props.data.fromLoad && props.data.layerArgs){
-    setLayerArgs(props.data.layerArgs as INNLayerArgs)
+  if (props.data.fromLoad && props.data.layerArgs) {
+    setLayerArgs(props.data.layerArgs as INNLayerArgs);
     props.data.fromLoad = false;
   }
 
@@ -87,40 +86,6 @@ const MenuBaseNode = ({
   /*                Focus management              */
   /*++++++++++++++++++++++++++++++++++++++++++++++*/
 
-  // the sidebar-menu input that has focus
-  // (custom focus management)
-  const [focused, setFocused] = useState("name");
-  // html-refrence to focus an element
-  const focusRef = React.createRef<HTMLInputElement>();
-  // stores wheter a select is opened (neccesary because of focus management)
-  const [openSelect, setOpenSelect] = useState("");
-  /**
-   * Called on opening a select.
-   *
-   * Sets the opend select variable to the given one.
-   * @param select name of the select-attribute
-   */
-  const onOpen = (select: string) => {
-    console.log("onOpen", select);
-    setOpenSelect(select);
-  };
-
-  /**
-   * Called on closing a select.
-   *
-   * Sets the opend-select variable to empty string.
-   */
-  const onClose = () => {
-    setOpenSelect("");
-  };
-
-  // this actually focuses the current element
-  useEffect(() => {
-    if (focusRef.current) {
-      focusRef.current.focus();
-    }
-  });
-
   /*++++++++++++++++++++++++++++++++++++++++++++++*/
   /*                Menu Components               */
   /*++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -153,6 +118,7 @@ const MenuBaseNode = ({
     return (
       <React.Fragment key={`fragmet-${key}`}>
         <TextInput<string>
+          ref={null}
           key={key}
           name={name}
           value={(layerArgs as any)[name] ? (layerArgs as any)[name] : ""}
@@ -160,11 +126,6 @@ const MenuBaseNode = ({
             setLayerArgs((old) => {
               return { ...old, [name]: value };
             });
-          }}
-          ref={focused === name ? focusRef : null}
-          onFocus={() => {
-            setFocused(name);
-            console.log(`focus ${name}`);
           }}
         />
         <Divider key={`divider-${key}`} />
@@ -193,11 +154,7 @@ const MenuBaseNode = ({
               return { ...old, [name]: value };
             });
           }}
-          ref={focused === name ? focusRef : null}
-          onFocus={() => {
-            setFocused(name);
-            console.log(`focus ${name}`);
-          }}
+          ref={null}
         />
         <Divider key={`divider-${key}`} />
       </React.Fragment>
@@ -226,20 +183,7 @@ const MenuBaseNode = ({
             });
           }}
           options={options}
-          ref={focused === name ? focusRef : null}
-          onFocus={() => {
-            setFocused(name);
-            console.log(`focus ${name}`);
-          }}
-          onBlur={() => {
-            setFocused("");
-            console.log(`loose focus`);
-          }}
-          open={openSelect === name}
-          onOpen={() => {
-            onOpen(name);
-          }}
-          onClose={onClose}
+          ref={null}
         />
         <Divider key={`divider-${key}`} />
       </React.Fragment>
@@ -266,11 +210,7 @@ const MenuBaseNode = ({
               return { ...old, [name]: value };
             });
           }}
-          ref={focused === name ? focusRef : null}
-          onFocus={() => {
-            setFocused(name);
-            console.log(`focus ${name}`);
-          }}
+          ref={null}
         />
         <Divider key={`divider-${key}`} />
       </React.Fragment>
@@ -303,7 +243,7 @@ const MenuBaseNode = ({
       </ArgsMenu>
     );
     // eslint-disable-next-line
-  }, [layerArgs, openSelect, focused]);
+  }, [layerArgs]);
 
   return (
     <BaseNode

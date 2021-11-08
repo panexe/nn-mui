@@ -24,11 +24,12 @@ import { Node } from "react-flow-renderer";
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import { purple } from "@mui/material/colors";
+import Portal from '@mui/material/Portal';
 
 // NNUI
 import { DataBaseType, Portals } from "../../../../../../types";
 import { getNNLib, INNLib } from "../../../../../../adapters/INNLib";
-import Portal from "../../../../portal/Portal";
+//import Portal from "../../../../portal/Portal";
 import { isSelected } from "../utils";
 import DimensionInput from "../../../layer-info/DimensionInput";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
@@ -128,11 +129,12 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
       })
     );
   }, [args, data.fromLoad]);
+  const portalDest = document.getElementById(Portals.layerInfo);
 
   return (
     <>
       {selected && (
-        <Portal destination={Portals.layerInfo} id={id}>
+        <Portal container={portalDest} >
           <ArgsMenu>
             <Typography variant="h4" mt={2}>
               dimensions
@@ -152,7 +154,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
       )}
       <NodeWrapper className="drag-handle">
         <StyledTypography>{labelText}</StyledTypography>
-        {dim.join(",")}
+        dim: {(args as any)['shape'].join(',')}
         <Handle
           type="source"
           position={Position.Bottom}

@@ -41,11 +41,12 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
   const createHandleInputChange = (n: number) => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
       const newVal = parseInt(event.target.value);
-      let ret = [...value]; 
+      let ret = [...value];
       ret[n] = newVal;
       setValue(ret);
     };
   };
+  const showLabels = false;
 
   let numberInputs = [];
   for (let i = 0; i < dim; i++) {
@@ -56,9 +57,6 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
         justifyContent="center"
         alignItems="center"
       >
-        <Grid item>
-          <InputLabel>{`dim-${i} size:`}</InputLabel>
-        </Grid>
         <Grid item xs={8}>
           <TextField
             //inputRef={ref}
@@ -68,9 +66,16 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
             onChange={createHandleInputChange(i)}
             value={value[i]}
             fullWidth
+            
             //onFocus={props.onFocus}
           />
         </Grid>
+
+        {showLabels && (
+          <Grid item>
+            <InputLabel>{`${i},`}</InputLabel>
+          </Grid>
+        )}
       </Grid>
     );
   }
@@ -86,42 +91,55 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
         padding: "1px",
         border: "solid 0px",
         borderColor: "white",
+        maxWidth: "500px",
       }}
     >
       <Divider />
       <Grid container direction="column" justifyContent="center">
         <Grid item>
+          <Typography>Size of each dimension:</Typography>
           <Grid
             spacing={1}
             container
-            columns={max * 2}
-            justifyContent="space-evenly"
-            alignItems="stretch"
+            columns={max * 2 + 2}
+            justifyContent="space-between"
+            alignItems="baseline"
           >
-            {numberInputs.map((val) => {
+            <Grid item>
+              <Typography variant="h4">[</Typography>
+            </Grid>
+            {numberInputs.map((val, index) => {
               console.log(
                 "max/dim",
                 max / dim,
                 Math.round(Math.floor(max / dim) * 2)
               );
               return (
-                <Grid
-                  xs={
-                    max / dim < 12
-                      ? (Math.round(Math.floor(max / dim) * 2) as GridSize)
-                      : "auto"
-                  }
-                  item
-                >
-                  {val}
-                </Grid>
+                <>
+                  <Grid
+                    item
+                    xs={
+                      max / dim < 12
+                        ? (Math.round(Math.floor(max / dim) * 2) as GridSize)
+                        : "auto"
+                    }
+                  >
+                    {val}
+                  </Grid>
+                  {index !== numberInputs.length - 1 && (
+                    <Typography variant="h4">,</Typography>
+                  )}
+                </>
               );
             })}
+            <Grid item>
+              <Typography variant="h4">]</Typography>
+            </Grid>
           </Grid>
         </Grid>
         <Divider />
         <Grid item>
-          <Typography>Dimensions:</Typography>
+          <Typography>Number of dimensions:</Typography>
           <Slider
             defaultValue={min}
             valueLabelDisplay="auto"

@@ -15,12 +15,13 @@ import { Position } from "react-flow-renderer";
 import { styled } from "@mui/system";
 import { blue, green, grey } from "@mui/material/colors";
 import theme from "../../../../../../theme";
+import Portal from '@mui/material/Portal';
 
 // NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType, Portals } from "../../../../../../types";
 import { Alert, Divider, Grid } from "@mui/material";
-import Portal from "../../../../portal/Portal";
+//import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { ILayerFunction, INNLib } from "../../../../../../adapters/INNLib";
@@ -72,10 +73,12 @@ const BaseNode = (props: BaseNodeProps) => {
 
   useUpdate(data, id, props.layerFunction);
 
+  const portalDest = document.getElementById(Portals.layerInfo);
+
   return (
     <Grid container direction="row">
       {selected && (
-        <Portal destination={Portals.layerInfo} id={id}>
+        <Portal container={portalDest}>
           {props.menu}
         </Portal>
       )}
