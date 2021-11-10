@@ -11,6 +11,7 @@ import { DragEvent } from "react";
 // REACT FLOW
 import ReactFlow, {
   BackgroundVariant,
+  Controls,
   FlowElement,
   FlowExportObject,
   isEdge,
@@ -35,7 +36,7 @@ import ToolSelectBar from "./ToolSelectBar";
 import { getNodeTypes } from "../nn-elements/layers";
 
 // MUI
-import { Box } from "@mui/material";
+import { Box, Grid, useTheme } from "@mui/material";
 
 // Tensorflow
 //
@@ -65,6 +66,7 @@ import {
 } from "../nn-elements/layers/basic/LayerNode";
 
 import localforage from "localforage";
+import SidebarFloat from "../sidebar/SidebarFloat";
 
 localforage.config({ name: "react-flow-config", storeName: "flows" });
 const flowKey = "nnui-flow";
@@ -96,6 +98,7 @@ const NetworkEditor = (props: Props) => {
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
   const lib = getNNLib(props.libName);
+  const theme = useTheme();
 
   const networkEditorRef = useRef<HTMLDivElement>(null);
 
@@ -353,7 +356,9 @@ const NetworkEditor = (props: Props) => {
             onNodeDragStart={onNodeDragStart}
             onNodeDragStop={onNodeDragStop}
           >
-            <Background gap={20} size={0.7} variant={BackgroundVariant.Dots} />
+            <SidebarFloat style={{top:'50%', transform: 'translate(0, -50%)' ,left:'24px', position: "relative", zIndex: 5 }} />
+
+            <Background style={{backgroundColor:theme.palette.background.paper}} gap={20} size={0.7} variant={BackgroundVariant.Dots} />
           </ReactFlow>
         </Box>
       </ContextMenu>

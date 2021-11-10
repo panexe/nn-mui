@@ -60,7 +60,7 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
         <Grid item xs={8}>
           <TextField
             //inputRef={ref}
-            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*", style:{textAlign: 'center'} }}
             variant="standard"
             margin="none"
             onChange={createHandleInputChange(i)}

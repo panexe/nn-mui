@@ -1,17 +1,86 @@
-import { createTheme } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
+import { createTheme } from "@mui/material/styles";
+import { red } from "@mui/material/colors";
+import { PaletteMode } from "@mui/material";
+import { amber, grey, lightGreen } from "@mui/material/colors";
+
+export const getDesignTokens = (mode: PaletteMode) => ({
+  components: {
+    MuiAppBar: {
+      defaultProps: {
+        enableColorOnDark: true,
+      },
+    },
+    MuiAccordion:{
+      styleOverrides:{
+        root:{
+          margin: 0,
+          "&.Mui-expanded":{margin: 0},
+          '&::before':{
+            backgroundColor: '#ffffff00',
+          }
+        }
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          "&.Mui-expanded": {
+            minHeight: "48px",
+          },
+        },
+        content: {
+          "&.Mui-expanded": {
+            margin: 0,
+          },
+        },
+      },
+    },
+    MuiAccordionDetails: {
+      styleOverrides: { root: {paddingTop: 0} },
+    },
+  },
+
+  typography: {
+    fontFamily: ["Roboto Mono"].join(","),
+  },
+  palette: {
+    mode,
+    ...(mode === "light"
+      ? {
+          // palette values for light mode
+          primary: amber,
+          divider: "#FFFFFF33",
+          text: {
+            primary: grey[900],
+            secondary: grey[800],
+          },
+        }
+      : {
+          // palette values for dark mode
+          primary: lightGreen,
+          divider: "#FFFFFF33",
+          background: {
+            default: "#171621",
+            paper: "#1D1B29",
+          },
+          text: {
+            primary: "#fff",
+            secondary: grey[500],
+          },
+        }),
+  },
+});
 
 // A custom theme for this app
 const theme = createTheme({
   palette: {
-    mode:'dark',
-   
+    mode: "dark",
 
     primary: {
-      main: '#556cd6',
+      main: "#556cd6",
     },
     secondary: {
-      main: '#19857b',
+      main: "#19857b",
     },
     error: {
       main: red.A400,
@@ -20,39 +89,35 @@ const theme = createTheme({
 
   typography: {
     // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      '"Lato"',
-      'sans-serif'
-    ].join(',')
+    fontFamily: ['"Lato"', "sans-serif"].join(","),
   },
 
   components: {
     MuiTabs: {
       styleOverrides: {
         flexContainer: {
-          height: '100%',
-        }
-      }
-    }, 
+          height: "100%",
+        },
+      },
+    },
 
-    MuiToolbar:{
+    MuiToolbar: {
       styleOverrides: {
-        root:{
-          minHeight: '0',
-          '@media (min-height: 600px)': {
-            minHeight: '0'
-          }
+        root: {
+          minHeight: "0",
+          "@media (min-height: 600px)": {
+            minHeight: "0",
+          },
         },
-        regular:{
-          minHeight: '24px',
+        regular: {
+          minHeight: "24px",
         },
-        gutters:{
-          minHeight: '24px',
-        }
-      }
-    }
-  }
-
+        gutters: {
+          minHeight: "24px",
+        },
+      },
+    },
+  },
 });
 
 export default theme;

@@ -12,19 +12,21 @@ import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
 
 // MUI
-import { styled } from "@mui/system";
+import { palette, styled } from "@mui/system";
 import { blue, green, grey } from "@mui/material/colors";
 import theme from "../../../../../../theme";
-import Portal from '@mui/material/Portal';
+import Portal from "@mui/material/Portal";
 
 // NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType, Portals } from "../../../../../../types";
-import { Alert, Divider, Grid } from "@mui/material";
+import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
 //import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { ILayerFunction, INNLib } from "../../../../../../adapters/INNLib";
+import { useTheme } from "@mui/material";
+import { SettingsInputComponent } from "@mui/icons-material";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -56,6 +58,7 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
   menu: ReactNode;
   children?: ReactNode;
   lib: INNLib;
+  color?: string;
 }
 
 /**
@@ -65,6 +68,7 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
  */
 const BaseNode = (props: BaseNodeProps) => {
   const { data, id, isConnectable } = props;
+  const theme = useTheme();
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
@@ -77,23 +81,19 @@ const BaseNode = (props: BaseNodeProps) => {
 
   return (
     <Grid container direction="row">
-      {selected && (
-        <Portal container={portalDest}>
-          {props.menu}
-        </Portal>
-      )}
+      {selected && <Portal container={portalDest}>{props.menu}</Portal>}
       <Grid item>
         <NodeWrapper
           className="drag-handle"
           sx={{
             border: selected
-              ? `4px solid ${blue[800]}`
-              : `1px solid ${theme.palette.action.disabled}`,
-            backgroundColor: props.backgroundColor
-              ? props.backgroundColor
-              : grey[800],
-            paddingTop: 0,
-            paddingBottom: 0,
+              ? `3px solid ${theme.palette.primary.main}`
+              : `1px solid ${"#FF006E"}`,
+            borderRadius: "4px",
+            backgroundColor: theme.palette.background.paper,
+            p: 0,
+            boxSizing:'border-box',
+            WebkitBoxSizing: 'border-box',
           }}
         >
           <Handle
@@ -105,16 +105,42 @@ const BaseNode = (props: BaseNodeProps) => {
           <Grid
             container
             direction="row"
-            justifyContent="space-between"
-            alignItems="stretch"
+            justifyContent="flex-start"
+            alignItems="center"
+            sx={{ height: NODE_HEIGHT, width: "100%" }}
           >
-            <Grid item xs={4}>
-              <p>{props.layerTypeName}</p>
+            <Grid item>
+              <Box
+                sx={{
+                  height: NODE_HEIGHT,
+                  width: NODE_HEIGHT,
+                  backgroundColor: "#FF006E88",
+                }}
+              >
+                <SettingsInputComponent
+                  sx={{
+                    fontSize: "32px",
+                    position: "relative",
+                    top: "50%",
+                    transform: "translate(0, -50%)",
+                  }}
+                />
+              </Box>
             </Grid>
-            <Divider orientation="vertical" flexItem>
-            </Divider>
-            <Grid item xs={6}>
-              <p>Dim: {props.children}</p>
+            <Grid item sx={{ pl: "16px" }}>
+              <Grid
+                container
+                direction="column"
+                justifyContent="center"
+                alignItems="baseline"
+              >
+                <Grid item>
+                  <Typography sx={{fontSize:'14pt'}}>{props.layerTypeName.toUpperCase()}</Typography>
+                </Grid>
+                <Grid item>
+                <Typography sx={{fontSize:'11pt', color: theme.palette.text.secondary}} >[{props.children}]</Typography>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
 

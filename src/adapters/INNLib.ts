@@ -202,7 +202,7 @@ export class TensorflowAdapter
   };
 
   getOutputShape(layer: Layer) {
-    return layer.outputShape.toString();
+    return layer.outputShape.map(val => val === null? 'None': val.toString()).join(',');
   }
 
   connect = (source: ILayerOutput<SymbolicTensor>, target: Layer) => {

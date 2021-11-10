@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
+    "@fontsource/roboto-mono": "^4.5.0",
     "@geoffcox/react-splitter": "^2.1.1",
     "@mui/icons-material": "^5.0.1",
     "@mui/material": "latest",

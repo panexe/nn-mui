@@ -6,7 +6,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import SaveIcon from '@mui/icons-material/Save';
 import RestorePageIcon from '@mui/icons-material/RestorePage';
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import { ToggleButton } from "@mui/material";
+import { Divider, ToggleButton } from "@mui/material";
 import { ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/system";
 
@@ -17,7 +17,7 @@ import { styled } from "@mui/system";
 /*--------------------------------------------------------*/
 
 const StyledDiv = styled("div")(({ theme }) => ({
-  backgroundColor: theme.palette.divider,
+  backgroundColor: theme.palette.background.paper,
   width: "100%",
 }));
 
@@ -77,6 +77,7 @@ const ToolSelectBar = (props: ToolSelectBarProps) => {
           <ControlPointIcon />
         </ToggleButton>
       </StyledToggleButtonGroup>
+      <Divider />
     </StyledDiv>
   );
 };

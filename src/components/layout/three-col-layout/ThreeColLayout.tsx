@@ -44,7 +44,7 @@ const ThreeColLayout = (props: ThreeColLayoutProps) => {
   return (
     <StyledSplit
       sizes={[20, 57, 23]}
-      minSize={[200,600,200]}
+      minSize={[0,600,200]}
       style={{display: 'flex', height: '100%'}}
       gutterSize={5}
     >

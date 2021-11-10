@@ -8,9 +8,9 @@ import Train from "../train/Train";
 import DimensionInput from "../model/layer-info/DimensionInput";
 import ArgsMenu from "../model/layer-info/ArgsMenu";
 import { useState } from "react";
+import SidebarFloat from "../model/sidebar/SidebarFloat";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
-  paddingTop: "56px",
   height: "100vh",
   width: "100vw",
 }));
@@ -34,7 +34,7 @@ const Main = () => {
       selectedTab = <Train />;
       break;
     case 3:
-      selectedTab = <ArgsMenu><DimensionInput value={dim} setValue={setDim} min={1} max={5} /></ArgsMenu>;
+      selectedTab = <SidebarFloat style={{}} />;
       break;
   }
 

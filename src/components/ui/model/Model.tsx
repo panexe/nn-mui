@@ -10,20 +10,8 @@ import { TensorflowAdapter } from "../../../adapters/INNLib";
 const Model = () => {
   return (
     <ReactFlowProvider>
-      <ThreeColLayout
-        leftContent={<Sidebar />}
-        mainContent={<NetworkEditor  libName="tensorflow"/>}
-        rightContent={
-          <div
-            id={Portals.layerInfo}
-            style={{
-              backgroundColor: theme.palette.action.hover,
-              height: "100%",
-              overflow: "auto",
-            }}
-          ></div>
-        }
-      />
+      <NetworkEditor  libName="tensorflow"/>
+      
     </ReactFlowProvider>
   );
 };
