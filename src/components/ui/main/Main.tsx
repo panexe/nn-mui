@@ -9,10 +9,11 @@ import DimensionInput from "../model/layer-info/DimensionInput";
 import ArgsMenu from "../model/layer-info/ArgsMenu";
 import { useState } from "react";
 import SidebarFloat from "../model/sidebar/SidebarFloat";
+import ArgumentFloat from "../model/layer-info/ArgumentFloat";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
-  height: "100vh",
-  width: "100vw",
+  height: "100%",
+  width: "100%",
 }));
 
 const Main = () => {
@@ -34,7 +35,7 @@ const Main = () => {
       selectedTab = <Train />;
       break;
     case 3:
-      selectedTab = <SidebarFloat style={{}} />;
+      selectedTab = <ArgumentFloat style={{}} />;
       break;
   }
 

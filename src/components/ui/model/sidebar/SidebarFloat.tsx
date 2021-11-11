@@ -10,6 +10,7 @@ import {
   styled,
   useTheme,
   Theme,
+  Tooltip,
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -17,6 +18,7 @@ import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SidebarFloatCategory from "./SidebarFloatCategory";
 import { Box, SxProps } from "@mui/system";
+import ExpandIcon from "../../../icons/ExpandIcon/ExpandIcon";
 
 const exampleValues = [
   { label: "The Shawshank Redemption", year: 1994 },
@@ -29,13 +31,13 @@ const exampleValues = [
 const StyledAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   "&.MuiAccordionSummary-content": {
     margin: 0,
-    backgroundColor: "green",
+    backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
   },
 }));
 
 interface SidebarFloatProps {
-  style: any
+  style: any;
 }
 
 const SidebarFloat = ({ style }: SidebarFloatProps) => {
@@ -46,34 +48,49 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
   const theme = useTheme();
 
   return (
-    <div style={{...style, width:'280px', marginRight:0}}>
+    <div style={{ ...style, width: "280px", marginRight: 0 }}>
       <Paper
         sx={{
-          mx:0,
-          width:expanded? '280px' : 'fit-content',
-          
+          mx: 0,
+          width: expanded ? "280px" : "fit-content",
           borderRadius: "4px",
           border: "solid 1px white",
         }}
       >
-        <Accordion expanded={expanded} onChange={toggleOpen} sx={{ backgroundColor: theme.palette.background.paper }}>
+        <Accordion
+          expanded={expanded}
+          onChange={toggleOpen}
+          sx={{ backgroundColor: theme.palette.background.paper }}
+        >
+            <Tooltip title='Add nodes' placement='top' sx={{backgroundColor: 'green'}}>
           <StyledAccordionSummary
             sx={{
-              paddingLeft: "24px",
+              paddingLeft: expanded ? "24px" : '16px',
               paddingRight: "16px",
               marginBottom: "0px",
+              backgroundColor: theme.palette.background.paper,
+              ':hover':{
+                  backgroundColor: expanded ? theme.palette.background.paper : theme.palette.primary.main,
+              }
             }}
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={expanded? <ExpandMoreIcon /> : <ExpandIcon />}
           >
-            <Typography fontSize="21px">NODES</Typography>
+            <Typography fontSize="21px">{expanded? 'NODES' : ''}</Typography>
             <Grid
               container
               direction="row"
               justifyContent="space-between"
               alignItems="center"
             ></Grid>
-          </StyledAccordionSummary>
-          <AccordionDetails sx={{ paddingLeft: "24px" }}>
+          </StyledAccordionSummary></Tooltip>
+          <AccordionDetails
+            sx={{
+              paddingLeft: "24px",
+              visibility: expanded ? "visible" : "collapse",
+              width: expanded ? 'auto' : '24px',
+              backgroundColor: theme.palette.background.paper,
+            }}
+          >
             <Autocomplete
               disablePortal
               id="combo-box-demo"

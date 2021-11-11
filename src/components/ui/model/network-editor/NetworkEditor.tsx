@@ -67,6 +67,7 @@ import {
 
 import localforage from "localforage";
 import SidebarFloat from "../sidebar/SidebarFloat";
+import ArgumentFloat from "../layer-info/ArgumentFloat";
 
 localforage.config({ name: "react-flow-config", storeName: "flows" });
 const flowKey = "nnui-flow";
@@ -356,8 +357,8 @@ const NetworkEditor = (props: Props) => {
             onNodeDragStart={onNodeDragStart}
             onNodeDragStop={onNodeDragStop}
           >
-            <SidebarFloat style={{top:'50%', transform: 'translate(0, -50%)' ,left:'24px', position: "relative", zIndex: 5 }} />
-
+            <SidebarFloat style={{top:'40%', transform: 'translate(0, -50%)' ,left:'24px', position: "relative", zIndex: 5 }} />
+            <ArgumentFloat  style={{top:'40%', transform: 'translate(0, -50%)' ,right:'24px', position: "absolute", zIndex: 5 }} />
             <Background style={{backgroundColor:theme.palette.background.paper}} gap={20} size={0.7} variant={BackgroundVariant.Dots} />
           </ReactFlow>
         </Box>

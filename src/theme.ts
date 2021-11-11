@@ -10,6 +10,15 @@ export const getDesignTokens = (mode: PaletteMode) => ({
         enableColorOnDark: true,
       },
     },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          border: '1px solid',
+          borderRadius: '4px',
+          backgroundColor:  "#1D1B29",
+        }
+      }
+    },
     MuiAccordion:{
       styleOverrides:{
         root:{

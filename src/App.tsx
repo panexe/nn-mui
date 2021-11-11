@@ -38,7 +38,7 @@ export default function App() {
       >
         <CssBaseline />
         <VariableDrawer />
-        <Box component="main" sx={{ flexGrow: 1, p: 0 , overflow: 'hidden'}}>
+        <Box component="main" sx={{ flexGrow: 1, p: 0 , overflowY: 'hidden'}}>
           <TopBar />
           <Main />
         </Box>
