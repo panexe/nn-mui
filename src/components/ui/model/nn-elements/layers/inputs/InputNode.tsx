@@ -21,10 +21,10 @@ import { Position } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
 
 // MUI
-import { Typography } from "@mui/material";
-import { styled } from "@mui/system";
+import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
+import { styled } from "@mui/material";
 import { purple } from "@mui/material/colors";
-import Portal from '@mui/material/Portal';
+import Portal from "@mui/material/Portal";
 
 // NNUI
 import { DataBaseType, Portals } from "../../../../../../types";
@@ -33,6 +33,8 @@ import { getNNLib, INNLib } from "../../../../../../adapters/INNLib";
 import { isSelected } from "../utils";
 import DimensionInput from "../../../layer-info/DimensionInput";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
+import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
+import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 
 /** this basicly is a copy of InputConfig from tfjs
  *  but we want import their type directly
@@ -47,18 +49,18 @@ import ArgsMenu from "../../../layer-info/ArgsMenu";
 /*                         CSS                            */
 /*--------------------------------------------------------*/
 const NodeWrapper = styled("div")(({ theme }) => ({
-  border: `1px solid ${theme.palette.action.disabled}`,
+  outline: `1px solid ${theme.palette.action.disabled}`,
   padding: 10,
-  backgroundColor: purple[800],
+  backgroundColor: theme.palette.background.paper,
   textAlign: "center",
-  minWidth: "240px",
-  maxWidth: "240px",
-  minHeight: "80px",
-  maxHeight: "80px",
+  minWidth: NODE_WIDTH,
+  maxWidth: NODE_WIDTH,
+  minHeight: NODE_HEIGHT,
+  maxHeight: NODE_HEIGHT,
+  overflow: "hidden",
 
   ".react-flow__handle": {
     background: theme.palette.text.primary,
-    top: "auto",
   },
 }));
 
@@ -76,6 +78,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
+  const theme = useTheme();
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected = isSelected(id, selectedElements);
@@ -87,9 +90,6 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 
   const [dim, setDim] = useState([0]);
   console.log("dim", dim);
-
-
-  
 
   if (data.fromLoad) {
   }
@@ -134,7 +134,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   return (
     <>
       {selected && (
-        <Portal container={portalDest} >
+        <Portal container={portalDest}>
           <ArgsMenu>
             <Typography variant="h4" mt={2}>
               dimensions
@@ -152,9 +152,69 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
           </ArgsMenu>
         </Portal>
       )}
-      <NodeWrapper className="drag-handle">
-        <StyledTypography>{labelText}</StyledTypography>
-        dim: {(args as any)['shape'].join(',')}
+      <NodeWrapper
+        className="drag-handle"
+        sx={{
+          outline: selected
+            ? `3px solid ${theme.palette.primary.main}`
+            : "none",
+          border: `1px solid ${"#FFBE0B"}`,
+          borderRadius: "4px",
+          p: 0,
+          boxSizing: "border-box",
+          WebkitBoxSizing: "border-box",
+        }}
+      >
+        <Grid
+          container
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center"
+          sx={{ height: NODE_HEIGHT, width: "100%" }}
+        >
+          <Grid item>
+            <Box
+              sx={{
+                height: NODE_HEIGHT,
+                width: NODE_HEIGHT,
+                backgroundColor: "#FFBE0B88",
+              }}
+            >
+              <Container
+                disableGutters
+                sx={{
+                  position: "relative",
+                  top: "60%",
+                  transform: "translate(0, -50%)",
+                }}
+              >
+                {createLayersIcon("32px")}
+              </Container>
+            </Box>
+          </Grid>
+          <Grid item sx={{ pl: "16px" }}>
+            <Grid
+              container
+              direction="column"
+              justifyContent="center"
+              alignItems="baseline"
+            >
+              <Grid item>
+                <Typography sx={{ fontSize: "14pt" }}>Input</Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  sx={{
+                    fontSize: "11pt",
+                    color: theme.palette.text.secondary,
+                  }}
+                >
+                  [{(args as any)["shape"].join(",")}]
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
         <Handle
           type="source"
           position={Position.Bottom}

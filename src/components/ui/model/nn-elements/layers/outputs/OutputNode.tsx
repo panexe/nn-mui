@@ -19,7 +19,14 @@ import {
 } from "react-flow-renderer";
 
 // MUI
-import { Card, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  Container,
+  Grid,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import { purple } from "@mui/material/colors";
 
@@ -39,19 +46,23 @@ import * as constants from "../../../../../../constants/constants";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../../../../store";
 import { modelActions } from "../../../../../../store/model";
+import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
+import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
 /*--------------------------------------------------------*/
 const NodeWrapper = styled("div")(({ theme }) => ({
-  border: `1px solid ${theme.palette.action.disabled}`,
-  padding: 10,
-  backgroundColor: purple[800],
+  outline: `1px solid ${theme.palette.action.disabled}`,
+  padding: 0,
+  borderRadius: "4px",
+  backgroundColor: theme.palette.background.paper,
   textAlign: "center",
-  minWidth: constants.NODE_WIDTH,
-  maxWidth: constants.NODE_WIDTH,
-  minHeight: constants.NODE_HEIGHT,
-  maxHeight: constants.NODE_HEIGHT,
+  minWidth: NODE_WIDTH,
+  maxWidth: NODE_WIDTH,
+  minHeight: NODE_HEIGHT,
+  maxHeight: NODE_HEIGHT,
+  overflow: "hidden",
 
   ".react-flow__handle": {
     background: theme.palette.text.primary,
@@ -74,6 +85,8 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const modelName: string = useSelector<RootState>(
     (state) => state.model.currentModelName
   ) as string;
+
+  const theme = useTheme();
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
@@ -146,7 +159,7 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   }, [model]);
 
   return (
-    <NodeWrapper className="drag-handle">
+    <>
       {selected && (
         <Portal destination={Portals.layerInfo} id={id}>
           <ArgsMenu>
@@ -162,17 +175,69 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
           </ArgsMenu>
         </Portal>
       )}
-      <Handle
-        type="target"
-        position={Position.Top}
-        id="a"
-        isConnectable={true} //isConnectable}
-        //onConnect={onTargetConnect}
-      />
-      <div>
-        <StyledTypography>{labelText}</StyledTypography>
-      </div>
-    </NodeWrapper>
+
+      <NodeWrapper
+        className="drag-handle"
+        sx={{
+          outline: selected
+            ? `3px solid ${theme.palette.primary.main}`
+            : "none",
+          border: `1px solid ${"#8338EC"}`,
+          borderRadius: "4px",
+          p: 0,
+          boxSizing: "border-box",
+          WebkitBoxSizing: "border-box",
+        }}
+      >
+        <Handle
+          type="target"
+          position={Position.Top}
+          id="a"
+          isConnectable={true} //isConnectable}
+          //onConnect={onTargetConnect}
+        />
+        <Grid
+          container
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center"
+          sx={{ height: NODE_HEIGHT, width: "100%" }}
+        >
+          <Grid item>
+            <Box
+              sx={{
+                height: NODE_HEIGHT,
+                width: NODE_HEIGHT,
+                backgroundColor: "#8338EC88",
+              }}
+            >
+              <Container
+                disableGutters
+                sx={{
+                  position: "relative",
+                  top: "60%",
+                  transform: "translate(0, -50%)",
+                }}
+              >
+                {createLayersIcon("32px")}
+              </Container>
+            </Box>
+          </Grid>
+          <Grid item sx={{ pl: "16px" }}>
+            <Grid
+              container
+              direction="column"
+              justifyContent="center"
+              alignItems="baseline"
+            >
+              <Grid item>
+                <Typography sx={{ fontSize: "14pt" }}>Output</Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </NodeWrapper>
+    </>
   );
 };
 

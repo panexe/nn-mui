@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+import { lightBlue, red } from "@mui/material/colors";
 import { PaletteMode } from "@mui/material";
 import { amber, grey, lightGreen } from "@mui/material/colors";
 
@@ -13,21 +13,21 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          border: '1px solid',
-          borderRadius: '4px',
-          backgroundColor:  "#1D1B29",
-        }
-      }
+          border: "1px solid",
+          borderRadius: "4px",
+          backgroundColor: "#1D1B29",
+        },
+      },
     },
-    MuiAccordion:{
-      styleOverrides:{
-        root:{
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
           margin: 0,
-          "&.Mui-expanded":{margin: 0},
-          '&::before':{
-            backgroundColor: '#ffffff00',
-          }
-        }
+          "&.Mui-expanded": { margin: 0 },
+          "&::before": {
+            backgroundColor: "#ffffff00",
+          },
+        },
       },
     },
     MuiAccordionSummary: {
@@ -45,7 +45,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
       },
     },
     MuiAccordionDetails: {
-      styleOverrides: { root: {paddingTop: 0} },
+      styleOverrides: { root: { paddingTop: 0 } },
     },
   },
 
@@ -57,10 +57,14 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     ...(mode === "light"
       ? {
           // palette values for light mode
-          primary: amber,
-          divider: "#FFFFFF33",
+          primary: lightBlue,
+          divider: "#00000033",
+          background: {
+            default: "#171621",
+            paper: "#DED6C3",
+          },
           text: {
-            primary: grey[900],
+            primary: "#5A4C2B",
             secondary: grey[800],
           },
         }

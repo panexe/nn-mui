@@ -24,7 +24,7 @@ const DrawerItem = ({ icon, name, open, tabIndex }: DrawerItemProps) => {
     const theme = useTheme();
 
     const selected = currentTabIndex === tabIndex;
-    const color = selected ? theme.palette.primary.main : 'white';
+    const color = selected ? theme.palette.primary.main : theme.palette.text.primary;
 
     const handleClick = () => {
         dispatch(uiActions.setTab(tabIndex));

@@ -37,7 +37,7 @@ const ArgumentFloat = ({ style }: ArgumentFloatProps) => {
         sx={{
           mx: 0,
           width: expanded ? "280px" : "fit-content",
-          float:'right',
+          float: "right",
           borderRadius: "4px",
           border: "solid 1px white",
         }}
@@ -45,23 +45,31 @@ const ArgumentFloat = ({ style }: ArgumentFloatProps) => {
         <Accordion
           expanded={expanded}
           onChange={toggleOpen}
-          sx={{ backgroundColor: theme.palette.background.paper}}
+          sx={{ backgroundColor: theme.palette.background.paper }}
         >
           <StyledAccordionSummary
             sx={{
               paddingLeft: "24px",
               paddingRight: "16px",
               marginBottom: "0px",
+              backgroundColor: "background.paper",
             }}
             expandIcon={<ExpandMoreIcon />}
           >
             <Typography fontSize="21px">ARGS</Typography>
           </StyledAccordionSummary>
-          <AccordionDetails sx={{ paddingLeft: "24px" , width: expanded ? 'auto' : '24px', visibility: expanded?'visible' :'collapse' }}>
-              
-            <><ArgumentFloatCategory values={[]} />
-            <ArgumentFloatCategory values={[]} /></>
-              
+          <AccordionDetails
+            sx={{
+              paddingLeft: "24px",
+              width: expanded ? "auto" : "24px",
+              visibility: expanded ? "visible" : "collapse",
+              backgroundColor: "background.paper",
+            }}
+          >
+            <>
+              <ArgumentFloatCategory values={[]} />
+              <ArgumentFloatCategory values={[]} />
+            </>
           </AccordionDetails>
         </Accordion>
       </Paper>

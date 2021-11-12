@@ -20,27 +20,33 @@ import Portal from "@mui/material/Portal";
 // NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType, Portals } from "../../../../../../types";
-import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Container,
+  Divider,
+  Grid,
+  Typography,
+} from "@mui/material";
 //import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { ILayerFunction, INNLib } from "../../../../../../adapters/INNLib";
 import { useTheme } from "@mui/material";
 import { SettingsInputComponent } from "@mui/icons-material";
+import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
 /*--------------------------------------------------------*/
 const NodeWrapper = styled("div")(({ theme }) => ({
-  border: `1px solid ${theme.palette.action.disabled}`,
-  padding: 10,
-  backgroundColor: green[800],
   textAlign: "center",
   minWidth: NODE_WIDTH,
   maxWidth: NODE_WIDTH,
   minHeight: NODE_HEIGHT,
   maxHeight: NODE_HEIGHT,
   overflow: "hidden",
+  borderRadius: "4px",
 
   ".react-flow__handle": {
     background: theme.palette.text.primary,
@@ -86,14 +92,14 @@ const BaseNode = (props: BaseNodeProps) => {
         <NodeWrapper
           className="drag-handle"
           sx={{
-            border: selected
+            outline: selected
               ? `3px solid ${theme.palette.primary.main}`
-              : `1px solid ${"#FF006E"}`,
-            borderRadius: "4px",
+              : "none",
+            border: `1px solid ${"#FF006E"}`,
             backgroundColor: theme.palette.background.paper,
             p: 0,
-            boxSizing:'border-box',
-            WebkitBoxSizing: 'border-box',
+            boxSizing: "border-box",
+            WebkitBoxSizing: "border-box",
           }}
         >
           <Handle
@@ -117,14 +123,16 @@ const BaseNode = (props: BaseNodeProps) => {
                   backgroundColor: "#FF006E88",
                 }}
               >
-                <SettingsInputComponent
+                <Container
+                  disableGutters
                   sx={{
-                    fontSize: "32px",
                     position: "relative",
-                    top: "50%",
+                    top: "60%",
                     transform: "translate(0, -50%)",
                   }}
-                />
+                >
+                  {createLayersIcon("32px")}
+                </Container>
               </Box>
             </Grid>
             <Grid item sx={{ pl: "16px" }}>
@@ -135,10 +143,19 @@ const BaseNode = (props: BaseNodeProps) => {
                 alignItems="baseline"
               >
                 <Grid item>
-                  <Typography sx={{fontSize:'14pt'}}>{props.layerTypeName.toUpperCase()}</Typography>
+                  <Typography sx={{ fontSize: "14pt" }}>
+                    {props.layerTypeName.toUpperCase()}
+                  </Typography>
                 </Grid>
                 <Grid item>
-                <Typography sx={{fontSize:'11pt', color: theme.palette.text.secondary}} >[{props.children}]</Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "11pt",
+                      color: theme.palette.text.secondary,
+                    }}
+                  >
+                    [{props.children}]
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>

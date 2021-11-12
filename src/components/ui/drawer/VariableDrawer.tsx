@@ -19,6 +19,7 @@ import EvaluateIcon, { createEvaluateIcon } from "../../icons/EvaluateIcon/Evalu
 import TrainIcon, { createTrainIcon } from "../../icons/TrainIcon/TrainIcon";
 import NetworkIcon, { createNetworkIcon } from "../../icons/NetworkIcon/NetworkIcon";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { createSettingsIcon } from "../../icons/SettingsIcon/SettingsIcon";
 
 const drawerWidth = "280px";
 
@@ -29,7 +30,7 @@ const topTabs = [
   { text: "EVAL", icon: createEvaluateIcon, tabIndex: 3 },
 ];
 
-const bottomTabs = [{ text: "SETTINGS", icon: createTrainIcon, tabIndex: 4 }];
+const bottomTabs = [{ text: "SETTINGS", icon: createSettingsIcon, tabIndex: 4 }];
 
 interface VariableDrawerProps {
   open: boolean;
@@ -111,7 +112,7 @@ const VariableDrawer = () => {
                 fontStyle="regular"
                 align="center"
                 fontSize="21pt"
-                color='white'
+                color='text.primary'
               >
                 NNUI
               </Typography>
