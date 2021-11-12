@@ -236,59 +236,46 @@ const NetworkEditor = (props: Props) => {
       }
       return el;
     });
-    const { grid, offset } = nodesToGrid(
-      newElements.filter((el) => isNode(el)) as Node[],
-      constants.NODE_WIDTH,
-      constants.NODE_HEIGHT,
-      constants.GRID_SNAP_SIZE,
-      element.id,
-      true
+    const otherNodes = nodes.filter((node) => node.id !== element.id);
+
+    const candidates = otherNodes.filter(
+      (node) =>
+        (element.position.y + constants.NODE_HEIGHT > node.position.y &&
+          element.position.y < node.position.y) ||
+        element.position.y === node.position.y ||
+        (element.position.y < node.position.y + constants.NODE_HEIGHT &&
+          element.position.y > node.position.y)
     );
 
-    let gridCopy = grid.map((arr) => arr.slice());
-
-    const intersects = checkIntersection(
-      element,
-      gridCopy,
-      offset,
-      constants.NODE_WIDTH,
-      constants.NODE_HEIGHT,
-      constants.GRID_SNAP_SIZE
+    const results = candidates.filter(
+      (node) =>
+        (element.position.x + constants.NODE_WIDTH > node.position.x &&
+          element.position.x < node.position.x) ||
+        element.position.x === node.position.x ||
+        (element.position.x < node.position.x + constants.NODE_WIDTH &&
+          element.position.x > node.position.x)
     );
 
-    if (intersects) {
-      console.log("intersects!!!!");
-      const freeSpotOffset = findNextFreeSpot(
-        element,
-        grid,
-        offset,
-        constants.NODE_WIDTH,
-        constants.NODE_HEIGHT,
-        constants.GRID_SNAP_SIZE
-      );
-      console.log("next free spot:", freeSpotOffset);
+    const padding = 40;
 
-      // place
-      setElements(
-        newElements.map((el) => {
-          if (el.id === element.id) {
-            (el as Node).position = {
-              x:
-                (el as Node).position.x +
-                freeSpotOffset * constants.GRID_SNAP_SIZE,
-              y: (el as Node).position.y,
-            };
-            console.log(
-              (el as Node).position.x +
-                freeSpotOffset * constants.GRID_SNAP_SIZE
-            );
-          }
-          return el;
-        })
-      );
-    } else {
-      setElements(newElements);
+    let newX = element.position.x;
+    if (results.length > 0) {
+      console.log("collision!");
+      const rightMost = results
+        .map((val) => val.position.x)
+        .reduce((prev, cur) => Math.max(prev, cur), Number.MIN_SAFE_INTEGER);
+      newX = rightMost + constants.NODE_WIDTH + padding;
+      console.log("results", results, "newX", newX);
     }
+    setElements(
+      newElements.map((el) => {
+        if (isNode(el) && el.id === element.id) {
+          return { ...el, position: { x: newX, y: el.position.y } };
+        }
+        return el;
+      })
+    );
+    return;
   };
 
   const onDrop = (event: DragEvent) => {
@@ -357,9 +344,30 @@ const NetworkEditor = (props: Props) => {
             onNodeDragStart={onNodeDragStart}
             onNodeDragStop={onNodeDragStop}
           >
-            <SidebarFloat style={{top:'40%', transform: 'translate(0, -50%)' ,left:'24px', position: "relative", zIndex: 5 }} />
-            <ArgumentFloat  style={{top:'40%', transform: 'translate(0, -50%)' ,right:'24px', position: "absolute", zIndex: 5 }} />
-            <Background style={{backgroundColor:theme.palette.background.paper}} gap={20} size={0.7} variant={BackgroundVariant.Dots} />
+            <SidebarFloat
+              style={{
+                top: "40%",
+                transform: "translate(0, -50%)",
+                left: "24px",
+                position: "relative",
+                zIndex: 5,
+              }}
+            />
+            <ArgumentFloat
+              style={{
+                top: "40%",
+                transform: "translate(0, -50%)",
+                right: "24px",
+                position: "absolute",
+                zIndex: 5,
+              }}
+            />
+            <Background
+              style={{ backgroundColor: theme.palette.background.paper }}
+              gap={20}
+              size={0.7}
+              variant={BackgroundVariant.Dots}
+            />
           </ReactFlow>
         </Box>
       </ContextMenu>
