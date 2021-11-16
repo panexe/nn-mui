@@ -36,6 +36,8 @@ export const createDropout = (
       error: "",
       layerName: "dropout",
       libName: libName,
+      isDragged: false, 
+      dragOffset: 0,
     },
   }; //as Node<DataBaseType>;
 };

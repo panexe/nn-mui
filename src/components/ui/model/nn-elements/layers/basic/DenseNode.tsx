@@ -38,6 +38,8 @@ export const createDense = (
       error: "",
       layerName: "dense",
       libName: libName,
+      isDragged: false, 
+      dragOffset: 0,
     },
   }; //as Node<DataBaseTypse>;
 };

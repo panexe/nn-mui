@@ -35,6 +35,7 @@ import DimensionInput from "../../../layer-info/DimensionInput";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
+import ArgumentFloatCategory from "../../../layer-info/ArgumentFloatCategory";
 
 /** this basicly is a copy of InputConfig from tfjs
  *  but we want import their type directly
@@ -135,10 +136,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
     <>
       {selected && (
         <Portal container={portalDest}>
-          <ArgsMenu>
-            <Typography variant="h4" mt={2}>
-              dimensions
-            </Typography>
+          <ArgumentFloatCategory name="dimensions">
             <DimensionInput
               value={(args as any)["shape"]}
               setValue={(value: number[]) => {
@@ -149,7 +147,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
               min={1}
               max={4}
             />
-          </ArgsMenu>
+          </ArgumentFloatCategory>
         </Portal>
       )}
       <NodeWrapper
@@ -245,6 +243,8 @@ export const createInput = (
       error: "",
       layerName: "input",
       libName: libName,
+      isDragged: false,
+      dragOffset: 0,
     },
   }; //as Node<DataBaseType>;
 };

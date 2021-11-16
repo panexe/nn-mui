@@ -57,6 +57,7 @@ import { math } from "@tensorflow/tfjs-core";
 import {
   checkIntersection,
   findNextFreeSpot,
+  getPlacementOffset,
   nodesToGrid,
   placeNodeOnGrid,
 } from "./utils";
@@ -68,6 +69,7 @@ import {
 import localforage from "localforage";
 import SidebarFloat from "../sidebar/SidebarFloat";
 import ArgumentFloat from "../layer-info/ArgumentFloat";
+import { DataBaseType } from "../../../../types";
 
 localforage.config({ name: "react-flow-config", storeName: "flows" });
 const flowKey = "nnui-flow";
@@ -225,10 +227,20 @@ const NetworkEditor = (props: Props) => {
 
   const onNodeDragStart = (event: React.MouseEvent, element: Node) => {
     setSelectedElements([element]);
+    setElements(
+      elements.map((el) => {
+        if (el.id === element.id) {
+          return {
+            ...el,
+            data: { ...el.data, isDragged: true, dragOffset: 10 },
+          } as Node<DataBaseType>;
+        }
+        return el;
+      })
+    );
   };
 
   const onNodeDragStop = (event: React.MouseEvent, element: Node) => {
-    console.log(element.position);
     const newElements = elements.map((el) => {
       if (el.id === element.id) {
         (el as Node).position.x = Math.round(element.position.x);
@@ -236,41 +248,40 @@ const NetworkEditor = (props: Props) => {
       }
       return el;
     });
-    const otherNodes = nodes.filter((node) => node.id !== element.id);
 
-    const candidates = otherNodes.filter(
-      (node) =>
-        (element.position.y + constants.NODE_HEIGHT > node.position.y &&
-          element.position.y < node.position.y) ||
-        element.position.y === node.position.y ||
-        (element.position.y < node.position.y + constants.NODE_HEIGHT &&
-          element.position.y > node.position.y)
-    );
-
-    const results = candidates.filter(
-      (node) =>
-        (element.position.x + constants.NODE_WIDTH > node.position.x &&
-          element.position.x < node.position.x) ||
-        element.position.x === node.position.x ||
-        (element.position.x < node.position.x + constants.NODE_WIDTH &&
-          element.position.x > node.position.x)
-    );
-
-    const padding = 40;
-
-    let newX = element.position.x;
-    if (results.length > 0) {
-      console.log("collision!");
-      const rightMost = results
-        .map((val) => val.position.x)
-        .reduce((prev, cur) => Math.max(prev, cur), Number.MIN_SAFE_INTEGER);
-      newX = rightMost + constants.NODE_WIDTH + padding;
-      console.log("results", results, "newX", newX);
-    }
+    const newX = getPlacementOffset(nodes, element);
     setElements(
       newElements.map((el) => {
         if (isNode(el) && el.id === element.id) {
-          return { ...el, position: { x: newX, y: el.position.y } };
+          return {
+            ...el,
+            position: { x: newX, y: el.position.y },
+            data: { ...el.data, isDragged: false, dragOffset: 0 },
+          } as Node<DataBaseType>;
+        }
+        return el;
+      })
+    );
+    return;
+  };
+
+  const onNodeDrag = (event: MouseEvent, element: Node) => {
+    const newElements = elements.map((el) => {
+      if (el.id === element.id) {
+        (el as Node).position.x = Math.round(element.position.x);
+        (el as Node).position.y = Math.round(element.position.y);
+      }
+      return el;
+    });
+
+    const newX = getPlacementOffset(nodes, element);
+    setElements(
+      newElements.map((el) => {
+        if (isNode(el) && el.id === element.id) {
+          return {
+            ...el,
+            data: { ...el.data, dragOffset: newX - element.position.x },
+          } as Node<DataBaseType>;
         }
         return el;
       })
@@ -343,6 +354,7 @@ const NetworkEditor = (props: Props) => {
             onDrop={onDrop}
             onNodeDragStart={onNodeDragStart}
             onNodeDragStop={onNodeDragStop}
+            onNodeDrag={onNodeDrag}
           >
             <SidebarFloat
               style={{

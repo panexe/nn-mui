@@ -11,6 +11,7 @@ import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TextInput from "./TextInput";
 import ArgumentFloatCategory from "./ArgumentFloatCategory";
+import { Portals } from "../../../../types";
 
 const StyledAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   "&.MuiAccordionSummary-content": {
@@ -22,6 +23,7 @@ const StyledAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
 
 interface ArgumentFloatProps {
   style: any;
+  children?: React.ReactNode;
 }
 
 const ArgumentFloat = ({ style }: ArgumentFloatProps) => {
@@ -66,10 +68,8 @@ const ArgumentFloat = ({ style }: ArgumentFloatProps) => {
               backgroundColor: "background.paper",
             }}
           >
-            <>
-              <ArgumentFloatCategory values={[]} />
-              <ArgumentFloatCategory values={[]} />
-            </>
+            <div style={{backgroundColor: theme.palette.background.paper}} id={Portals.layerInfo}></div>
+            
           </AccordionDetails>
         </Accordion>
       </Paper>

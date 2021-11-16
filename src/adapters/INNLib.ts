@@ -21,7 +21,10 @@ export type IArgType =
   | { type: "select"; options: string[] };
 
 export interface ILayerMenu {
-  elements: { name: string; type: IArgType }[];
+  categories: {
+    categoryName: string;
+    values: { name: string; type: IArgType }[];
+  }[];
 }
 
 // extract generic (arg type) from layer
@@ -202,7 +205,9 @@ export class TensorflowAdapter
   };
 
   getOutputShape(layer: Layer) {
-    return layer.outputShape.map(val => val === null? 'None': val.toString()).join(',');
+    return layer.outputShape
+      .map((val) => (val === null ? "None" : val.toString()))
+      .join(",");
   }
 
   connect = (source: ILayerOutput<SymbolicTensor>, target: Layer) => {
@@ -237,7 +242,12 @@ export class TensorflowAdapter
 
   input = {
     menu: {
-      elements: [{ name: "options", type: this.categoryType }],
+      categories: [
+        {
+          categoryName: "options",
+          values: [],
+        },
+      ],
     },
     initialArgs: {
       shape: [32],
@@ -251,10 +261,14 @@ export class TensorflowAdapter
   // dense layer
   dense = {
     menu: {
-      elements: [
-        { name: "options", type: this.categoryType },
-        { name: "units", type: this.numberType },
-        { name: "activation", type: this.activationType },
+      categories: [
+        {
+          categoryName: "basic",
+          values: [
+            { name: "units", type: this.numberType },
+            { name: "activation", type: this.activationType },
+          ],
+        },
       ],
     },
     initialArgs: {
@@ -279,9 +293,11 @@ export class TensorflowAdapter
   // dropout
   dropout = {
     menu: {
-      elements: [
-        { name: "options", type: this.categoryType },
-        { name: "rate", type: this.numberType },
+      categories: [
+        {
+          categoryName: "basic",
+          values: [{ name: "rate", type: this.numberType }],
+        },
       ],
     },
     initialArgs: {

@@ -10,6 +10,7 @@ import ArgsMenu from "../model/layer-info/ArgsMenu";
 import { useState } from "react";
 import SidebarFloat from "../model/sidebar/SidebarFloat";
 import ArgumentFloat from "../model/layer-info/ArgumentFloat";
+import ExpandTest from "../model/sidebar/ExpandeTest";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   height: "100%",
@@ -35,7 +36,7 @@ const Main = () => {
       selectedTab = <Train />;
       break;
     case 3:
-      selectedTab = <ArgumentFloat style={{}} />;
+      selectedTab = <ExpandTest />;
       break;
   }
 

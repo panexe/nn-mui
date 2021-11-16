@@ -50,6 +50,8 @@ export const createNode = (
       error: "",
       layerName: type,
       libName: libName,
+      isDragged: false, 
+      dragOffset: 0,
     },
   }; //as Node<DataBaseType>;
 };

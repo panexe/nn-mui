@@ -7,7 +7,7 @@ import { Node } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer/dist/types";
 
 // MUI
-import { Divider, Typography } from "@mui/material";
+import { Divider, ListItem, Typography } from "@mui/material";
 
 // NNUI
 import { DataBaseType } from "../../../../../../types";
@@ -22,6 +22,7 @@ import {
   ILayerOutput,
   INNLayerArgs,
 } from "../../../../../../adapters/INNLib";
+import ArgumentFloatCategory from "../../../layer-info/ArgumentFloatCategory";
 
 /**
  *
@@ -116,7 +117,7 @@ const MenuBaseNode = ({
    */
   const createText = (name: string, key: string) => {
     return (
-      <React.Fragment key={`fragmet-${key}`}>
+      <ListItem sx={{ width: "100%", padding: "0", fontWeight: "bold" }} key={`fragmet-${key}`}>
         <TextInput<string>
           ref={null}
           key={key}
@@ -128,8 +129,7 @@ const MenuBaseNode = ({
             });
           }}
         />
-        <Divider key={`divider-${key}`} />
-      </React.Fragment>
+      </ListItem>
     );
   };
 
@@ -156,7 +156,6 @@ const MenuBaseNode = ({
           }}
           ref={null}
         />
-        <Divider key={`divider-${key}`} />
       </React.Fragment>
     );
   };
@@ -185,7 +184,6 @@ const MenuBaseNode = ({
           options={options}
           ref={null}
         />
-        <Divider key={`divider-${key}`} />
       </React.Fragment>
     );
   };
@@ -212,35 +210,38 @@ const MenuBaseNode = ({
           }}
           ref={null}
         />
-        <Divider key={`divider-${key}`} />
       </React.Fragment>
     );
   };
 
   const menuJSX = useMemo(() => {
     return (
-      <ArgsMenu>
-        {layer.menu.elements.map((val) => {
-          switch (val.type.type) {
-            case "category":
-              return createCategory(val.name, `${val.name}-${props.id}`);
-            case "string":
-              return createText(val.name, `${val.name}-${props.id}`);
-            case "number":
-              return createNumber(val.name, `${val.name}-${props.id}`);
-            case "boolean":
-              return createCheckbox(val.name, `${val.name}-${props.id}`);
-            case "select":
-              return createSelect(
-                val.name,
-                val.type.options,
-                `${val.name}-${props.id}`
-              );
-            default:
-              return <p>ERROR: unknown value</p>;
-          }
-        })}
-      </ArgsMenu>
+      <>
+        {layer.menu.categories.map((cat) =>
+        <ArgumentFloatCategory name={cat.categoryName}>
+          {cat.values.map((val) => {
+            switch (val.type.type) {
+              case "category":
+                return createCategory(val.name, `${val.name}-${props.id}`);
+              case "string":
+                return createText(val.name, `${val.name}-${props.id}`);
+              case "number":
+                return createNumber(val.name, `${val.name}-${props.id}`);
+              case "boolean":
+                return createCheckbox(val.name, `${val.name}-${props.id}`);
+              case "select":
+                return createSelect(
+                  val.name,
+                  val.type.options,
+                  `${val.name}-${props.id}`
+                );
+              default:
+                return <p>ERROR: unknown value</p>;
+            }
+          })}
+          </ArgumentFloatCategory>
+        )}
+      </>
     );
     // eslint-disable-next-line
   }, [layerArgs]);
@@ -275,6 +276,8 @@ export const createMenuBaseNode = (
       error: "",
       layerName: "dense",
       libName: "tensorflow",
+      isDragged: false,
+      dragOffset: 0,
     },
   }; //as Node<DataBaseType>;
 };

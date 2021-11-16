@@ -11,6 +11,8 @@ import {
   useTheme,
   Theme,
   Tooltip,
+  Collapse,
+  Grow,
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -58,7 +60,7 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
   ).layers;
 
   return (
-    <div style={{ ...style, width: "280px", marginRight: 0 }}>
+    <div style={{ ...style, width: expanded ? "280px" : "fit-content", marginRight: 0 }}>
       <Paper
         sx={{
           mx: 0,
@@ -92,6 +94,7 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
               expandIcon={expanded ? <ExpandMoreIcon /> : <ExpandIcon />}
             >
               <Typography fontSize="21px">{expanded ? "NODES" : ""}</Typography>
+
               <Grid
                 container
                 direction="row"

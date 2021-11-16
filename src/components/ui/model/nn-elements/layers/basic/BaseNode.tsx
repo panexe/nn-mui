@@ -65,6 +65,7 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
   children?: ReactNode;
   lib: INNLib;
   color?: string;
+
 }
 
 /**
@@ -88,6 +89,20 @@ const BaseNode = (props: BaseNodeProps) => {
   return (
     <Grid container direction="row">
       {selected && <Portal container={portalDest}>{props.menu}</Portal>}
+      <Box
+        sx={{
+          visibility: data.isDragged ? "visible" : "hidden",
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+          borderRadius: "4px",
+          outline: "solid 2px",
+          outlineColor: "#FFFFFF44",
+          outlineStyle: "dashed",
+          position: "absolute",
+          left: `${data.dragOffset}px`,
+          zIndex: -1,
+        }}
+      ></Box>
       <Grid item>
         <NodeWrapper
           className="drag-handle"

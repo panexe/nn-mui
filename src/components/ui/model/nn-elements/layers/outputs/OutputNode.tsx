@@ -259,6 +259,8 @@ export const createOutput = (
       error: "",
       layerName: "output",
       libName: libName,
+      dragOffset: 0, 
+      isDragged: false,
     },
   }; //as Node<DataBaseType>;
 };

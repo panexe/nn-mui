@@ -16,12 +16,12 @@ import TextInput from "./TextInput";
 
 interface ArgumentFloatCategoryProps {
   children?: ReactNode;
-  values: ReactNode[];
+  name: string;
 }
 
 const ArgumentFloatCategory = ({
   children,
-  values,
+  name,
 }: ArgumentFloatCategoryProps) => {
   const theme = useTheme();
   const [text, setText] = useState<string>("text");
@@ -42,19 +42,15 @@ const ArgumentFloatCategory = ({
         backgroundColor: theme.palette.background.paper,
       }}
     >
-      <AccordionSummary sx={{ px: 0, backgroundColor: 'background.paper' }} expandIcon={<ExpandMoreIcon />}>
-        basic
+      <AccordionSummary
+        sx={{ px: 0, backgroundColor: "background.paper" }}
+        expandIcon={<ExpandMoreIcon />}
+      >
+        {name}
       </AccordionSummary>
 
-      <AccordionDetails sx={{ px: 0, backgroundColor: 'background.paper' }}>
-        <ListItem sx={{ width: "100%", padding: "0", fontWeight: "bold" }}>
-          <TextInput
-            value={text}
-            ref={null}
-            setValue={setText}
-            name="testing"
-          />
-        </ListItem>
+      <AccordionDetails sx={{ px: 0, backgroundColor: "background.paper" }}>
+        {children}
       </AccordionDetails>
     </Accordion>
   );

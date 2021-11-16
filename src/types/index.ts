@@ -10,6 +10,8 @@ export interface DataBaseType {
   libName: string;
   fromLoad?: boolean;
   layerArgs?: any;
+  isDragged: boolean;
+  dragOffset: number;
 }
 
 export type layerOutput = { layerOutput: SymbolicTensor, modelInput: SymbolicTensor | SymbolicTensor [] };

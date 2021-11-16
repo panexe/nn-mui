@@ -101,9 +101,9 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
           <Grid
             spacing={1}
             container
-            columns={max * 2 + 2}
+            columns={max * 2 + 8}
             justifyContent="space-between"
-            alignItems="baseline"
+            alignItems="center"
           >
             <Grid item>
               <Typography variant="h4">[</Typography>
