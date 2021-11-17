@@ -354,8 +354,12 @@ const NetworkEditor = (props: Props) => {
               }}
             />
             <Background
-              style={{ backgroundColor: theme.palette.background.paper }}
+              style={{
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.secondary,
+              }}
               gap={20}
+              color={theme.palette.text.secondary}
               size={0.7}
               variant={BackgroundVariant.Dots}
             />

@@ -15,10 +15,11 @@ import {
 import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SidebarFloatCategory from "./SidebarFloatCategory";
-import ExpandIcon from "../../../icons/ExpandIcon/ExpandIcon";
+import ExpandIcon, {
+  createExpandIcon,
+} from "../../../icons/ExpandIcon/ExpandIcon";
 import { nodesMenu } from "../nn-elements/layers";
 import { TensorflowAdapter } from "../../../../adapters/INNLib";
-
 
 const StyledAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   "&.MuiAccordionSummary-content": {
@@ -60,7 +61,8 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
           mx: 0,
           width: expanded ? "280px" : "fit-content",
           borderRadius: "4px",
-          border: "solid 1px white",
+          padding: "1px",
+          outline: `solid 1px ${theme.palette.divider}`,
         }}
       >
         <Accordion
@@ -85,7 +87,13 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
                     : theme.palette.primary.main,
                 },
               }}
-              expandIcon={expanded ? <ExpandMoreIcon /> : <ExpandIcon />}
+              expandIcon={
+                expanded ? (
+                  <ExpandMoreIcon sx={{ fill: theme.palette.text.primary }} />
+                ) : (
+                  createExpandIcon("24px", theme.palette.text.primary)
+                )
+              }
             >
               <Typography fontSize="21px">{expanded ? "NODES" : ""}</Typography>
 
