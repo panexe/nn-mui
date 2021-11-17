@@ -220,7 +220,7 @@ const MenuBaseNode = ({
     return (
       <>
         {layer.menu.categories.map((cat) => (
-          <ArgumentFloatCategory name={cat.categoryName}>
+          <ArgumentFloatCategory name={cat.categoryName} key={`arg-float-category-${props.id}-${cat}`}>
             {cat.values.map((val) => {
               switch (val.type.type) {
                 case "category":

@@ -63,8 +63,6 @@ const onDragOver = (event: DragEvent) => {
   event.preventDefault();
   event.dataTransfer.dropEffect = "move";
 };
-let id = 0;
-const getId = (): ElementId => `node_${id++}`;
 
 interface Props {
   children?: ReactNode;
@@ -91,6 +89,16 @@ const NetworkEditor = (props: Props) => {
   const resetSelectedElements = useStoreActions(
     (actions) => actions.resetSelectedElements
   );
+
+  const getId = (nodeType: string = 'node'): ElementId => {
+    let idNum = 0;
+    let res: undefined | Node = undefined;
+    do {
+      res = nodes.find((node) => node.id === `nodeType_${idNum++}`);
+    } while (res !== undefined);
+
+    return `nodeType_${idNum++}`;
+  };
 
   const onLoad = (_reactFlowInstance: OnLoadParams) => {
     if (!reactFlowInstance) {

@@ -3,9 +3,10 @@ import { IModel, TensorflowModelAdapter } from "../../../adapters/INNLib";
 import { RootState } from "../../../store";
 import * as tf from "@tensorflow/tfjs";
 import { useEffect, useState } from "react";
-import { Card } from "@mui/material";
+import { Button, Card } from "@mui/material";
 import { LayersModel } from "@tensorflow/tfjs";
 import { MnistData } from "../dataset/mnist";
+import { train } from "./utils";
 
 const Train = () => {
   //const model : undefined | IModel = useSelector<RootState>((state) => state.model.currentModel) as undefined | IModel;
@@ -41,7 +42,6 @@ const Train = () => {
       tab: "Model",
       styles: { height: "1000px" },
     };
-    
 
     const BATCH_SIZE = 512;
     const TRAIN_DATA_SIZE = 5500;
@@ -56,15 +56,31 @@ const Train = () => {
       const d = data.nextTestBatch(TEST_DATA_SIZE);
       return [d.xs.reshape([TEST_DATA_SIZE, 28, 28, 1]), d.labels];
     });
+  };
 
+  const btnOnClick = async () => {
+    let trainModel = model?.model as tf.LayersModel;
+    trainModel.compile({
+      optimizer: "adam",
+      loss: "categoricalCrossentropy",
+      metrics: ["acc"],
+    });
+
+    let data = new MnistData();
+    await data.load();
+
+    train(trainModel, data);
   };
 
   return (
-    <Card sx={{ margin: 2, padding: 2 }}>
-      {summary.split("\n").map((line) => (
-        <p>{line}</p>
-      ))}
-    </Card>
+    <>
+      <Button onClick={btnOnClick}>Start Training</Button>
+      <Card sx={{ margin: 2, padding: 2 }}>
+        {summary.split("\n").map((line) => (
+          <p>{line}</p>
+        ))}
+      </Card>
+    </>
   );
 };
 

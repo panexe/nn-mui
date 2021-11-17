@@ -36,10 +36,11 @@ const ArgumentFloat = ({ style }: ArgumentFloatProps) => {
       <Paper
         sx={{
           mx: 0,
+          padding: '1px',
           width: expanded ? "280px" : "fit-content",
           float: "right",
           borderRadius: "4px",
-          border: "solid 1px white",
+          border: `solid 1px ${theme.palette.divider}`,
         }}
       >
         <Accordion

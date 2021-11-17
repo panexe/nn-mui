@@ -9,7 +9,8 @@ import {
 import * as tf from "@tensorflow/tfjs";
 import { LayerArgs } from "@tensorflow/tfjs-layers/dist/engine/topology";
 import { InputConfig } from "@tensorflow/tfjs-layers/dist/engine/input_layer";
-
+import { FlattenLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/core";
+import { ConvLayerArgs } from "@tensorflow/tfjs-layers/dist/layers/convolutional";
 /**
  * Interface that describes a generic arg type.
  * These represent the values a menu-element can take on.
@@ -227,15 +228,16 @@ export class TensorflowAdapter
     return [
       { name: "dense", layer: this.dense },
       { name: "dropout", layer: this.dropout },
+      { name: "flatten", layer: this.flatten },
     ];
   };
   getAvailableLayerNames = () => {
-    return ["dense", "dropout"];
+    return ["dense", "dropout", "flatten"];
   };
 
   getLayerMenu = () => {
     return [
-      { categoryName: "basic", layers: ["dense", "dropout"] },
+      { categoryName: "basic", layers: ["dense", "dropout", "flatten"] },
       { categoryName: "advanced", layers: ["input"] },
     ];
   };
@@ -308,4 +310,19 @@ export class TensorflowAdapter
       return tf.layers.dropout(args);
     },
   };
+
+  // flatten
+  flatten = {
+    menu: {
+      categories: [],
+    },
+    initialArgs: {
+      name: undefined,
+    },
+    create: (args: FlattenLayerArgs) => {
+      return tf.layers.flatten(args);
+    },
+  };
+
+  
 }

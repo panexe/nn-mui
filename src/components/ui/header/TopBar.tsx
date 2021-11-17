@@ -1,14 +1,17 @@
-import { AppBar, Divider,  Toolbar, Typography } from "@mui/material";
+import { AppBar, Divider, Toolbar, Typography } from "@mui/material";
 import useTheme from "@mui/system/useTheme";
 
 const TopBar = () => {
   const theme = useTheme();
-  console.log("theme", theme.palette.background.paper);
 
   return (
     <>
       <AppBar
-        sx={{ zIndex: 1, backgroundColor: theme.palette.background.paper, boxShadow:'none' }}
+        sx={{
+          zIndex: 1,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: "none",
+        }}
         position="sticky"
         color="transparent"
       >

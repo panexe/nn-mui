@@ -61,8 +61,8 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
           mx: 0,
           width: expanded ? "280px" : "fit-content",
           borderRadius: "4px",
-          padding: "1px",
-          outline: `solid 1px ${theme.palette.divider}`,
+          padding: "0px",
+          border: `solid 1px ${theme.palette.divider}`,
         }}
       >
         <Accordion
@@ -86,6 +86,7 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
                     ? theme.palette.background.paper
                     : theme.palette.primary.main,
                 },
+                borderRadius: '4px',
               }}
               expandIcon={
                 expanded ? (

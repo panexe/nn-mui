@@ -6,16 +6,15 @@
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@fontsource/roboto-mono": "^4.5.0",
-    "@geoffcox/react-splitter": "^2.1.1",
     "@mui/icons-material": "^5.0.1",
     "@mui/material": "latest",
     "@mui/styles": "^5.0.1",
     "@reduxjs/toolkit": "^1.6.2",
     "@tensorflow/tfjs": "^3.9.0",
     "@tensorflow/tfjs-backend-cpu": "^3.9.0",
+    "@tensorflow/tfjs-vis": "^1.5.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "astar-typescript": "^1.2.5",
     "localforage": "^1.10.0",
     "react": "latest",
     "react-dom": "latest",
@@ -23,9 +22,6 @@
     "react-redux": "^7.2.6",
     "react-scripts": "latest",
     "react-split": "^2.0.13",
-    "react-splitter-layout": "^4.0.0",
-    "ts-file-parser": "^0.0.21",
-    "ts-transformer-keys": "^0.4.3",
     "typescript": "latest"
   },
   "scripts": {
@@ -34,7 +30,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "styleguide": "styleguidist server",
-    "styleguide:build": "styleguidist build"
+    "styleguide:build": "styleguidist build",
+    "postinstall": "rimraf node_modules/preact/*/preact.d.ts"
   },
   "browserslist": {
     "production": [
@@ -49,7 +46,6 @@
     ]
   },
   "devDependencies": {
-    "@types/react-splitter-layout": "^3.0.2",
     "react-styleguidist": "^11.1.7"
   },
   "eslintConfig": {

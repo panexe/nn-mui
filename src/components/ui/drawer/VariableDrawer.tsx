@@ -132,6 +132,7 @@ const VariableDrawer = () => {
               icon={icon}
               name={text}
               tabIndex={tabIndex}
+              key={`drawer-item-${text}`}
             />
           ))}
         </List>
@@ -149,6 +150,7 @@ const VariableDrawer = () => {
                   icon={icon}
                   name={text}
                   tabIndex={tabIndex}
+                  key={`drawer-item-${text}`}
                 />
               ))}
             </List>
