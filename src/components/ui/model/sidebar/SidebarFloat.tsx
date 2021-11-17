@@ -9,28 +9,16 @@ import {
   Autocomplete,
   styled,
   useTheme,
-  Theme,
   Tooltip,
-  Collapse,
-  Grow,
 } from "@mui/material";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SidebarFloatCategory from "./SidebarFloatCategory";
-import { Box, SxProps } from "@mui/system";
 import ExpandIcon from "../../../icons/ExpandIcon/ExpandIcon";
 import { nodesMenu } from "../nn-elements/layers";
 import { TensorflowAdapter } from "../../../../adapters/INNLib";
 
-const exampleValues = [
-  { label: "The Shawshank Redemption", year: 1994 },
-  { label: "The Godfather", year: 1972 },
-  { label: "The Godfather: Part II", year: 1974 },
-  { label: "The Dark Knight", year: 2008 },
-  { label: "12 Angry Men", year: 1957 },
-];
 
 const StyledAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   "&.MuiAccordionSummary-content": {
@@ -60,7 +48,13 @@ const SidebarFloat = ({ style }: SidebarFloatProps) => {
   ).layers;
 
   return (
-    <div style={{ ...style, width: expanded ? "280px" : "fit-content", marginRight: 0 }}>
+    <div
+      style={{
+        ...style,
+        width: expanded ? "280px" : "fit-content",
+        marginRight: 0,
+      }}
+    >
       <Paper
         sx={{
           mx: 0,

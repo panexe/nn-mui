@@ -23,16 +23,13 @@ import { Node } from "react-flow-renderer";
 // MUI
 import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/material";
-import { purple } from "@mui/material/colors";
 import Portal from "@mui/material/Portal";
 
 // NNUI
 import { DataBaseType, Portals } from "../../../../../../types";
 import { getNNLib, INNLib } from "../../../../../../adapters/INNLib";
-//import Portal from "../../../../portal/Portal";
 import { isSelected } from "../utils";
 import DimensionInput from "../../../layer-info/DimensionInput";
-import ArgsMenu from "../../../layer-info/ArgsMenu";
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 import ArgumentFloatCategory from "../../../layer-info/ArgumentFloatCategory";
@@ -65,9 +62,6 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.primary,
-}));
 
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
@@ -87,7 +81,6 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   const [args, setArgs] = useState<typeof lib.input.initialArgs>(
     lib.input.initialArgs
   );
-  const labelText = "Input";
 
   const [dim, setDim] = useState([0]);
   console.log("dim", dim);

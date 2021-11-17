@@ -1,5 +1,5 @@
 import { SymbolicTensor } from "@tensorflow/tfjs-layers";
-import { ILayerOutput, ILayerPlaceholder, INNLib } from "../adapters/INNLib";
+import { ILayerOutput } from "../adapters/INNLib";
 
 export interface DataBaseType {
   inputValue: ILayerOutput<any> | undefined; // should also include SymbolicTensor[]

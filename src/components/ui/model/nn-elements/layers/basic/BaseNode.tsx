@@ -12,28 +12,18 @@ import { NodeProps } from "react-flow-renderer";
 import { Position } from "react-flow-renderer";
 
 // MUI
-import { palette, styled } from "@mui/system";
-import { blue, green, grey } from "@mui/material/colors";
-import theme from "../../../../../../theme";
+import { styled } from "@mui/system";
 import Portal from "@mui/material/Portal";
 
 // NNUI
 import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType, Portals } from "../../../../../../types";
-import {
-  Alert,
-  Box,
-  Container,
-  Divider,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Container, Grid, Typography } from "@mui/material";
 //import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { ILayerFunction, INNLib } from "../../../../../../adapters/INNLib";
 import { useTheme } from "@mui/material";
-import { SettingsInputComponent } from "@mui/icons-material";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 
 /*--------------------------------------------------------*/
@@ -65,7 +55,6 @@ export interface BaseNodeProps extends NodeProps<DataBaseType> {
   children?: ReactNode;
   lib: INNLib;
   color?: string;
-
 }
 
 /**

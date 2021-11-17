@@ -7,7 +7,7 @@ import { getOutgoers } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
 import { useStoreActions } from "react-flow-renderer";
 import { useStoreState } from "react-flow-renderer";
-import { ILayerFunction, ILayerOutput, IModel } from "../adapters/INNLib";
+import { ILayerFunction, ILayerOutput } from "../adapters/INNLib";
 
 // NN-UI
 import { DataBaseType } from "../types";

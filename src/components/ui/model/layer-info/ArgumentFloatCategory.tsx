@@ -2,17 +2,10 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Grid,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
   useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DatasetIcon from "../../../icons/DatasetIcon/DatasetIcon";
 import { ReactNode, useState } from "react";
-import TextInput from "./TextInput";
 
 interface ArgumentFloatCategoryProps {
   children?: ReactNode;
@@ -24,7 +17,6 @@ const ArgumentFloatCategory = ({
   name,
 }: ArgumentFloatCategoryProps) => {
   const theme = useTheme();
-  const [text, setText] = useState<string>("text");
   const [expanded, setExpanded] = useState<boolean>(true);
 
   const toggleExpanded = () => {

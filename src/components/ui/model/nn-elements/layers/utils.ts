@@ -1,4 +1,3 @@
-import { useStoreState } from "react-flow-renderer";
 import { Elements } from "react-flow-renderer";
 /**
  * Returns true if the element with the given id, is in the selectedElements arr

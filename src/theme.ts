@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 import { lightBlue, red } from "@mui/material/colors";
 import { PaletteMode } from "@mui/material";
-import { amber, grey, lightGreen } from "@mui/material/colors";
+import { grey, lightGreen } from "@mui/material/colors";
 
 export const getDesignTokens = (mode: PaletteMode) => ({
   components: {

@@ -7,12 +7,11 @@ import { Node } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer/dist/types";
 
 // MUI
-import { Divider, ListItem, Typography } from "@mui/material";
+import { ListItem, Typography } from "@mui/material";
 
 // NNUI
 import { DataBaseType } from "../../../../../../types";
 import BaseNode from "./BaseNode";
-import ArgsMenu from "../../../layer-info/ArgsMenu";
 import TextInput from "../../../layer-info/TextInput";
 import SelectInput from "../../../layer-info/SelectInput";
 import CheckBoxInput from "../../../layer-info/CheckBoxInput";
@@ -117,7 +116,10 @@ const MenuBaseNode = ({
    */
   const createText = (name: string, key: string) => {
     return (
-      <ListItem sx={{ width: "100%", padding: "0", fontWeight: "bold" }} key={`fragmet-${key}`}>
+      <ListItem
+        sx={{ width: "100%", padding: "0", fontWeight: "bold" }}
+        key={`fragmet-${key}`}
+      >
         <TextInput<string>
           ref={null}
           key={key}
@@ -217,30 +219,30 @@ const MenuBaseNode = ({
   const menuJSX = useMemo(() => {
     return (
       <>
-        {layer.menu.categories.map((cat) =>
-        <ArgumentFloatCategory name={cat.categoryName}>
-          {cat.values.map((val) => {
-            switch (val.type.type) {
-              case "category":
-                return createCategory(val.name, `${val.name}-${props.id}`);
-              case "string":
-                return createText(val.name, `${val.name}-${props.id}`);
-              case "number":
-                return createNumber(val.name, `${val.name}-${props.id}`);
-              case "boolean":
-                return createCheckbox(val.name, `${val.name}-${props.id}`);
-              case "select":
-                return createSelect(
-                  val.name,
-                  val.type.options,
-                  `${val.name}-${props.id}`
-                );
-              default:
-                return <p>ERROR: unknown value</p>;
-            }
-          })}
+        {layer.menu.categories.map((cat) => (
+          <ArgumentFloatCategory name={cat.categoryName}>
+            {cat.values.map((val) => {
+              switch (val.type.type) {
+                case "category":
+                  return createCategory(val.name, `${val.name}-${props.id}`);
+                case "string":
+                  return createText(val.name, `${val.name}-${props.id}`);
+                case "number":
+                  return createNumber(val.name, `${val.name}-${props.id}`);
+                case "boolean":
+                  return createCheckbox(val.name, `${val.name}-${props.id}`);
+                case "select":
+                  return createSelect(
+                    val.name,
+                    val.type.options,
+                    `${val.name}-${props.id}`
+                  );
+                default:
+                  return <p>ERROR: unknown value</p>;
+              }
+            })}
           </ArgumentFloatCategory>
-        )}
+        ))}
       </>
     );
     // eslint-disable-next-line

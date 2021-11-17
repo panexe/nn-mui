@@ -2,19 +2,15 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Grid,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography,
   useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DatasetIcon from "../../../icons/DatasetIcon/DatasetIcon";
 import { ReactNode } from "react";
 import { DragEvent } from "react";
 import LayersIcon from "../../../icons/LayersIcon/LayersIcon";
-
 
 interface SidebarFloatCategoryProps {
   children?: ReactNode;
@@ -25,11 +21,11 @@ interface SidebarFloatCategoryProps {
 const SidebarFloatCategory = ({ name, items }: SidebarFloatCategoryProps) => {
   const theme = useTheme();
 
-  const onDragStart = (event : DragEvent, nodeType: string) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
-    console.log('dragstart: ',nodeType);
-  }
+  const onDragStart = (event: DragEvent, nodeType: string) => {
+    event.dataTransfer.setData("application/reactflow", nodeType);
+    event.dataTransfer.effectAllowed = "move";
+    console.log("dragstart: ", nodeType);
+  };
 
   return (
     <Accordion

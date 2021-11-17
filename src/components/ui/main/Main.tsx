@@ -5,12 +5,8 @@ import Dataset from "../dataset/Dataset";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import Train from "../train/Train";
-import DimensionInput from "../model/layer-info/DimensionInput";
-import ArgsMenu from "../model/layer-info/ArgsMenu";
 import { useState } from "react";
-import SidebarFloat from "../model/sidebar/SidebarFloat";
-import ArgumentFloat from "../model/layer-info/ArgumentFloat";
-import ExpandTest from "../model/sidebar/ExpandeTest";
+import Settings from "../settings/Settings";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   height: "100%",
@@ -19,9 +15,6 @@ const StyledContainer = styled(Box)(({ theme }) => ({
 
 const Main = () => {
   const tabIndex = useSelector<RootState>((state) => state.ui.tabIndex);
-
-  const[ dim, setDim] = useState([0]);
-  console.log("dim", dim);
 
   let selectedTab = <p>No tab selected.</p>;
 
@@ -36,8 +29,10 @@ const Main = () => {
       selectedTab = <Train />;
       break;
     case 3:
-      selectedTab = <ExpandTest />;
+      selectedTab = <p>Nothing yet</p>;
       break;
+    case 4:
+      selectedTab = <Settings />;
   }
 
   return <StyledContainer>{selectedTab}</StyledContainer>;

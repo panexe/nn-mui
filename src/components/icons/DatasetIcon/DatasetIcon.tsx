@@ -1,5 +1,4 @@
-import { Icon, SvgIcon } from "@mui/material";
-import { string } from "@tensorflow/tfjs-core";
+import { Icon} from "@mui/material";
 import { ReactComponent as Logo } from "./dataset.svg";
 
 interface DatasetIconProps{

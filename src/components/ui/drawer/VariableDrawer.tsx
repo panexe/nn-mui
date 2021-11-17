@@ -8,17 +8,15 @@ import {
   Typography,
 } from "@mui/material";
 import DrawerItem from "./DrawerItem";
-import MailIcon from "@mui/icons-material/Mail";
 import { styled } from "@mui/material/styles";
 import React from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MuiDrawer from "@mui/material/Drawer";
-import DatasetIcon, { createDatasetIcon } from "../../icons/DatasetIcon/DatasetIcon";
-import EvaluateIcon, { createEvaluateIcon } from "../../icons/EvaluateIcon/EvaluateIcon";
-import TrainIcon, { createTrainIcon } from "../../icons/TrainIcon/TrainIcon";
-import NetworkIcon, { createNetworkIcon } from "../../icons/NetworkIcon/NetworkIcon";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { createDatasetIcon } from "../../icons/DatasetIcon/DatasetIcon";
+import { createEvaluateIcon } from "../../icons/EvaluateIcon/EvaluateIcon";
+import { createTrainIcon } from "../../icons/TrainIcon/TrainIcon";
+import { createNetworkIcon } from "../../icons/NetworkIcon/NetworkIcon";
 import { createSettingsIcon } from "../../icons/SettingsIcon/SettingsIcon";
 
 const drawerWidth = "280px";
@@ -30,11 +28,9 @@ const topTabs = [
   { text: "EVAL", icon: createEvaluateIcon, tabIndex: 3 },
 ];
 
-const bottomTabs = [{ text: "SETTINGS", icon: createSettingsIcon, tabIndex: 4 }];
-
-interface VariableDrawerProps {
-  open: boolean;
-}
+const bottomTabs = [
+  { text: "SETTINGS", icon: createSettingsIcon, tabIndex: 4 },
+];
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -112,7 +108,7 @@ const VariableDrawer = () => {
                 fontStyle="regular"
                 align="center"
                 fontSize="21pt"
-                color='text.primary'
+                color="text.primary"
               >
                 NNUI
               </Typography>

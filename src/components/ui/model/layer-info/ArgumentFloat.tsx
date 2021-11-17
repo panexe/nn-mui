@@ -9,8 +9,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TextInput from "./TextInput";
-import ArgumentFloatCategory from "./ArgumentFloatCategory";
 import { Portals } from "../../../../types";
 
 const StyledAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
@@ -68,8 +66,10 @@ const ArgumentFloat = ({ style }: ArgumentFloatProps) => {
               backgroundColor: "background.paper",
             }}
           >
-            <div style={{backgroundColor: theme.palette.background.paper}} id={Portals.layerInfo}></div>
-            
+            <div
+              style={{ backgroundColor: theme.palette.background.paper }}
+              id={Portals.layerInfo}
+            ></div>
           </AccordionDetails>
         </Accordion>
       </Paper>

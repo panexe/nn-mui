@@ -11,7 +11,6 @@ import { DragEvent } from "react";
 // REACT FLOW
 import ReactFlow, {
   BackgroundVariant,
-  Controls,
   FlowElement,
   FlowExportObject,
   isEdge,
@@ -36,35 +35,17 @@ import ToolSelectBar from "./ToolSelectBar";
 import { getNodeTypes } from "../nn-elements/layers";
 
 // MUI
-import { Box, Grid, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 
 // Tensorflow
 //
 import "@tensorflow/tfjs-backend-cpu";
 
-//import { createDropoutFromBase } from "../nn-elements/layers/basic/DropoutNode";
 import { edgeTypes } from "../edges";
 import * as constants from "../../../../constants/constants";
 import { getInitialElements } from "./initialElements";
-import { createDropout } from "../nn-elements/layers/basic/DropoutNode";
-import { createDense } from "../nn-elements/layers/basic/DenseNode";
-import {
-  getNNLib,
-  INNLib,
-  TensorflowAdapter,
-} from "../../../../adapters/INNLib";
-import { math } from "@tensorflow/tfjs-core";
-import {
-  checkIntersection,
-  findNextFreeSpot,
-  getPlacementOffset,
-  nodesToGrid,
-  placeNodeOnGrid,
-} from "./utils";
-import {
-  createLayerNode,
-  createNode,
-} from "../nn-elements/layers/basic/LayerNode";
+import { getPlacementOffset } from "./utils";
+import { createNode } from "../nn-elements/layers/basic/LayerNode";
 
 import localforage from "localforage";
 import SidebarFloat from "../sidebar/SidebarFloat";
@@ -100,7 +81,6 @@ const NetworkEditor = (props: Props) => {
   const edges = useStoreState((state) => state.edges);
   const elements: Elements = [...nodes, ...edges];
   const setElements = useStoreActions((actions) => actions.setElements);
-  const lib = getNNLib(props.libName);
   const theme = useTheme();
 
   const networkEditorRef = useRef<HTMLDivElement>(null);
@@ -143,7 +123,6 @@ const NetworkEditor = (props: Props) => {
       const flow = await localforage.getItem(flowKey);
 
       if (flow) {
-        const [x = 0, y = 0] = (flow as FlowExportObject).position;
         setElements(
           (flow as FlowExportObject).elements.map((el) => {
             if (isNode(el)) {

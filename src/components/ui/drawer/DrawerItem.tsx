@@ -6,7 +6,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../store";
 import { uiActions } from "../../../store/ui";

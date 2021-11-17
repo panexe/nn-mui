@@ -3,7 +3,7 @@ import MenuBaseNode from "./MenuBaseNode";
 import { DataBaseType } from "../../../../../../types";
 import { NodeProps } from "react-flow-renderer";
 import { Node } from "react-flow-renderer";
-import { getNNLib, ILayer, INNLib } from "../../../../../../adapters/INNLib";
+import { getNNLib, ILayer } from "../../../../../../adapters/INNLib";
 
 export const createLayerNode = (
   libName: string,

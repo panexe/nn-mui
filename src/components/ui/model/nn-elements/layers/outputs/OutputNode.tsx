@@ -14,8 +14,6 @@ import {
   Position,
   Node,
   useStoreState,
-  getIncomers,
-  useStoreActions,
 } from "react-flow-renderer";
 
 // MUI
@@ -28,24 +26,15 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { purple } from "@mui/material/colors";
 
 // NNUI
-import { useUpdate } from "../../../../../../hooks/useUpdate";
 import { DataBaseType, Portals } from "../../../../../../types";
 
-import {
-  getNNLib,
-  ILayerOutput,
-  IModel,
-  INNLib,
-} from "../../../../../../adapters/INNLib";
+import { getNNLib, IModel, INNLib } from "../../../../../../adapters/INNLib";
 import Portal from "../../../../portal/Portal";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
-import * as constants from "../../../../../../constants/constants";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../../../../store";
-import { modelActions } from "../../../../../../store/model";
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 
@@ -67,10 +56,6 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   ".react-flow__handle": {
     background: theme.palette.text.primary,
   },
-}));
-
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.primary,
 }));
 
 /*--------------------------------------------------------*/
@@ -96,11 +81,6 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 
   const [summary, setSummary] = useState("summary");
   //const [layerModel, setLayerModel] = useState<IModel | undefined>();
-
-  const nodes = useStoreState((state) => state.nodes);
-  const edges = useStoreState((state) => state.edges);
-  const elements = [...nodes, ...edges];
-  const setElements = useStoreActions((actions) => actions.setElements);
 
   if (data.fromLoad) {
     data.fromLoad = false;
@@ -133,20 +113,6 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   useEffect(() => {
     updateModel();
   }, [data]);
-
-  // applys input to this layer
-  const fn = async (input: ILayerOutput<any> | undefined) => {
-    if (input === undefined) return undefined;
-
-    console.log("output lfn", input);
-    const nnModel: IModel = lib.createModel(
-      input.modelInput,
-      input.layerOutput
-    );
-    dispatch(modelActions.setCurrentModel(nnModel));
-    const saveResults = await nnModel.save(`localstorage://${modelName}`);
-    console.log("save results:", saveResults, modelName);
-  };
 
   //useUpdate(data, id, fn);
 
@@ -259,7 +225,7 @@ export const createOutput = (
       error: "",
       layerName: "output",
       libName: libName,
-      dragOffset: 0, 
+      dragOffset: 0,
       isDragged: false,
     },
   }; //as Node<DataBaseType>;

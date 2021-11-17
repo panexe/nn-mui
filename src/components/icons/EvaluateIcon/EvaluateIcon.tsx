@@ -1,4 +1,4 @@
-import { Icon, SvgIcon } from "@mui/material";
+import { Icon } from "@mui/material";
 import { ReactComponent as Logo } from "./evaluate.svg";
 
 interface EvaluateIconProps{
