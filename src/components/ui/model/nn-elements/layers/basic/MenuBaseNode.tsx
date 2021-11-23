@@ -1,5 +1,5 @@
 // REACT
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 // REACT FLOW
@@ -7,7 +7,7 @@ import { Node } from "react-flow-renderer";
 import { NodeProps } from "react-flow-renderer/dist/types";
 
 // MUI
-import { ListItem, Typography } from "@mui/material";
+import { CircularProgress, ListItem, Portal, Typography } from "@mui/material";
 
 // NNUI
 import { DataBaseType } from "../../../../../../types";
@@ -19,9 +19,16 @@ import {
   getNNLib,
   ILayer,
   ILayerOutput,
+  ILayerPlaceholder,
   INNLayerArgs,
+  INNLib,
 } from "../../../../../../adapters/INNLib";
 import ArgumentFloatCategory from "../../../layer-info/ArgumentFloatCategory";
+import { useAppDispatch } from "../../../../../../store";
+import { uiActions } from "../../../../../../store/ui";
+
+import * as Comlink from "comlink";
+import { LayerArgs } from "@tensorflow/tfjs-layers/dist/engine/topology";
 
 /**
  *
@@ -44,11 +51,13 @@ const MenuBaseNode = ({
   ...props
 }: MenuBaseProps) => {
   const nnLib = getNNLib(libName);
+  const dispatch = useAppDispatch();
   // output-shape string for display on node
   const [outputShape, setOutputShape] = useState("");
   const [layerArgs, setLayerArgs] = useState<typeof layer.initialArgs>(
     layer.initialArgs
   );
+  const [loading, setLoading] = useState(false);
 
   // set args from loaded status
   if (props.data.fromLoad && props.data.layerArgs) {
@@ -75,16 +84,16 @@ const MenuBaseNode = ({
    */
   const layerFunction = (input: ILayerOutput<any> | undefined) => {
     if (input === undefined) return input;
+    setLoading(true);
 
     const newLayer = layer.create(layerArgs);
     const ret = nnLib.connect(input, newLayer);
     setOutputShape(nnLib.getOutputShape(newLayer));
+
+    setLoading(false);
     return ret as ILayerOutput<any>;
   };
 
-  /*++++++++++++++++++++++++++++++++++++++++++++++*/
-  /*                Focus management              */
-  /*++++++++++++++++++++++++++++++++++++++++++++++*/
 
   /*++++++++++++++++++++++++++++++++++++++++++++++*/
   /*                Menu Components               */
@@ -220,7 +229,10 @@ const MenuBaseNode = ({
     return (
       <>
         {layer.menu.categories.map((cat) => (
-          <ArgumentFloatCategory name={cat.categoryName} key={`arg-float-category-${props.id}-${cat}`}>
+          <ArgumentFloatCategory
+            name={cat.categoryName}
+            key={`arg-float-category-${props.id}-${cat}`}
+          >
             {cat.values.map((val) => {
               switch (val.type.type) {
                 case "category":
@@ -248,16 +260,24 @@ const MenuBaseNode = ({
     // eslint-disable-next-line
   }, [layerArgs]);
 
+  const containerLoading = document.getElementById("loading-portal");
   return (
-    <BaseNode
-      {...props}
-      lib={nnLib}
-      menu={menuJSX}
-      layerFunction={layerFunction}
-      layerTypeName={layerTypeName}
-    >
-      {outputShape}
-    </BaseNode>
+    <>
+      {loading && (
+        <Portal container={containerLoading}>
+          <CircularProgress size={24} />
+        </Portal>
+      )}
+      <BaseNode
+        {...props}
+        lib={nnLib}
+        menu={menuJSX}
+        layerFunction={layerFunction}
+        layerTypeName={layerTypeName}
+      >
+        {outputShape}
+      </BaseNode>
+    </>
   );
 };
 

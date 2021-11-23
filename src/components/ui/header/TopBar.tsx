@@ -1,8 +1,24 @@
-import { AppBar, Divider, Toolbar, Typography } from "@mui/material";
-import useTheme from "@mui/system/useTheme";
+import {
+  AppBar,
+  CircularProgress,
+  Divider,
+  Grid,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
+
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 const TopBar = () => {
   const theme = useTheme();
+  const loading = useSelector<RootState>(
+    (state) => state.ui.loading
+  ) as boolean;
+  const loadingMessage = useSelector<RootState>(
+    (state) => state.ui.loadingMessage
+  ) as string;
 
   return (
     <>
@@ -16,15 +32,32 @@ const TopBar = () => {
         color="transparent"
       >
         <Toolbar>
-          <Typography
-            sx={{ width: "100%" }}
-            align="center"
-            variant="h6"
-            noWrap
-            component="div"
+          <Grid
+            container
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="flex-end"
           >
-            Project Name
-          </Typography>
+            <Grid item xs={5}></Grid>
+            <Grid item>
+              <Typography
+                sx={{ width: "100%", mr:4 }}
+                align="left"
+                variant="h6"
+                noWrap
+                component="div"
+              >
+                Project Name
+              </Typography>
+            </Grid>
+            <div id="loading-portal"></div>
+            <Grid item>
+              {loading && <CircularProgress size={20} sx={{mr:2}} />}
+            </Grid>
+            <Grid item>
+              <Typography color={theme.palette.text.secondary}>{loadingMessage}</Typography>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
       <Divider />

@@ -20,6 +20,7 @@ import {
 import {
   Box,
   Card,
+  CircularProgress,
   Container,
   Grid,
   Typography,
@@ -31,12 +32,13 @@ import { styled } from "@mui/system";
 import { DataBaseType, Portals } from "../../../../../../types";
 
 import { getNNLib, IModel, INNLib } from "../../../../../../adapters/INNLib";
-import Portal from "../../../../portal/Portal";
+import { Portal } from "@mui/base";
 import ArgsMenu from "../../../layer-info/ArgsMenu";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../../../../store";
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
+import { uiActions } from "../../../../../../store/ui";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -72,6 +74,7 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   ) as string;
 
   const theme = useTheme();
+  const [loading, setLoading] = useState(false);
 
   const selectedElements = useStoreState((state) => state.selectedElements);
   const selected =
@@ -103,7 +106,8 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
         data.inputValue.layerOutput
       );
       //dispatch(modelActions.setCurrentModel(nnModel));
-      const saveResults = await nnModel.save(`localstorage://${modelName}`);
+
+      const saveResults = await nnModel.save(`indexeddb://${modelName}`);
       console.log("save results:", saveResults, modelName);
     } else {
       console.log("done nothing in output node");
@@ -111,7 +115,9 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     updateModel();
+    setLoading(false);
   }, [data]);
 
   //useUpdate(data, id, fn);
@@ -124,21 +130,25 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
     }
   }, [model]);
 
+  const containerArgs = document.getElementById(Portals.layerInfo);
+  const containerLoading = document.getElementById("loading-portal");
+
   return (
     <>
+      {loading && <Portal container={containerLoading}>
+        <CircularProgress size={24}/>
+      </Portal>}
       {selected && (
-        <Portal destination={Portals.layerInfo} id={id}>
-          <ArgsMenu>
-            <Typography variant="h4" mt={2}>
-              {labelText}
-            </Typography>
-            {summary.length === 1 && <p>No summary available.</p>}
-            {summary.length > 1 && (
-              <Card sx={{ padding: "12px" }}>
-                <Typography>{summary}</Typography>
-              </Card>
-            )}
-          </ArgsMenu>
+        <Portal container={containerArgs}>
+          <Typography variant="h4" mt={2}>
+            {labelText}
+          </Typography>
+          {summary.length === 1 && <p>No summary available.</p>}
+          {summary.length > 1 && (
+            <Card sx={{ padding: "12px" }}>
+              <Typography>{summary}</Typography>
+            </Card>
+          )}
         </Portal>
       )}
 

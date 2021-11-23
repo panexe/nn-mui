@@ -229,15 +229,17 @@ export class TensorflowAdapter
       { name: "dense", layer: this.dense },
       { name: "dropout", layer: this.dropout },
       { name: "flatten", layer: this.flatten },
+      { name: "conv2d", layer: this.conv2d },
     ];
   };
   getAvailableLayerNames = () => {
-    return ["dense", "dropout", "flatten"];
+    return ["dense", "dropout", "flatten", "conv2d"];
   };
 
   getLayerMenu = () => {
     return [
       { categoryName: "basic", layers: ["dense", "dropout", "flatten"] },
+      { categoryName: "convolutional", layers: ["conv2d"] },
       { categoryName: "advanced", layers: ["input"] },
     ];
   };
@@ -324,5 +326,27 @@ export class TensorflowAdapter
     },
   };
 
-  
+  conv2d = {
+    menu: {
+      categories: [
+        {
+          categoryName: "basic",
+          values: [
+            { name: "filters", type: this.numberType },
+            { name: "kernelSize", type: this.numberType },
+            { name: "activation", type: this.activationType },
+          ],
+        },
+      ],
+    },
+    initialArgs: {
+      name: undefined,
+      filters: 32,
+      kernelSize:3,
+      activation: undefined,
+    },
+    create: (args: ConvLayerArgs) => {
+      return tf.layers.conv2d(args);
+    },
+  };
 }

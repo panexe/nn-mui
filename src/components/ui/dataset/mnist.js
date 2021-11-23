@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
- import * as tf from '@tensorflow/tfjs';
+ import * as tf from '@tensorflow/tfjs-core';
 
  const IMAGE_SIZE = 784;
  const NUM_CLASSES = 10;
@@ -45,44 +45,37 @@
  
    async load() {
      // Make a request for the MNIST sprited image.
-     const img = new Image();
-     const canvas = document.createElement('canvas');
-     const ctx = canvas.getContext('2d');
-     const imgRequest = new Promise((resolve, reject) => {
-       img.crossOrigin = '';
-       img.onload = () => {
-         img.width = img.naturalWidth;
-         img.height = img.naturalHeight;
+     const imgRequest = (async () => {
+       const response = await fetch(MNIST_IMAGES_SPRITE_PATH, {mode: 'cors'});
+       const blob = await response.blob();
+       const bitmap = await createImageBitmap(blob);
+       const {width} = bitmap;
  
-         const datasetBytesBuffer =
-             new ArrayBuffer(NUM_DATASET_ELEMENTS * IMAGE_SIZE * 4);
+       const datasetBytesBuffer =
+           new ArrayBuffer(NUM_DATASET_ELEMENTS * IMAGE_SIZE * 4);
  
-         const chunkSize = 5000;
-         canvas.width = img.width;
-         canvas.height = chunkSize;
+       const chunkSize = 5000;
+       const canvas = new OffscreenCanvas(width, chunkSize);
+       const ctx = canvas.getContext('2d');
  
-         for (let i = 0; i < NUM_DATASET_ELEMENTS / chunkSize; i++) {
-           const datasetBytesView = new Float32Array(
-               datasetBytesBuffer, i * IMAGE_SIZE * chunkSize * 4,
-               IMAGE_SIZE * chunkSize);
-           ctx.drawImage(
-               img, 0, i * chunkSize, img.width, chunkSize, 0, 0, img.width,
-               chunkSize);
+       for (let i = 0; i < NUM_DATASET_ELEMENTS / chunkSize; i++) {
+         const datasetBytesView = new Float32Array(
+             datasetBytesBuffer, i * IMAGE_SIZE * chunkSize * 4,
+             IMAGE_SIZE * chunkSize);
+         ctx.drawImage(
+             bitmap, 0, i * chunkSize, width, chunkSize, 0, 0, width, chunkSize);
  
-           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
  
-           for (let j = 0; j < imageData.data.length / 4; j++) {
-             // All channels hold an equal value since the image is grayscale, so
-             // just read the red channel.
-             datasetBytesView[j] = imageData.data[j * 4] / 255;
-           }
+         for (let j = 0; j < imageData.data.length / 4; j++) {
+           // All channels hold an equal value since the image is grayscale, so
+           // just read the red channel.
+           datasetBytesView[j] = imageData.data[j * 4] / 255;
          }
-         this.datasetImages = new Float32Array(datasetBytesBuffer);
+       }
  
-         resolve();
-       };
-       img.src = MNIST_IMAGES_SPRITE_PATH;
-     });
+       this.datasetImages = new Float32Array(datasetBytesBuffer);
+     })();
  
      const labelsRequest = fetch(MNIST_LABELS_PATH);
      const [imgResponse, labelsResponse] =

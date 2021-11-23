@@ -90,7 +90,7 @@ const NetworkEditor = (props: Props) => {
     (actions) => actions.resetSelectedElements
   );
 
-  const getId = (nodeType: string = 'node'): ElementId => {
+  const getId = (nodeType: string = "node"): ElementId => {
     let idNum = 0;
     let res: undefined | Node = undefined;
     do {

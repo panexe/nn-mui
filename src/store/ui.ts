@@ -4,11 +4,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface uiState {
   tabIndex: number;
   colorMode: PaletteMode;
+  loading: boolean;
+  loadingMessage: string;
 }
 
 const initialState: uiState = {
   tabIndex: 1,
   colorMode: "dark",
+  loading: false,
+  loadingMessage: "",
 };
 
 const uiSlice = createSlice({
@@ -20,6 +24,14 @@ const uiSlice = createSlice({
     },
     toggleColorMode(state) {
       state.colorMode = state.colorMode === "light" ? "dark" : "light";
+    },
+    startLoading(state, action: PayloadAction<string>) {
+      state.loading = true;
+      state.loadingMessage = action.payload;
+    },
+    stopLoading(state) {
+      state.loading = false;
+      state.loadingMessage = "";
     },
   },
 });

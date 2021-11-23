@@ -17,9 +17,10 @@ interface DimensionInputProps {
   setValue:
     | React.Dispatch<React.SetStateAction<number[]>>
     | ((val: number[]) => void);
+  id: string;
 }
 
-const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
+const DimensionInput = ({ min, max, value, setValue, id }: DimensionInputProps) => {
   const dim = value.length;
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
@@ -56,8 +57,9 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
         direction="column"
         justifyContent="center"
         alignItems="center"
+        key={`${id}-diminput_grid-${i}`}
       >
-        <Grid item xs={8}>
+        <Grid item xs={8} key={`diminput_grid-${i}-item`}>
           <TextField
             //inputRef={ref}
             inputProps={{ inputMode: "numeric", pattern: "[0-9]*", style:{textAlign: 'center'} }}
@@ -66,14 +68,14 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
             onChange={createHandleInputChange(i)}
             value={value[i]}
             fullWidth
-            
+            key={`${id}-diminput_grid-${i}-textinput`}
             //onFocus={props.onFocus}
           />
         </Grid>
 
         {showLabels && (
-          <Grid item>
-            <InputLabel>{`${i},`}</InputLabel>
+          <Grid item key={`${id}-diminput_grid-${i}-item2`}>
+            <InputLabel key={`${id}-diminput_grid-${i}-inputlabel`}>{`${i},`}</InputLabel>
           </Grid>
         )}
       </Grid>
@@ -115,8 +117,9 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
                 Math.round(Math.floor(max / dim) * 2)
               );
               return (
-                <>
+                <React.Fragment key={`${id}-diminput-fragment-jsx-${index}`}>
                   <Grid
+                    key={`${id}-diminput_grid-item-jsx-${index}`}
                     item
                     xs={
                       max / dim < 12
@@ -127,9 +130,9 @@ const DimensionInput = ({ min, max, value, setValue }: DimensionInputProps) => {
                     {val}
                   </Grid>
                   {index !== numberInputs.length - 1 && (
-                    <Typography variant="h4">,</Typography>
+                    <Typography variant="h4" key={`${id}-diminput-dash-jsx-${index}`}>,</Typography>
                   )}
-                </>
+                </React.Fragment>
               );
             })}
             <Grid item>

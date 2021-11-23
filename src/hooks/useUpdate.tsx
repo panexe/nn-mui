@@ -1,5 +1,5 @@
 // REACT
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 // REACT-FLOW
 import { Elements } from "react-flow-renderer";
@@ -8,6 +8,7 @@ import { Node } from "react-flow-renderer";
 import { useStoreActions } from "react-flow-renderer";
 import { useStoreState } from "react-flow-renderer";
 import { ILayerFunction, ILayerOutput } from "../adapters/INNLib";
+import { useAsync } from "react-async";
 
 // NN-UI
 import { DataBaseType } from "../types";
@@ -15,7 +16,7 @@ import { DataBaseType } from "../types";
 export const useUpdate = (
   data: DataBaseType,
   id: string,
-  fn: ILayerFunction<any> 
+  fn: ILayerFunction<any>,
 ) => {
   const setElements = useStoreActions((actions) => actions.setElements);
   const nodes = useStoreState((state) => state.nodes);
@@ -23,7 +24,9 @@ export const useUpdate = (
   const elements: Elements = [...nodes, ...edges];
 
   useEffect(() => {
-    const currentElement = nodes.find((el) => el.id === id) as Node<DataBaseType> | undefined;
+    const currentElement = nodes.find((el) => el.id === id) as
+      | Node<DataBaseType>
+      | undefined;
 
     // only proceed when input values are valid
     if (
@@ -78,6 +81,7 @@ export const useUpdate = (
     } catch (e) {
       outputValue = undefined;
       error = (e as Error).message;
+      console.error(error);
 
       console.log("call stack: ", (e as Error).stack?.toString());
       console.log(currentElement.data.inputValue);

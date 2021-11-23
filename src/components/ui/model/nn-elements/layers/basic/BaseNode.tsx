@@ -22,7 +22,7 @@ import { Alert, Box, Container, Grid, Typography } from "@mui/material";
 //import Portal from "../../../../portal/Portal";
 
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
-import { ILayerFunction, INNLib } from "../../../../../../adapters/INNLib";
+import { ILayerFunction, ILayerOutput, INNLib } from "../../../../../../adapters/INNLib";
 import { useTheme } from "@mui/material";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
 

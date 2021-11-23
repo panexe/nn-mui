@@ -62,7 +62,6 @@ const NodeWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-
 /*--------------------------------------------------------*/
 /*                       COMPONENT                        */
 /*--------------------------------------------------------*/
@@ -82,11 +81,15 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
     lib.input.initialArgs
   );
 
-  const [dim, setDim] = useState([0]);
-  console.log("dim", dim);
-
-  if (data.fromLoad) {
-  }
+  useEffect(() => {
+    if (data.fromLoad && data.layerArgs) {
+      console.log("fromload | data.layerArgs", data.layerArgs);
+      console.log("fromload | args", args);
+      setArgs((old) => ({ ...old, ...data.layerArgs }));
+      console.log("fromload | args", args);
+      data.fromLoad = false;
+    }
+  }, [data.fromLoad]);
 
   console.log("output in input", data.outputValue);
   // update outgoing connections
@@ -97,8 +100,17 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
     // get connected elements
     const outGoers = getOutgoers(currentElement, elements);
 
-    // create the input layer
-    const layer = lib.input.create(args);
+    let layer;
+    if (data.fromLoad === true && data.layerArgs !== undefined) {
+      layer = lib.input.create(data.layerArgs);
+      setArgs(data.layerArgs);
+      data.fromLoad = false;
+    } else {
+      // create the input layer
+      layer = lib.input.create(args);
+      data.layerArgs = args;
+    }
+
     const outputValue = { layerOutput: layer, modelInput: layer };
     console.log("output value in input node", outputValue);
 
@@ -122,7 +134,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
         return el;
       })
     );
-  }, [args, data.fromLoad]);
+  }, [args]);
   const portalDest = document.getElementById(Portals.layerInfo);
 
   return (
@@ -131,6 +143,7 @@ const InputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
         <Portal container={portalDest}>
           <ArgumentFloatCategory name="dimensions">
             <DimensionInput
+              id={id}
               value={(args as any)["shape"]}
               setValue={(value: number[]) => {
                 setArgs((old) => {
