@@ -57,29 +57,64 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     ...(mode === "light"
       ? {
           // palette values for light mode
-          primary: lightBlue,
-          divider: "#00000033",
+          primary: {
+            main: '#005AC5',
+            light: '#D7E2FF',
+            dark: '#001944',
+          },
+          secondary: {
+            main: '#575E71',
+            light: '#DBE2F9',
+            dark: '#141B2C',
+            contrastText: '#ffffff',
+          },
           background: {
-            default: "#171621",
-            paper: "#DED6C3",
+            default: '#FDFBFF',
+            paper: '#F0F2FC',
           },
           text: {
-            primary: "#5A4C2B",
-            secondary: grey[800],
+            primary: '#1B1B1E',
+            secondary: '#44464E',
+            disabled: 'rgba(27,27,30,0.38)',
+            hint: 'rgba(27,27,30,0.38)',
           },
+          error: {
+            main: '#BA1B1B',
+            light: '#FFDAD4',
+            dark: '#410001',
+          },
+          divider: '#75777F',
         }
       : {
           // palette values for dark mode
-          primary: lightGreen,
-          divider: "#FFFFFF33",
+          primary: {
+            main: '#ACC6FF',
+            contrastText: '#002D6D',
+            dark: '#004299',
+            light: '#D7E2FF',
+          },
+          secondary: {
+            main: '#DEBBDE',
+            contrastText: '#402743',
+            light: '#FCD7FB',
+            dark: '#583E5A',
+          },
           background: {
-            default: "#171621",
-            paper: "#1D1B29",
+            default: '#1B1B1E',
+            paper: '#232429',
           },
           text: {
-            primary: "#fff",
-            secondary: grey[500],
+            primary: '#E4E2E6',
+            secondary: '#C5C6D0',
+            disabled: 'rgba(227,227,227,0.38)',
           },
+          error: {
+            main: '#F2B8B5',
+            contrastText: '#601410',
+            light: '#F9DEDC',
+            dark: '#8C1D18',
+          },
+          divider: '#938F99',
         }),
   },
 });

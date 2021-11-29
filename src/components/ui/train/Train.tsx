@@ -3,7 +3,7 @@ import { IModel, TensorflowModelAdapter } from "../../../adapters/INNLib";
 import { RootState } from "../../../store";
 import * as tf from "@tensorflow/tfjs";
 import { useEffect, useState } from "react";
-import { Button, Card } from "@mui/material";
+import { Button, Card, Divider, Grid } from "@mui/material";
 import { LayersModel } from "@tensorflow/tfjs";
 import { MnistData } from "../dataset/mnist";
 import { train } from "./utils";
@@ -19,6 +19,10 @@ import {
   buildChartTheme,
   darkTheme,
 } from "@visx/xychart";
+import TrainTopBar from "./train-topbar/TrainTopBar";
+import Chart from "./chart/Chart";
+import DataBox from "./databox/DataBox";
+import TrainSideMenu from "./train-sidemenu/TrainSideMenu";
 
 type Datapoint = {
   epoch: number;
@@ -44,13 +48,71 @@ function Sleep(milliseconds: number) {
 }
 
 const Train = () => {
+  const [trainProg, setTrainProg] = useState<Datapoint[]>([
+    {
+      epoch: 0,
+      modelFitTime: 12,
+      trainLoss: 1,
+      trainAcc: 0.1,
+      valLoss: 1,
+      valAcc: 0.1,
+    },
+    {
+      epoch: 1,
+      modelFitTime: 12,
+      trainLoss: 0.5,
+      trainAcc: 0.4,
+      valLoss: 0.8,
+      valAcc: 0.3,
+    },
+    {
+      epoch: 2,
+      modelFitTime: 12,
+      trainLoss: 0.3,
+      trainAcc: 0.7,
+      valLoss: 0.5,
+      valAcc: 0.6,
+    },
+  ]);
+  const lines = [
+    {
+      name: "loss",
+      yAccessor: (d: Datapoint) => d.trainLoss,
+      xAccessor: (d: Datapoint) => d.epoch,
+    },
+    {
+      name: "acc",
+      yAccessor: (d: Datapoint) => d.trainAcc,
+      xAccessor: (d: Datapoint) => d.epoch,
+    },
+    {
+      name: "val-loss",
+      yAccessor: (d: Datapoint) => d.valLoss,
+      xAccessor: (d: Datapoint) => d.epoch,
+    },
+    {
+      name: "val-acc",
+      yAccessor: (d: Datapoint) => d.valAcc,
+      xAccessor: (d: Datapoint) => d.epoch,
+    },
+  ];
+
+  const [showLines, setShowLines] = useState<boolean[]>([
+    true,
+    true,
+    true,
+    true,
+  ]);
+
   //const model : undefined | IModel = useSelector<RootState>((state) => state.model.currentModel) as undefined | IModel;
   const modelName: string = useSelector<RootState>(
     (state) => state.model.currentModelName
   ) as string;
   let model: undefined | IModel = undefined;
   const [summary, setSummary] = useState("");
-  const [trainProg, setTrainProg] = useState<Datapoint[]>([]);
+
+  const TOP_BAR_HEIGHT = 48;
+  const SIDE_MENU_WIDTH = 328;
 
   const loadModel = async () => {
     return await tf.loadLayersModel(`indexeddb://${modelName}`);
@@ -90,6 +152,59 @@ const Train = () => {
       console.log(ret);
     }
   };
+
+  return (
+    <Grid
+      container
+      direction="column"
+      justifyContent="flex-start"
+      alignItems="stretch"
+      sx={{ height: "100%" }}
+    >
+      <Grid item sx={{ height: `${TOP_BAR_HEIGHT}px` }}>
+        <TrainTopBar />
+        <Divider />
+      </Grid>
+
+      <Grid item xs="auto" sx={{ height: `calc(100% - ${TOP_BAR_HEIGHT}px)` }}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="space-between"
+          alignItems="stretch"
+          sx={{ height: "100%", width: "100%" }}
+        >
+          <Grid
+            item
+            xs="auto"
+            sx={{
+              width: `calc(100% - ${SIDE_MENU_WIDTH}px)`,
+              minWidth: "400px",
+              pr: "32px",
+            }}
+          >
+            <Chart
+              data={trainProg}
+              lines={lines}
+              showLines={showLines}
+              setShowLines={setShowLines}
+            />
+            <Grid container direction="row" spacing="16px">
+              <Grid item xs={6}>
+                <DataBox />
+              </Grid>
+              <Grid item xs={6}>
+                <DataBox />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item sx={{ width: `${SIDE_MENU_WIDTH}px` }}>
+            <TrainSideMenu />
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
 
   return (
     <>

@@ -6,6 +6,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { palette } from "@mui/system";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../store";
 import { uiActions } from "../../../store/ui";
@@ -18,23 +19,39 @@ interface DrawerItemProps {
 }
 
 const DrawerItem = ({ icon, name, open, tabIndex }: DrawerItemProps) => {
-    const dispatch = useAppDispatch();
-    const currentTabIndex = useSelector<RootState>((state) => state.ui.tabIndex);
-    const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const currentTabIndex = useSelector<RootState>((state) => state.ui.tabIndex);
+  const theme = useTheme();
 
-    const selected = currentTabIndex === tabIndex;
-    const color = selected ? theme.palette.primary.main : theme.palette.text.primary;
+  const selected = currentTabIndex === tabIndex;
+  const color = theme.palette.text.primary;
+  const bgColor = selected
+    ? theme.palette.secondary.dark
+    : theme.palette.background.default;
 
-    const handleClick = () => {
-        dispatch(uiActions.setTab(tabIndex));
-    }
-
+  const handleClick = () => {
+    dispatch(uiActions.setTab(tabIndex));
+  };
 
   if (open) {
     return (
-      <ListItem button onClick={handleClick} key={name} sx={{ width: "100%" }}>
-        <ListItemIcon > {icon('24px', color) }</ListItemIcon>
-        <ListItemText sx={{color: color}} primary={name} />
+      <ListItem
+        selected={selected}
+        button
+        onClick={handleClick}
+        key={name}
+        sx={{
+          borderRadius: "0px 100px 100px 0px",
+          pl: "32px",
+          pr: "12px",
+          height: "40px",
+          width: "244px",
+          fontSize: "14px",
+          "&.Mui-selected": { backgroundColor: theme.palette.secondary.dark },
+        }}
+      >
+        <ListItemIcon> {icon("24px", color)}</ListItemIcon>
+        <ListItemText sx={{ color: color }} primary={name} />
       </ListItem>
     );
   } else {
@@ -57,7 +74,7 @@ const DrawerItem = ({ icon, name, open, tabIndex }: DrawerItemProps) => {
             px: 0,
           }}
         >
-          <Grid item >{icon('24px', color)}</Grid>
+          <Grid item>{icon("24px", color)}</Grid>
           <Grid item>
             <Typography color={color} fontWeight="bold" fontSize="11pt">
               {name}

@@ -18,8 +18,9 @@ import { createEvaluateIcon } from "../../icons/EvaluateIcon/EvaluateIcon";
 import { createTrainIcon } from "../../icons/TrainIcon/TrainIcon";
 import { createNetworkIcon } from "../../icons/NetworkIcon/NetworkIcon";
 import { createSettingsIcon } from "../../icons/SettingsIcon/SettingsIcon";
+import { useTheme } from "@mui/material";
 
-const drawerWidth = "280px";
+const drawerWidth = "256px";
 
 const topTabs = [
   { text: "DATASET", icon: createDatasetIcon, tabIndex: 0 },
@@ -81,6 +82,7 @@ const Drawer = styled(MuiDrawer, {
 
 const VariableDrawer = () => {
   const [open, setOpen] = React.useState(true);
+  const theme = useTheme();
 
   const toggleDrawer = () => {
     setOpen((old) => !old);
@@ -90,7 +92,14 @@ const VariableDrawer = () => {
     <Drawer
       variant="permanent"
       sx={{ height: "100vh", overflow: "visible" }}
-      PaperProps={{ style: { height: "100%", overflow: "visible" } }}
+      PaperProps={{
+        style: {
+          height: "100%",
+          overflow: "visible",
+          backgroundColor: theme.palette.background.default,
+          border: 'none',
+        },
+      }}
       open={open}
     >
       <DrawerHeader sx={{ p: 0, overflow: "visible" }}>
