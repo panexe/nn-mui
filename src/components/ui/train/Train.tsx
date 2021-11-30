@@ -9,6 +9,7 @@ import { MnistData } from "../dataset/mnist";
 import { train } from "./utils";
 import * as Comlink from "comlink";
 import { ModelWorkerType } from "../../../train-worker";
+import { OptimizerArgs } from "../../../train-worker/train-worker";
 
 import {
   AnimatedAxis, // any of these can be non-animated equivalents
@@ -23,6 +24,7 @@ import TrainTopBar from "./train-topbar/TrainTopBar";
 import Chart from "./chart/Chart";
 import DataBox from "./databox/DataBox";
 import TrainSideMenu from "./train-sidemenu/TrainSideMenu";
+import ModelOptionsTab from "./train-sidemenu/ModelOptionsTab";
 
 type Datapoint = {
   epoch: number;
@@ -31,6 +33,28 @@ type Datapoint = {
   trainAcc: number;
   valLoss: number;
   valAcc: number;
+};
+
+interface HistoryDatum {
+  [key: string]: number;
+}
+
+export type ModelOptions = {
+  optimizer: string | OptimizerArgs;
+  loss: string;
+  metrics: {
+    accuracy: boolean;
+    binaryAccuracy: boolean;
+    binaryCrossentropy: boolean;
+    categoricalAccuracy: boolean;
+    categoricalCrossentropy: boolean;
+    cosineProximity: boolean;
+    meanAbsoluteError: boolean;
+    meanAbsolutePercentageError: boolean;
+    meanSquaredError: boolean;
+    precision: boolean;
+    recall: boolean;
+  };
 };
 
 const accessorsLoss = {
@@ -48,61 +72,65 @@ function Sleep(milliseconds: number) {
 }
 
 const Train = () => {
-  const [trainProg, setTrainProg] = useState<Datapoint[]>([
+  const [trainProg, setTrainProg] = useState<HistoryDatum[]>([
     {
+      testVal0: 0,
+      testVal1: 1,
+      testVal2: 2,
+      testVal3: 3,
+      testVal4: 4,
+      testVal5: 5,
+      testVal6: 6,
+      testVal7: 7,
+      testVal8: 8,
       epoch: 0,
-      modelFitTime: 12,
-      trainLoss: 1,
-      trainAcc: 0.1,
-      valLoss: 1,
-      valAcc: 0.1,
     },
     {
+      testVal0: 0.2,
+      testVal1: 0.8,
+      testVal2: 2,
+      testVal3: 3,
+      testVal4: 4,
+      testVal5: 5,
+      testVal6: 6,
+      testVal7: 7,
+      testVal8: 8,
       epoch: 1,
-      modelFitTime: 12,
-      trainLoss: 0.5,
-      trainAcc: 0.4,
-      valLoss: 0.8,
-      valAcc: 0.3,
     },
     {
+      testVal0: 0.4,
+      testVal1: 0.6,
+      testVal2: 2,
+      testVal3: 3,
+      testVal4: 4,
+      testVal5: 5,
+      testVal6: 6,
+      testVal7: 7,
+      testVal8: 8,
       epoch: 2,
-      modelFitTime: 12,
-      trainLoss: 0.3,
-      trainAcc: 0.7,
-      valLoss: 0.5,
-      valAcc: 0.6,
     },
   ]);
-  const lines = [
-    {
-      name: "loss",
-      yAccessor: (d: Datapoint) => d.trainLoss,
-      xAccessor: (d: Datapoint) => d.epoch,
-    },
-    {
-      name: "acc",
-      yAccessor: (d: Datapoint) => d.trainAcc,
-      xAccessor: (d: Datapoint) => d.epoch,
-    },
-    {
-      name: "val-loss",
-      yAccessor: (d: Datapoint) => d.valLoss,
-      xAccessor: (d: Datapoint) => d.epoch,
-    },
-    {
-      name: "val-acc",
-      yAccessor: (d: Datapoint) => d.valAcc,
-      xAccessor: (d: Datapoint) => d.epoch,
-    },
-  ];
 
-  const [showLines, setShowLines] = useState<boolean[]>([
-    true,
-    true,
-    true,
-    true,
-  ]);
+  let lines: {
+    name: string;
+    xAccessor: (d: HistoryDatum) => number;
+    yAccessor: (d: HistoryDatum) => number;
+  }[] = [];
+  if (trainProg[0] !== undefined) {
+    lines = Object.keys(trainProg[trainProg.length - 1]).map((key) => {
+      return {
+        name: key,
+        xAccessor: (d: HistoryDatum) => d.epoch,
+        yAccessor: (d: HistoryDatum) => d[key],
+      };
+    });
+  }
+  console.log("lines", lines);
+  console.log("trainProg", trainProg);
+
+  const [showLines, setShowLines] = useState<boolean[]>(
+    lines.map((val) => true)
+  );
 
   //const model : undefined | IModel = useSelector<RootState>((state) => state.model.currentModel) as undefined | IModel;
   const modelName: string = useSelector<RootState>(
@@ -110,6 +138,24 @@ const Train = () => {
   ) as string;
   let model: undefined | IModel = undefined;
   const [summary, setSummary] = useState("");
+
+  const [modelOptions, setModelOptions] = useState<ModelOptions>({
+    optimizer: "adam",
+    loss: "categoricalCrossentropy",
+    metrics: {
+      accuracy: true,
+      binaryAccuracy: false,
+      binaryCrossentropy: false,
+      categoricalAccuracy: false,
+      categoricalCrossentropy: false,
+      cosineProximity: false,
+      meanAbsoluteError: false,
+      meanAbsolutePercentageError: false,
+      meanSquaredError: false,
+      precision: false,
+      recall: false,
+    },
+  });
 
   const TOP_BAR_HEIGHT = 48;
   const SIDE_MENU_WIDTH = 328;
@@ -137,10 +183,21 @@ const Train = () => {
         type: "module",
       })
     );
+    console.log("start training | modelOptions", modelOptions);
+
+    const metrics = Object.entries(modelOptions.metrics)
+      .filter(([key, value]) => value)
+      .map(([key, value]) => {
+        return key;
+      });
+
     let workerInst = await new worker();
-    await workerInst.loadModel(modelName, "adam", "categoricalCrossentropy", [
-      "acc",
-    ]);
+    await workerInst.loadModel(
+      modelName,
+      modelOptions.optimizer,
+      modelOptions.loss,
+      metrics
+    );
     await workerInst.loadData();
 
     for (let i = 1; i <= 10; i++) {
@@ -148,6 +205,7 @@ const Train = () => {
       // insert short sleep for animation
       await Sleep(700);
       const ret = await workerInst.trainEpoch(i);
+
       setTrainProg((old) => [...old, ret]);
       console.log(ret);
     }
@@ -162,7 +220,7 @@ const Train = () => {
       sx={{ height: "100%" }}
     >
       <Grid item sx={{ height: `${TOP_BAR_HEIGHT}px` }}>
-        <TrainTopBar />
+        <TrainTopBar fabOnClick={btnOnClick} />
         <Divider />
       </Grid>
 
@@ -199,13 +257,19 @@ const Train = () => {
             </Grid>
           </Grid>
           <Grid item sx={{ width: `${SIDE_MENU_WIDTH}px` }}>
-            <TrainSideMenu />
+            <TrainSideMenu>
+              <ModelOptionsTab
+                options={modelOptions}
+                setOptions={setModelOptions}
+              />
+            </TrainSideMenu>
           </Grid>
         </Grid>
       </Grid>
     </Grid>
   );
 
+  /*
   return (
     <>
       <Button onClick={btnOnClick}>Start Training</Button>
@@ -244,7 +308,7 @@ const Train = () => {
         ))}
       </Card>
     </>
-  );
+  );*/
 };
 
 export default Train;

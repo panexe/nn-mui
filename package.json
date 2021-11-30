@@ -24,6 +24,7 @@
     "react-async": "^10.0.1",
     "react-dom": "latest",
     "react-flow-renderer": "^9.6.8",
+    "react-indiana-drag-scroll": "^2.1.0",
     "react-redux": "^7.2.6",
     "react-scripts": "latest",
     "react-split": "^2.0.13",

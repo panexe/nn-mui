@@ -13,7 +13,11 @@ const FabButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const TrainTopBar = () => {
+interface TrainTopBarProps {
+  fabOnClick: Function;
+}
+
+const TrainTopBar = ({ fabOnClick }: TrainTopBarProps) => {
   const theme = useTheme();
 
   return (
@@ -31,17 +35,7 @@ const TrainTopBar = () => {
         <FabButton
           startIcon={<PlayArrow />}
           onClick={() => {
-            console.log(
-              chroma
-                .mix(
-                  chroma(theme.palette.primary.main).hex(),
-                  chroma(theme.palette.background.default).hex(),
-
-                  0.989
-                )
-                .hex()
-            );
-            console.log(chroma(theme.palette.primary.main).alpha(0.08).hex());
+            fabOnClick();
           }}
         >
           Start Training

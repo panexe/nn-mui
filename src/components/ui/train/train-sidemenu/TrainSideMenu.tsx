@@ -8,19 +8,31 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import SettingsIcon from "../../../icons/SettingsIcon/SettingsIcon";
 import TextInput from "../../model/layer-info/TextInput";
 
-const TrainSideMenu = () => {
+interface TrainSideMenuProps {
+    children?: ReactNode;
+
+}
+
+const TrainSideMenu = ({children}: TrainSideMenuProps) => {
   const theme = useTheme();
   const [tab, setTab] = useState(0);
+
+  if(React.Children.count(children) < 1){
+      console.error("TrainSideMenu needs tabs as children.");
+  }
+  let childrenArr = React.Children.toArray(children);
 
   const [text, setText] = useState("text");
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
+
+  
 
   const tab1 = (
     <Box sx={{ width: "100%", height: "100%", p: "16px" }}>
@@ -73,7 +85,7 @@ const TrainSideMenu = () => {
           <Tab label="item 2" />
         </Tabs>
         <Divider />
-        {tab === 0 && tab1}
+        {tab === 0 && childrenArr[0]}
       </Stack>
     </Box>
   );

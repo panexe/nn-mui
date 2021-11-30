@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ReactNode } from "react";
+import { cloneElement, ReactNode } from "react";
 import { DragEvent } from "react";
 import LayersIcon from "../../../icons/LayersIcon/LayersIcon";
 
@@ -22,6 +22,9 @@ const SidebarFloatCategory = ({ name, items }: SidebarFloatCategoryProps) => {
   const theme = useTheme();
 
   const onDragStart = (event: DragEvent, nodeType: string) => {
+    //event.preventDefault();
+    event.stopPropagation();
+
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
     console.log("dragstart: ", nodeType);

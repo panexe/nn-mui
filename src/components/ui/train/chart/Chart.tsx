@@ -1,4 +1,4 @@
-import { Paper, useTheme } from "@mui/material";
+import { Paper, Typography, useTheme } from "@mui/material";
 import { any } from "@tensorflow/tfjs-core";
 
 import {
@@ -45,6 +45,7 @@ interface ChartProps<T> {
 
 const Chart = <T,>({ data, lines, showLines, setShowLines }: ChartProps<T>) => {
   const theme = useTheme();
+  console.log(darkTheme.colors);
 
   const chart = (
     <XYChart
@@ -54,18 +55,21 @@ const Chart = <T,>({ data, lines, showLines, setShowLines }: ChartProps<T>) => {
       theme={darkTheme}
     >
       <AnimatedAxis orientation="bottom" />
+      <AnimatedAxis orientation="left" />
       <AnimatedGrid columns={true} numTicks={4} />
       {lines.map((val, index) => {
-        return (
-          <AnimatedLineSeries
-            style={{ visibility: showLines[index] ? "visible" : "hidden" }}
-            key={val.name}
-            dataKey={val.name}
-            data={data as any}
-            xAccessor={val.xAccessor as any}
-            yAccessor={val.yAccessor as any}
-          />
-        );
+        if (showLines[index]) {
+          return (
+            <AnimatedLineSeries
+              style={{ visibility: showLines[index] ? "visible" : "hidden" }}
+              key={val.name}
+              dataKey={val.name}
+              data={data as any}
+              xAccessor={val.xAccessor as any}
+              yAccessor={val.yAccessor as any}
+            />
+          );
+        }
       })}
     </XYChart>
   );
@@ -81,10 +85,26 @@ const Chart = <T,>({ data, lines, showLines, setShowLines }: ChartProps<T>) => {
           borderRadius: "16px",
           mb: "16px",
           mt: "16px",
+          position: "relative",
         }}
         elevation={1}
       >
-        {chart}
+        {showLines.filter((val) => val).length === 0 && (
+          <Typography
+            sx={{
+              width: "100%",
+              position: "absolute",
+              textAlign: "center",
+              top: "50%",
+              msTransform: "translateY(-50%)",
+              transform: " translateY(-50%)",
+            }}
+            variant="h5"
+          >
+            No data to show
+          </Typography>
+        )}
+        {showLines.filter((val) => val).length !== 0 && chart}
       </Paper>
       <ChartOptions
         lines={lines.map((val) => val.name)}

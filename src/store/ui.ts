@@ -6,6 +6,7 @@ interface uiState {
   colorMode: PaletteMode;
   loading: boolean;
   loadingMessage: string;
+  dragging: boolean;
 }
 
 const initialState: uiState = {
@@ -13,6 +14,7 @@ const initialState: uiState = {
   colorMode: "dark",
   loading: false,
   loadingMessage: "",
+  dragging: false,
 };
 
 const uiSlice = createSlice({
@@ -33,6 +35,12 @@ const uiSlice = createSlice({
       state.loading = false;
       state.loadingMessage = "";
     },
+    startDragging(state){
+      state.dragging = true;
+    }, 
+    stopDragging(state){
+      state.dragging = false;
+    }
   },
 });
 

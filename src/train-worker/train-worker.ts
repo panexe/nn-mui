@@ -4,6 +4,32 @@ import { MnistData } from "../components/ui/dataset/mnist";
 interface Layers {
   [key: string]: tf.SymbolicTensor;
 }
+export type OptimizerArgs =
+  | { optimizer: "sgd"; learningRate: number }
+  | {
+      optimizer: "momentum";
+      learningRate: number;
+      momentum: number;
+      useNestrov: boolean | undefined;
+    }
+  | {
+      optimizer: "adagrad";
+      learningRate: number;
+      initialAccumulatorValue: number | undefined;
+    }
+  | {
+      optimizer: "adadelta";
+      learningRate: number | undefined;
+      rho: number | undefined;
+      epsilon: number | undefined;
+    }
+  | {
+      optimizer: "adam";
+      learningRate: number | undefined;
+      beta1: number | undefined;
+      beta2: number | undefined;
+      epsilon: number | undefined;
+    };
 
 export class ModelWorker {
   model: tf.LayersModel | undefined;
@@ -25,13 +51,57 @@ export class ModelWorker {
   }
   async loadModel(
     modelName: string = "my-model",
-    optimizer: string = "adam",
-    loss: "categoricalCrossentropy",
+    optimizer: string | OptimizerArgs = "adam",
+    loss: string = "categoricalCrossentropy",
     metrics: string[] = ["acc"]
   ) {
-    console.log("loading model...");
-    this.model = await tf.loadLayersModel(`indexeddb://${modelName}`);
-    this.model.compile({ optimizer: optimizer, loss: loss, metrics: metrics });
+    if (typeof optimizer === typeof "string") {
+      console.log("loading model...");
+      this.model = await tf.loadLayersModel(`indexeddb://${modelName}`);
+      this.model.compile({
+        optimizer: optimizer as string,
+        loss: loss,
+        metrics: metrics,
+      });
+    } else {
+      let opti = optimizer as OptimizerArgs;
+      let opt;
+      switch (opti.optimizer) {
+        case "sgd":
+          opt = tf.train.sgd(opti.learningRate);
+          break;
+        case "momentum":
+          opt = tf.train.momentum(
+            opti.learningRate,
+            opti.momentum,
+            opti.useNestrov
+          );
+          break;
+        case "adadelta":
+          opt = tf.train.adadelta(opti.learningRate, opti.rho, opti.epsilon);
+          break;
+        case "adagrad":
+          opt = tf.train.adagrad(
+            opti.learningRate,
+            opti.initialAccumulatorValue
+          );
+          break;
+        case "adam":
+          opt = tf.train.adam(
+            opti.learningRate,
+            opti.beta1,
+            opti.beta2,
+            opti.epsilon
+          );
+          break;
+      }
+      this.model = await tf.loadLayersModel(`indexeddb://${modelName}`);
+      this.model.compile({
+        optimizer: opt,
+        loss: loss,
+        metrics: metrics,
+      });
+    }
   }
 
   async loadData() {
@@ -64,7 +134,7 @@ export class ModelWorker {
         "No model is defined. Create one before you start training."
       );
     }
-    
+
     const beginMs = performance.now();
     const hist = await this.model.fit(this.trainXs, this.trainYs, {
       epochs: 1,
@@ -76,18 +146,35 @@ export class ModelWorker {
     const elapsedMs = performance.now() - beginMs;
     const modelFitTime = elapsedMs / 1000;
 
+    // remove
+    console.log("hist.history", hist.history);
+
     const trainLoss = hist.history["loss"][0] as number;
     const trainAcc = hist.history["acc"][0] as number;
     const valLoss = hist.history["loss"][0] as number;
     const valAcc = hist.history["acc"][0] as number;
 
+    interface HistoryDatum {
+      [key: string]: number;
+    }
+
+    let obj : HistoryDatum = {};
+    Object.entries(hist.history).map(([key, value]) => {
+      obj[key] = value[0] as number;
+    })
+    
+
+    const history = Object.entries(hist.history)
+      .filter(([key, value]) => value instanceof Number)
+      .map(([key, value]) => [key, value[0] as number]);
+    
+    console.log("trainwoker history", history);
+    console.log("trainworker obj", obj);
+
     return {
       epoch: n,
       modelFitTime: modelFitTime,
-      trainLoss: trainLoss,
-      trainAcc: trainAcc,
-      valLoss: valLoss,
-      valAcc: valAcc,
+      ...obj,
     };
   }
 }
