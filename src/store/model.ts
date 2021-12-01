@@ -5,12 +5,14 @@ interface modelState {
   currentFlowKey: string;
   currentModel: undefined | IModel;
   currentModelName: string;
+  currentModelSummary: string;
 }
 
 const initialState: modelState = {
   currentFlowKey: "default-flow",
   currentModel: undefined,
   currentModelName: "default",
+  currentModelSummary: "",
 };
 
 const modelSlice = createSlice({
@@ -28,6 +30,9 @@ const modelSlice = createSlice({
     },
     setCurrentModelName(state, action: PayloadAction<string>) {
       state.currentModelName = action.payload;
+    },
+    setCurrentModelSummary(state, action: PayloadAction<string>) {
+      state.currentModelSummary = action.payload;
     },
   },
 });

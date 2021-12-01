@@ -38,7 +38,7 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../../../../store";
 import { NODE_HEIGHT, NODE_WIDTH } from "../../../../../../constants/constants";
 import { createLayersIcon } from "../../../../../icons/LayersIcon/LayersIcon";
-import { uiActions } from "../../../../../../store/ui";
+import { modelActions } from "../../../../../../store/model";
 
 /*--------------------------------------------------------*/
 /*                         CSS                            */
@@ -109,6 +109,9 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 
       const saveResults = await nnModel.save(`indexeddb://${modelName}`);
       console.log("save results:", saveResults, modelName);
+
+      const summary = nnModel.summary();
+      dispatch(modelActions.setCurrentModelSummary(summary));
     } else {
       console.log("done nothing in output node");
     }
@@ -135,9 +138,11 @@ const OutputNode = ({ data, id, isConnectable }: NodeProps<DataBaseType>) => {
 
   return (
     <>
-      {loading && <Portal container={containerLoading}>
-        <CircularProgress size={24}/>
-      </Portal>}
+      {loading && (
+        <Portal container={containerLoading}>
+          <CircularProgress size={24} />
+        </Portal>
+      )}
       {selected && (
         <Portal container={containerArgs}>
           <Typography variant="h4" mt={2}>

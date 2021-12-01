@@ -1,8 +1,22 @@
 import { Settings } from "@mui/icons-material";
-import { Paper, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Paper,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+  Zoom,
+} from "@mui/material";
+import { ReactNode } from "react";
 import SettingsIcon from "../../../icons/SettingsIcon/SettingsIcon";
 
-const DataBox = () => {
+interface DataBoxProps {
+  data: { [key: string]: string | string[] | number | boolean };
+  title: string;
+  icon?: ReactNode;
+}
+
+const DataBox = ({ data, title, icon }: DataBoxProps) => {
   const theme = useTheme();
 
   return (
@@ -18,38 +32,98 @@ const DataBox = () => {
       elevation={1}
     >
       <Stack direction="row" spacing="16px" sx={{ mb: "8px" }}>
-        <SettingsIcon />
-        <Typography variant="h6">Title of Databoxs</Typography>
+        {icon}
+        <Typography variant="h6">{title}</Typography>
       </Stack>
       <Stack direction="row" spacing="16px">
-        <Stack spacing='4px' sx={{width: '50%'}}>
-          <Stack direction="row" spacing="16px">
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>Value: </Typography>
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>10</Typography>
-          </Stack>
-          <Stack direction="row" spacing="16px">
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>Value: </Typography>
-            <Typography  fontSize='14pt'sx={{ width: "100px" }}>10</Typography>
-          </Stack>
-          <Stack direction="row" spacing="16px">
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>Value: </Typography>
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>10</Typography>
-          </Stack>
+        <Stack spacing="4px" sx={{ width: "50%" }}>
+          {Object.entries(data).map(([key, val], index) => {
+            if (!(index % 2)) {
+              return (
+                <Stack
+                  key={`databox-stack-${key}-${index}`}
+                  direction="row"
+                  spacing="16px"
+                >
+                  <Tooltip
+                    title={key}
+                    placement="top-start"
+                    TransitionComponent={Zoom}
+                    enterDelay={500}
+                  >
+                    <Typography
+                      key={`databox-typographie-key-${key}-${index}`}
+                      fontSize="14px"
+                      noWrap
+                      sx={{ width: "60%" }}
+                    >
+                      {key}{" "}
+                    </Typography>
+                  </Tooltip>
+                  <Tooltip
+                    title={val.toString()}
+                    placement="top-start"
+                    TransitionComponent={Zoom}
+                    enterDelay={500}
+                  >
+                    <Typography
+                      key={`databox-typographie-val-${key}-${index}`}
+                      fontSize="14px"
+                      noWrap
+                      sx={{ width: "40%" }}
+                    >
+                      {val.toString()}
+                    </Typography>
+                  </Tooltip>
+                </Stack>
+              );
+            }
+          })}
         </Stack>
 
-        <Stack spacing='4px'>
-          <Stack direction="row" spacing="16px">
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>Value: </Typography>
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>10</Typography>
-          </Stack>
-          <Stack direction="row" spacing="16px">
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>Value: </Typography>
-            <Typography  fontSize='14pt'sx={{ width: "100px" }}>10</Typography>
-          </Stack>
-          <Stack direction="row" spacing="16px">
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>Value: </Typography>
-            <Typography fontSize='14pt' sx={{ width: "100px" }}>10</Typography>
-          </Stack>
+        <Stack spacing="4px" sx={{ width: "50%" }}>
+          {Object.entries(data).map(([key, val], index) => {
+            if (index % 2) {
+              return (
+                <Stack
+                  key={`databox-stack-${key}-${index}`}
+                  direction="row"
+                  spacing="16px"
+                >
+                  <Tooltip
+                    title={key}
+                    placement="top-start"
+                    TransitionComponent={Zoom}
+                    enterDelay={500}
+                  >
+                    <Typography
+                      key={`databox-typographie-key-${key}-${index}`}
+                      fontSize="14px"
+                      noWrap
+                      sx={{ width: "60%" }}
+                    >
+                      {key}{" "}
+                    </Typography>
+                  </Tooltip>
+                  <Tooltip
+                    title={val.toString()}
+                    placement="top-start"
+                    TransitionComponent={Zoom}
+                    enterDelay={500}
+                  >
+                    <Typography
+                      key={`databox-typographie-val-${key}-${index}`}
+                      fontSize="14px"
+                      noWrap
+                      sx={{ width: "40%" }}
+                    >
+                      {val.toString()}
+                    </Typography>
+                  </Tooltip>
+                </Stack>
+              );
+            }
+          })}
         </Stack>
       </Stack>
     </Paper>
